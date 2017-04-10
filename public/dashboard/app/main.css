@@ -3875,6 +3875,11 @@ th {
     height: 550px; }
   .panel.large-panel {
     height: 974px; }
+  /*custom panel for pasar virtual*/
+  .panel.pv-medium-panel {
+    height: 400px;
+    box-shadow: none; }
+  /*end of custom*/
   .panel.viewport100 {
     height: calc(100vh - 218px); }
   .panel.with-scroll .panel-body {

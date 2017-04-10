@@ -289,6 +289,8 @@
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionByHistory/mpTransactionByHistoryCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionBySentra/mpTransactionBySentra.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionBySentra/mpTransactionBySentraCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionFilter/mpTransactionFilter.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionFilter/mpTransactionFilterCtrl.js')}}"></script>
 <!-- endinject
 
 <!-- inject:partials -->

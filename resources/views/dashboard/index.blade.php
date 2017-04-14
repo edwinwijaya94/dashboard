@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="{{asset('dashboard/lib/bootstrap-select.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/bootstrap-switch.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/bootstrap-tagsinput.css')}}" >
+  <link rel="stylesheet" href="{{asset('dashboard/lib/daterangepicker.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/font-awesome.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/fullcalendar.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/leaflet.css')}}" >
@@ -137,6 +138,7 @@
 <script src="{{asset('dashboard/lib/jstree.js')}}"></script>
 <script src="{{asset('dashboard/lib/ngJsTree.js')}}"></script>
 <script src="{{asset('dashboard/lib/select.js')}}"></script>
+<script src="{{asset('dashboard/lib/daterangepicker.js')}}"></script>
 <!-- endbower -->
 <!-- endbuild -->
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -149,10 +151,10 @@
 <script src="{{asset('dashboard/app/pages/components/components.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/dashboard/dashboard.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/form/form.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/maps/maps.module.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/maps/maps.module.js')}}"></script> -->
 <script src="{{asset('dashboard/app/pages/profile/profile.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/tables/tables.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/ui.module.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/ui/ui.module.js')}}"></script> -->
 <script src="{{asset('dashboard/app/theme/components/components.module.js')}}"></script>
 <script src="{{asset('dashboard/app/theme/inputs/inputs.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/charts/amCharts/amCharts.module.js')}}"></script>
@@ -162,17 +164,17 @@
 <script src="{{asset('dashboard/app/pages/components/mail/mail.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/components/timeline/timeline.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/components/tree/tree.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/alerts/alerts.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/buttons/buttons.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/grid/grid.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/icons/icons.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/modals/modals.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/notifications/notifications.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/panels/panels.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/progressBars/progressBars.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/slider/slider.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/tabs/tabs.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/typography/typography.module.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/ui/alerts/alerts.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/buttons/buttons.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/grid/grid.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/icons/icons.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/modals/modals.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/notifications/notifications.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/panels/panels.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/progressBars/progressBars.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/slider/slider.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/tabs/tabs.module.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/typography/typography.module.js')}}"></script> -->
 <script src="{{asset('dashboard/app/app.js')}}"></script>
 <script src="{{asset('dashboard/app/theme/theme.config.js')}}"></script>
 <script src="{{asset('dashboard/app/theme/theme.configProvider.js')}}"></script>
@@ -226,14 +228,14 @@
 <script src="{{asset('dashboard/app/pages/dashboard/weather/weather.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/dashboard/weather/WeatherCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/form/wizard/wizrdCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/maps/google-maps/GmapPageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/maps/leaflet/LeafletPageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/maps/map-bubbles/MapBubblePageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/maps/map-lines/MapLinesPageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/buttons/ButtonPageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/icons/IconsPageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/modals/ModalsPageCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/notifications/NotificationsPageCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/maps/google-maps/GmapPageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/maps/leaflet/LeafletPageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/maps/map-bubbles/MapBubblePageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/maps/map-lines/MapLinesPageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/buttons/ButtonPageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/icons/IconsPageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/modals/ModalsPageCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/notifications/NotificationsPageCtrl.js')}}"></script> -->
 <script src="{{asset('dashboard/app/theme/components/backTop/backTop.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/theme/components/baPanel/baPanel.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/theme/components/baPanel/baPanel.service.js')}}"></script>
@@ -269,8 +271,8 @@
 <script src="{{asset('dashboard/app/pages/components/mail/composeBox/composeModal.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/components/mail/detail/MailDetailCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/components/mail/list/MailListCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/modals/notifications/NotificationsCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/ui/modals/progressModal/ProgressModalCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/ui/modals/notifications/NotificationsCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/ui/modals/progressModal/ProgressModalCtrl.js')}}"></script> -->
 <script src="{{asset('dashboard/app/theme/components/backTop/lib/jquery.backTop.min.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/form/inputs/widgets/datePickers/datepickerCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/form/inputs/widgets/datePickers/datepickerpopupCtrl.js')}}"></script>
@@ -285,12 +287,19 @@
 
 <!-- CUSTOM MODULE FOR DASHBOARD PASAR VIRTUAL -->
 <script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionByHistory/mpTransactionByHistory.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionByHistory/mpTransactionByHistoryCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionBySentra/mpTransactionBySentra.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionBySentra/mpTransactionBySentraCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionFilter/mpTransactionFilter.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransactionFilter/mpTransactionFilterCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionByHistory/mpTransactionByHistory.directive.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionByHistory/mpTransactionByHistoryCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionBySentra/mpTransactionBySentra.directive.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionBySentra/mpTransactionBySentraCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionFilter/mpTransactionFilter.directive.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransactionFilter/mpTransactionFilterCtrl.js')}}"></script> -->
+
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionFilterCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionByHistoryCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionBySentraCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionFactory.js')}}"></script> -->
 <!-- endinject
 
 <!-- inject:partials -->

@@ -61,9 +61,9 @@ class MarketplaceController extends Controller
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
 
-        if($query['groupBy'] == 'seller_id')
+        if($query['groupBy'] == 'sentra')
             return $this->getTransactionBySeller($query);
-        else if (($query['groupBy'] == 'history'))
+        else if ($query['groupBy'] == 'history')
             return $this->getTransactionByHistory($query);
     }
 
@@ -75,7 +75,7 @@ class MarketplaceController extends Controller
                     ->select(DB::raw($query['aggregate'].'as value, seller_id'))
                     ->where('datetime', '>=', $query['startDate'])
                     ->where('datetime', '<=', $query['endDate'])
-                    ->groupBy($query['groupBy'])
+                    ->groupBy('seller_id')
                     ->get();
 
         $status = $this->setStatus();

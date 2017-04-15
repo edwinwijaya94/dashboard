@@ -3876,9 +3876,9 @@ th {
   .panel.large-panel {
     height: 974px; }
   /*custom panel for pasar virtual*/
-  .panel.pv-medium-panel {
-    height: 400px;
-    box-shadow: none; }
+  .panel.pv-panel {
+    box-shadow: none;
+  }
   /*end of custom*/
   .panel.viewport100 {
     height: calc(100vh - 218px); }
@@ -5581,7 +5581,7 @@ a.fc-more {
       height: 114px; }
   @media screen and (min-width: 1325px) {
     .pie-charts .pie-chart-item-container {
-      width: 25%; } }
+      width: 40%; } }
   @media screen and (min-width: 700px) and (max-width: 1325px) {
     .pie-charts .pie-chart-item-container {
       width: 50%; } }

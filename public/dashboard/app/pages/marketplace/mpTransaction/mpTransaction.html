@@ -10,10 +10,27 @@
     </div>
     <!-- end of filter -->
 
+    <!-- stats -->
+    <div class="row pie-charts" ng-controller="mpTransactionStatsCtrl">
+      <div class="pie-chart-item-container" ng-repeat="chart in charts">
+        <div ba-panel
+             ba-panel-class="pv-panel">
+          <div class="pie-chart-item">
+            <div class="chart" rel="{{ ::chart.color }}" data-percent="60"> <span class="percent"></span> </div>
+            <div class="description">
+              <div>{{ ::chart.description }}</div>
+              <div class="description-stats" ng-bind="chart.stats"></div>
+            </div>
+            <i class="chart-icon i-{{ ::chart.icon }}"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="col-lg-6 col-md-12 col-sm-12"
          ba-panel
          ba-panel-title="Tren Nilai Transaksi"
-         ba-panel-class="pv-medium-panel">
+         ba-panel-class="medium-panel pv-panel">
          <!-- transaction by history -->
       <div class="row" ng-controller="mpTransactionByHistoryCtrl">
         <div class="col-md-12">
@@ -27,7 +44,7 @@
     <div class="col-lg-6 col-md-12 col-sm-12"
          ba-panel
          ba-panel-title="Nilai Transaksi Per Sentra"
-         ba-panel-class="pv-medium-panel">
+         ba-panel-class="medium-panel pv-panel">
       <!-- transaction by sentra -->
       <div class="row" ng-controller="mpTransactionBySentraCtrl">
         <div class="col-md-12">

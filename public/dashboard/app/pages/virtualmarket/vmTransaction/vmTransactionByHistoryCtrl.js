@@ -5,45 +5,54 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.marketplace')
-      .controller('mpTransactionBySentraCtrl', mpTransactionBySentraCtrl);
+  angular.module('BlurAdmin.pages.virtualmarket')
+      .controller('vmTransactionByHistoryCtrl', vmTransactionByHistoryCtrl);
 
   /** @ngInject */
-  function mpTransactionBySentraCtrl($scope, $window, $http, baConfig) {
-    
+  function vmTransactionByHistoryCtrl($scope, $window, $http, baConfig) {
     var layoutColors = baConfig.colors;
+
     $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     $scope.noData = false;
-    $scope.$on('updateMpTransaction', function(event, startDate, endDate) {  
+    $scope.$on('updateVmTransaction', function(event, startDate, endDate) {  
       $scope.getData(startDate, endDate);
     });
-    
+
     $scope.getData = function(startDate, endDate) {
       $scope.loading = true;
-      $http.get('/api/marketplace/transaction?type=sentra&aggregate=sum&start_date='+startDate+'&end_date='+endDate)
+      $http.get('/api/virtualmarket/transaction?type=history&aggregate=sum&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
-          var data = res.data.data;
+          var resp = res.data.data;
+          var data = [];
+          var i;
+          for(i=0; i<resp.length; i++) {
+            var x = {};
+            x.time = resp[i].yr+'-'+resp[i].mo;
+            x.value = resp[i].value;
+            data.push(x);
+          }
           $scope.drawChart(data, $scope.colors);
         })
         .finally(function() {
           $scope.loading= false;
-        });
+        });    
     }
 
-    $scope.drawChart = function(data, colors) {
+    // chart
+    $scope.drawChart =  function(data, colors) {
       if($scope.chart == undefined) {
         if(data.length == 0) {
           $scope.noData = true;
         } else {
           $scope.noData = false;
-          $scope.chart = new Morris.Bar({
-            element: 'mpTransactionBySentra',
+          $scope.chart = new Morris.Line({
+            element: 'vmTransactionByHistory',
             data: data,
-            xkey: 'seller_id',
+            xkey: 'time',
             ykeys: ['value'],
             labels: ['Nilai Transaksi'],
-            preUnits: 'Rp ',
-            barColors: colors
+            yLabelFormat : function(y){return 'Rp '+y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');},
+            lineColors: colors
           });
         }
       } else {
@@ -61,6 +70,4 @@
     });
   }
 
-  // chart
-  
 })();

@@ -9,6 +9,7 @@
     'ui.router',
 
     // 'BlurAdmin.pages.dashboard',
+    'BlurAdmin.pages.virtualmarket',
     'BlurAdmin.pages.marketplace',
     // 'BlurAdmin.pages.ui',
     // 'BlurAdmin.pages.components',
@@ -22,7 +23,7 @@
 
   /** @ngInject */
   function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
-    $urlRouterProvider.otherwise('/dashboard');
+    $urlRouterProvider.otherwise('/virtualmarket');
 
     // baSidebarServiceProvider.addStaticItem({
     //   title: 'Pages',

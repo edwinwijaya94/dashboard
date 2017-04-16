@@ -289,16 +289,24 @@
 <!-- <script src="{{asset('dashboard/app/pages/form/inputs/widgets/tagsInput/tagsInput.directive.js')}}"></script> -->
 
 <!-- CUSTOM MODULE FOR DASHBOARD PASAR VIRTUAL -->
-<script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
+<!-- vmTransaction -->
+<script src="{{asset('dashboard/app/pages/virtualmarket/virtualmarket.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionFilterCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionByHistoryCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionStatsCtrl.js')}}"></script>
 
+<!-- mpTransaction -->
+<script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionFilterCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionByHistoryCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionBySentraCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionBySentraCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionStatsCtrl.js')}}"></script>
-<!-- endinject
+
+<!-- endinject -->
 
 <!-- inject:partials -->
 <!-- angular templates will be automatically converted in js and inserted here -->

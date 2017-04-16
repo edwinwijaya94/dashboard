@@ -13,13 +13,14 @@
     var layoutColors = baConfig.colors;
 
     $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
+    $scope.noData = false;
     $scope.$on('updateMpTransaction', function(event, startDate, endDate) {  
       $scope.getData(startDate, endDate);
     });
 
     $scope.getData = function(startDate, endDate) {
       $scope.loading = true;
-      $http.get('/api/marketplace/transaction?group_by=history&aggregate=sum&start_date='+startDate+'&end_date='+endDate)
+      $http.get('/api/marketplace/transaction?type=history&aggregate=sum&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
           var resp = res.data.data;
           var data = [];
@@ -40,17 +41,27 @@
     // chart
     $scope.drawChart =  function(data, colors) {
       if($scope.chart == undefined) {
-        $scope.chart = new Morris.Line({
-          element: 'mpTransactionByHistory',
-          data: data,
-          xkey: 'time',
-          ykeys: ['value'],
-          labels: ['Nilai Transaksi'],
-          preUnits: 'Rp ',
-          lineColors: colors
-        });
+        if(data.length == 0) {
+          $scope.noData = true;
+        } else {
+          $scope.noData = false;
+          $scope.chart = new Morris.Line({
+            element: 'mpTransactionByHistory',
+            data: data,
+            xkey: 'time',
+            ykeys: ['value'],
+            labels: ['Nilai Transaksi'],
+            yLabelFormat : function(y){return 'Rp '+y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');},
+            lineColors: colors
+          });
+        }
       } else {
         $scope.chart.setData(data);
+        if(data.length == 0) {
+          $scope.noData = true;
+        } else {
+          $scope.noData = false;
+        } 
       }
     }
 

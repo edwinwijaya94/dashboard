@@ -12,7 +12,6 @@ class MarketplaceSeeder extends Seeder
     public function run()
     {
 
-    	// Marketplace transaction
         factory(App\Model\Marketplace\Transaction::class, 10)->create();
     }
 }

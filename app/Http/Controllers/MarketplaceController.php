@@ -22,7 +22,7 @@ class MarketplaceController extends Controller
         $default = array();
         $default['startDate'] = '1960-01-01';
         $default['endDate'] = '2020-01-01';
-        $default['groupBy'] = 'seller_id';
+        $default['type'] = 'stats';
         $default['aggregate'] = 'sum';
         $default['aggregateBy'] = 'amount'; // aggregate by this column
         $default['decimals'] = 3; // decimal places
@@ -35,7 +35,7 @@ class MarketplaceController extends Controller
         $query = array();
         $query['startDate'] = $request->query('start_date', $default['startDate']);
         $query['endDate'] = $request->query('end_date', $default['endDate']);
-        $query['groupBy'] = $request->query('group_by', $default['groupBy']);
+        $query['type'] = $request->query('type', $default['type']);
         $query['aggregate'] = $request->query('aggregate', $default['aggregate']).'('.$default['aggregateBy'].')';
 
         // Round results if using avg function
@@ -61,9 +61,9 @@ class MarketplaceController extends Controller
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
 
-        if($query['groupBy'] == 'sentra')
+        if($query['type'] == 'sentra')
             return $this->getTransactionBySeller($query);
-        else if ($query['groupBy'] == 'history')
+        else if ($query['type'] == 'history')
             return $this->getTransactionByHistory($query);
     }
 

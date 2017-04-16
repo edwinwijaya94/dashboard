@@ -5,19 +5,19 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.marketplace', [])
+  angular.module('BlurAdmin.pages.virtualmarket', [])
       .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($stateProvider) {
     $stateProvider
-        .state('marketplace', {
-          url: '/marketplace',
-          templateUrl: 'app/pages/marketplace/marketplace.html',
-          title: 'Marketplace',
+        .state('virtualmarket', {
+          url: '/virtualmarket',
+          templateUrl: 'app/pages/virtualmarket/virtualmarket.html',
+          title: 'Virtual Market',
           sidebarMeta: {
             icon: 'ion-android-home',
-            order: 2,
+            order: 1,
           },
         });
   }

@@ -17,5 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// marketplace transaction
+// virtual market
+Route::get('/virtualmarket/transaction', 'VirtualMarketController@getTransaction');
+Route::get('/virtualmarket/commodity', 'VirtualMarketController@getCommodity');
+
+// marketplace
 Route::get('/marketplace/transaction', 'MarketplaceController@getTransaction');

@@ -97,6 +97,15 @@ class InitDbVirtualmarket extends Migration
             $table->integer('user_feedback_id');
             $table->integer('reason_id');
         });
+
+        Schema::connection('virtual_market')->create('garendongs', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id');
+            $table->integer('number_of_allocation')->default(0);
+            $table->integer('status')->default(1);
+            $table->integer('rating');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -116,5 +125,6 @@ class InitDbVirtualmarket extends Migration
         Schema::connection('virtual_market')->dropIfExists('converter');
         Schema::connection('virtual_market')->dropIfExists('category');
         Schema::connection('virtual_market')->dropIfExists('reason_list');
+        Schema::connection('virtual_market')->dropIfExists('garendongs');
     }
 }

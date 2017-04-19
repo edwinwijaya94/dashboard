@@ -71,8 +71,8 @@ class VirtualMarketController extends Controller
     {
         DB::enableQueryLog();
         // execute
-        // success / failed transaction
-        $data = DB::connection('virtual_market')
+        // success rates
+        $successRates = DB::connection('virtual_market')
                     ->table('order')
                     ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
                     ->select(DB::raw('status, count(*), sum(total_price)'))
@@ -80,10 +80,20 @@ class VirtualMarketController extends Controller
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->groupBy('status')
-                    // ->toSql();
                     ->get();
-        // dd ($data);
 
+        // app platform (mobile / sms)
+        $appPlatform = DB::connection('virtual_market')
+                    ->table('order')
+                    ->select(DB::raw('order_type, count(*)'))
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    ->groupBy('order_type')
+                    ->get();
+
+        $data = array();
+        $data['successRate'] = $successRates;
+        $data['appPlatform'] = $appPlatform;
         $status = $this->setStatus();
 
         return response()->json([
@@ -190,4 +200,136 @@ class VirtualMarketController extends Controller
                     'data' => $data
                 ]);
     }
+
+    // SHOPPER
+    public function getShopper(Request $request)
+    {
+        $default = $this->setDefault();
+        $query = $this->setQuery($request, $default);
+
+        if($query['type'] == 'stats')
+            return $this->getShopperStats($query);
+        else if($query['type'] == 'toplist')
+            return $this->getShopperTopList($query);
+    }
+
+    public function getShopperStats($query)
+    {
+        DB::enableQueryLog();
+        // execute
+        $data = DB::connection('virtual_market')
+                    ->table('garendongs')
+                    ->select(DB::raw('count(*)'))
+                    ->get();
+
+        // $data = array();
+        // $data['rating'] = $rating;
+        // $data['feedback'] = $feedback;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);      
+    }
+
+    public function getShopperTopList($query)
+    {
+        DB::enableQueryLog();
+        // execute
+        $data = DB::connection('virtual_market')
+                    ->table('garendongs')
+                    ->select(DB::raw('user_id, rating'))
+                    ->orderBy('rating', 'desc')
+                    ->limit(5)
+                    ->get();
+
+        // $data = array();
+        // $data['rating'] = $rating;
+        // $data['feedback'] = $feedback;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);      
+    }
+
+    // USER FEEDBACK
+    public function getFeedback(Request $request)
+    {
+        $default = $this->setDefault();
+        $query = $this->setQuery($request, $default);
+
+        if($query['type'] == 'stats')
+            return $this->getFeedbackStats($query);
+    }
+
+    public function getFeedbackStats($query)
+    {
+        DB::enableQueryLog();
+        // execute
+        $rating = DB::connection('virtual_market')
+                    ->table('user_feedback')
+                    ->join('order', 'user_feedback.order_id', '=', 'order.id')
+                    ->select(DB::raw('count(*) as buyer, round(avg(rating), 2) as rating'))
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    ->get();
+
+        $feedback = DB::connection('virtual_market')
+                    ->table('reason_list')
+                    ->join('reason', 'reason_list.reason_id', '=', 'reason.id')
+                    ->join('user_feedback', 'reason_list.user_feedback_id', '=', 'user_feedback.id')
+                    ->join('order', 'user_feedback.order_id', '=', 'order.id')
+                    ->select(DB::raw('reason, count(*)'))
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    ->groupBy('reason.reason')
+                    ->get();
+
+        $data = array();
+        $data['rating'] = $rating;
+        $data['feedback'] = $feedback;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);      
+    }
+
+    // BUYER
+    public function getBuyer(Request $request)
+    {
+        $default = $this->setDefault();
+        $query = $this->setQuery($request, $default);
+
+        if($query['type'] == 'stats')
+            return $this->getBuyerStats($query);
+    }
+
+    public function getBuyerStats($query)
+    {
+        DB::enableQueryLog();
+        // execute
+        $data = DB::connection('virtual_market')
+                    ->table('order')
+                    ->select(DB::raw('count(distinct buyer_id) as buyer, (count(*) - count(distinct buyer_id)) as returningUser'))
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    // ->groupBy('buyer_id')
+                    ->get();
+
+        // $data = array();
+        // $data['successRate'] = $successRates;
+        // $data['appPlatform'] = $appPlatform;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
 }

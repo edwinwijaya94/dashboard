@@ -35,8 +35,8 @@
                'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                '7 Hari': [moment().subtract(6, 'days'), moment()],
                '30 Hari': [moment().subtract(29, 'days'), moment()],
-               // 'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
-               'Tahun Ini': [moment().startOf('year'), moment()]
+               'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
+               'Bulan Lalu': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
             maxDate: $scope.endDate,
             showDropdowns: true,

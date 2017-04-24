@@ -72,7 +72,7 @@ class VirtualMarketController extends Controller
         DB::enableQueryLog();
         // execute
         // success rates
-        $successRates = DB::connection('virtual_market')
+        $transactionStatus = DB::connection('virtual_market')
                     ->table('order')
                     ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
                     ->select(DB::raw('status, count(*), sum(total_price)'))
@@ -85,15 +85,15 @@ class VirtualMarketController extends Controller
         // app platform (mobile / sms)
         $appPlatform = DB::connection('virtual_market')
                     ->table('order')
-                    ->select(DB::raw('order_type, count(*)'))
+                    ->select(DB::raw('order_type as name, count(*)'))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->groupBy('order_type')
                     ->get();
 
         $data = array();
-        $data['successRate'] = $successRates;
-        $data['appPlatform'] = $appPlatform;
+        $data['transaction_status'] = $transactionStatus;
+        $data['app_platform'] = $appPlatform;
         $status = $this->setStatus();
 
         return response()->json([
@@ -164,7 +164,7 @@ class VirtualMarketController extends Controller
         
         $data = array();
         $data['availablity'] = $availability;
-        $data['unavailableProducts'] = $unavailableProducts;
+        $data['unavailable_products'] = $unavailableProducts;
 
         $status = $this->setStatus();
 
@@ -315,7 +315,7 @@ class VirtualMarketController extends Controller
         // execute
         $data = DB::connection('virtual_market')
                     ->table('order')
-                    ->select(DB::raw('count(distinct buyer_id) as buyer, (count(*) - count(distinct buyer_id)) as returningUser'))
+                    ->select(DB::raw('count(distinct buyer_id) as buyer, (count(*) - count(distinct buyer_id)) as returning_user'))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     // ->groupBy('buyer_id')

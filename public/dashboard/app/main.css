@@ -6271,6 +6271,7 @@ label.todo-checkbox {
 /*custom CSS for pasar virtual*/
 .pv-chart {
   position: absolute;
+  width: 100%;
 }
 .pv-chart-medium-overlay {
   width: 100%;

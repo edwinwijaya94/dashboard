@@ -11,29 +11,54 @@
     <!-- end of filter -->
 
     <!-- stats -->
-    <div class="row pie-charts" ng-controller="vmTransactionStatsCtrl">
-      <div class="pie-chart-item-container" ng-repeat="chart in charts">
-        <div ba-panel
-             ba-panel-class="pv-panel">
-          <div class="pie-chart-item">
-            <div class="chart" rel="{{ ::chart.color }}" data-percent="60"> <span class="percent"></span> </div>
-            <div class="description">
-              <div>{{ ::chart.description }}</div>
-              <div class="description-stats" ng-bind="chart.stats"></div>
+    <div class="row">
+      <!-- transaction success rate -->
+      <div class="pie-charts" ng-controller="vmTransactionStatsCtrl">
+        <div class="pie-chart-item-container" ng-repeat="chart in charts">
+          <div ba-panel
+               ba-panel-class="pv-panel">
+            <div class="pie-chart-item">
+              <div easypiechart class="chart" options="options" percent="percent"> <span class="percent" ng-bind="percent"></span> </div>
+              <div class="description">
+                <div>{{ ::chart.description }}</div>
+                <div class="description-stats" ng-bind="chart.stats"></div>
+              </div>
+              <i class="chart-icon i-{{ ::chart.icon }}"></i>
             </div>
-            <i class="chart-icon i-{{ ::chart.icon }}"></i>
+          </div>
+        </div>
+      </div>
+      <!-- app platform -->
+      <div class="col-md-7"
+         ba-panel
+         ba-panel-title="Platform Aplikasi"
+         ba-panel-class="pv-panel">
+         <!-- app platform used -->
+        <div class="row" ng-controller="vmTransactionStatsCtrl">
+          <div class="col-lg-12 col-md-12">
+            <div class="progress">
+              <div class="progress-bar progress-bar-{{platform.color}}" style="width: {{platform.percentage}}%" ng-repeat="platform in platforms">
+                {{formatPlatform(platform)}}
+              </div>
+            </div>
+            <!-- loading / no data handler -->
+            <!-- <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div> -->
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-6 col-md-12 col-sm-12"
+    
+    <div class="col-lg-12 col-md-12 col-sm-12"
          ba-panel
          ba-panel-title="Tren Nilai Transaksi"
          ba-panel-class="medium-panel pv-panel">
          <!-- transaction by history -->
       <div class="row" ng-controller="vmTransactionByHistoryCtrl">
-        <div class="col-md-12">
+        <div class="col-lg-12 col-md-12">
           <div id="vmTransactionByHistory" class="pv-chart"></div>
           <!-- loading / no data handler -->
           <div class="pv-chart-medium-overlay" ng-show="loading || noData">
@@ -43,19 +68,5 @@
         </div>
       </div>
     </div>
-    <!-- <div class="col-lg-6 col-md-12 col-sm-12"
-         ba-panel
-         ba-panel-title="Nilai Transaksi Per Sentra"
-         ba-panel-class="medium-panel pv-panel"> -->
-      <!-- transaction by sentra -->
-      <!-- <div class="row" ng-controller="vmTransactionBySentraCtrl">
-        <div class="col-md-12">
-          <div id="vmTransactionBySentra" class="pv-chart"></div>
-          <div class="pv-chart-medium-overlay" ng-show="loading">
-            <div class="pv-chart-loading"></div>
-          </div>
-        </div>
-      </div>
-    </div> -->
   </div>
 </div>

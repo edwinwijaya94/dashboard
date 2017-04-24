@@ -24,9 +24,9 @@
   <link rel="stylesheet" href="{{asset('dashboard/lib/daterangepicker.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/font-awesome.css')}}" >
   <!-- <link rel="stylesheet" href="{{asset('dashboard/lib/fullcalendar.css')}}" > -->
-  <link rel="stylesheet" href="{{asset('dashboard/lib/leaflet.css')}}" >
+  <!-- <link rel="stylesheet" href="{{asset('dashboard/lib/leaflet.css')}}" > -->
   <link rel="stylesheet" href="{{asset('dashboard/lib/angular-progress-button-styles.min.css')}}" >
-  <link rel="stylesheet" href="{{asset('dashboard/lib/chartist.min.css')}}" >
+  <!-- <link rel="stylesheet" href="{{asset('dashboard/lib/chartist.min.css')}}" > -->
   <link rel="stylesheet" href="{{asset('dashboard/lib/morris.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/ion.rangeSlider.css')}}" >
   <link rel="stylesheet" href="{{asset('dashboard/lib/ion.rangeSlider.skinFlat.css')}}" >
@@ -88,19 +88,21 @@
 <!-- <script src="{{asset('dashboard/lib/jquery-ui.js')}}"></script> -->
 <script src="{{asset('dashboard/lib/jquery-ui.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/jquery.easing.js')}}"></script>
-<script src="{{asset('dashboard/lib/jquery.easypiechart.js')}}"></script>
-<script src="{{asset('dashboard/lib/Chart.js')}}"></script>
+<!-- <script src="{{asset('dashboard/lib/jquery.easypiechart.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/Chart.js')}}"></script> -->
+<script src="{{asset('dashboard/lib/Chart.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/amcharts.js')}}"></script>
-<script src="{{asset('dashboard/lib/responsive.min.js')}}"></script>
-<script src="{{asset('dashboard/lib/serial.js')}}"></script>
-<script src="{{asset('dashboard/lib/funnel.js')}}"></script>
-<script src="{{asset('dashboard/lib/pie.js')}}"></script>
-<script src="{{asset('dashboard/lib/gantt.js')}}"></script>
-<script src="{{asset('dashboard/lib/amstock.js')}}"></script>
-<script src="{{asset('dashboard/lib/ammap.js')}}"></script>
-<script src="{{asset('dashboard/lib/worldLow.js')}}"></script>
+<!-- <script src="{{asset('dashboard/lib/responsive.min.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/serial.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/funnel.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/pie.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/gantt.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/amstock.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/ammap.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/lib/worldLow.js')}}"></script> -->
 <!-- <script src="{{asset('dashboard/lib/angular.js')}}"></script> -->
 <script src="{{asset('dashboard/lib/angular.min.js')}}"></script>
+<script src="{{asset('dashboard/lib/angular.easypiechart.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/angular-route.js')}}"></script>
 <script src="{{asset('dashboard/lib/jquery.slimscroll.js')}}"></script>
 <script src="{{asset('dashboard/lib/angular-slimscroll.js')}}"></script>
@@ -114,7 +116,7 @@
 <script src="{{asset('dashboard/lib/bootstrap-tagsinput.js')}}"></script>
 <script src="{{asset('dashboard/lib/moment.js')}}"></script>
 <!-- <script src="{{asset('dashboard/lib/fullcalendar.js')}}"></script> -->
-<script src="{{asset('dashboard/lib/leaflet-src.js')}}"></script>
+<!-- <script src="{{asset('dashboard/lib/leaflet-src.js')}}"></script> -->
 <script src="{{asset('dashboard/lib/angular-progress-button-styles.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/angular-ui-router.js')}}"></script>
 <script src="{{asset('dashboard/lib/angular-chart.js')}}"></script>
@@ -126,7 +128,8 @@
 <script src="{{asset('dashboard/lib/morris.js')}}"></script>
 <script src="{{asset('dashboard/lib/angular-morris-chart.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/ion.rangeSlider.js')}}"></script>
-<script src="{{asset('dashboard/lib/ui-bootstrap-tpls.js')}}"></script>
+<!-- <script src="{{asset('dashboard/lib/ui-bootstrap-tpls.js')}}"></script> -->
+<script src="{{asset('dashboard/lib/ui-bootstrap-tpls.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/angular-animate.js')}}"></script>
 <script src="{{asset('dashboard/lib/rangy-core.js')}}"></script>
 <script src="{{asset('dashboard/lib/rangy-classapplier.js')}}"></script>
@@ -138,7 +141,8 @@
 <script src="{{asset('dashboard/lib/textAngular-sanitize.js')}}"></script>
 <script src="{{asset('dashboard/lib/textAngularSetup.js')}}"></script>
 <script src="{{asset('dashboard/lib/xeditable.js')}}"></script>
-<script src="{{asset('dashboard/lib/jstree.js')}}"></script>
+<!-- <script src="{{asset('dashboard/lib/jstree.js')}}"></script> -->
+<script src="{{asset('dashboard/lib/jstree.min.js')}}"></script>
 <script src="{{asset('dashboard/lib/ngJsTree.js')}}"></script>
 <script src="{{asset('dashboard/lib/select.js')}}"></script>
 <script src="{{asset('dashboard/lib/daterangepicker.js')}}"></script>
@@ -289,7 +293,7 @@
 <!-- <script src="{{asset('dashboard/app/pages/form/inputs/widgets/tagsInput/tagsInput.directive.js')}}"></script> -->
 
 <!-- CUSTOM MODULE FOR DASHBOARD PASAR VIRTUAL -->
-<!-- vmTransaction -->
+<!-- virtual market dashboard -->
 <script src="{{asset('dashboard/app/pages/virtualmarket/virtualmarket.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
@@ -297,7 +301,14 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionByHistoryCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionStatsCtrl.js')}}"></script>
 
-<!-- mpTransaction -->
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodity.directive.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityFilterCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityByHistoryCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityStatsCtrl.js')}}"></script> -->
+
+
+<!-- marketplace dashboard -->
 <script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script>

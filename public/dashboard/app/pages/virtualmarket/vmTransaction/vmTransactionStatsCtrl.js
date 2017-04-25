@@ -11,7 +11,7 @@
   /** @ngInject */
   function vmTransactionStatsCtrl($scope, $timeout, $http, baConfig, baUtil) {
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
-    var pieColor = baConfig.colors.danger;
+    var pieColor = baConfig.colors.success;
 
     $scope.$on('updateVmTransaction', function(event, startDate, endDate) {
       $scope.getData(startDate, endDate);  

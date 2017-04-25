@@ -9,10 +9,10 @@
         .controller('vmTransactionFilterCtrl', vmTransactionFilterCtrl);
 
     /** @ngInject */
-    function vmTransactionFilterCtrl($scope) {
+    function vmTransactionFilterCtrl($scope, vmHelper) {
 
-        $scope.startDate = moment().subtract(29, 'days');
-        $scope.endDate = moment();
+        $scope.startDate = vmHelper.defDate.start;
+        $scope.endDate = vmHelper.defDate.end;
 
         $scope.notifyCharts = function() {
             var startDate = $scope.startDate.format('YYYY-MM-DD');
@@ -35,7 +35,7 @@
                'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                '7 Hari': [moment().subtract(6, 'days'), moment()],
                '30 Hari': [moment().subtract(29, 'days'), moment()],
-               // 'Bulan Ini': [moment().startOf('month'), moment().endOf('month')],
+               '1 Tahun': [moment().subtract(364, 'days'), moment()],
                'Tahun Ini': [moment().startOf('year'), moment()]
             },
             maxDate: $scope.endDate,

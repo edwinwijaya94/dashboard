@@ -9,7 +9,7 @@
       .controller('vmTransactionByHistoryCtrl', vmTransactionByHistoryCtrl);
 
   /** @ngInject */
-  function vmTransactionByHistoryCtrl($scope, $window, $http, baConfig) {
+  function vmTransactionByHistoryCtrl($scope, $window, $http, baConfig, vmHelper) {
     var layoutColors = baConfig.colors;
 
     $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
@@ -28,6 +28,8 @@
           for(i=0; i<resp.length; i++) {
             var x = {};
             x.time = resp[i].yr+'-'+resp[i].mo;
+            x.year = resp[i].yr;
+            x.month = resp[i].mo;
             x.value = resp[i].value;
             data.push(x);
           }
@@ -51,8 +53,29 @@
             xkey: 'time',
             ykeys: ['value'],
             labels: ['Nilai Transaksi'],
-            yLabelFormat : function(y){return 'Rp '+y.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');},
-            lineColors: colors
+            xLabels: 'month',
+            xLabelFormat: function(x){
+              return vmHelper.formatMonth(x.getMonth()+1)+' \''+x.getFullYear().toString().substr(-2);
+            },
+            yLabelFormat : function(y){
+              var value;
+              if(y>=1000000000)
+                value = (y/1000000000).toString() + ' mi';
+              else if(y>=1000000)
+                value = (y/1000000).toString() + ' jt';
+              else if (y>=1000)
+                value = (y/1000).toString() + ' rb';
+              else 
+                value = y.toString();
+              return vmHelper.formatCurrency(value);
+            },
+            hoverCallback: function (index, options, content, row) {
+              return '<p>'+vmHelper.formatMonth(row.month)+' '+row.year+'</p>'
+                    +'<p>'+'Nilai Transaksi: '+vmHelper.formatCurrency(row.value.toString())+'</p>';
+            },
+            lineColors: colors,
+            smooth: false,
+            // xLabelAngle: 30,
           });
         }
       } else {

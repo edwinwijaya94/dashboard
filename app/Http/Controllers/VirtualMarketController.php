@@ -109,7 +109,7 @@ class VirtualMarketController extends Controller
         $data = DB::connection('virtual_market')
                     ->table('order')
                     ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
-                    ->select(DB::raw($query['aggregate'].'as value, extract( year from order_at) as yr, extract(month from order_at) as mo '))
+                    ->select(DB::raw($query['aggregate'].'as value, count(*), extract( year from order_at) as yr, extract(month from order_at) as mo '))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->where('status', '=', 'success')

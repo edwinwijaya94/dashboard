@@ -13,7 +13,7 @@
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
     var pieColor = baConfig.colors.success;
 
-    $scope.$on('updateVmTransaction', function(event, startDate, endDate) {
+    $scope.$on('updateVm', function(event, startDate, endDate) {
       $scope.getData(startDate, endDate);  
     });
 
@@ -54,10 +54,14 @@
       };
 
       for(var i=0; i<data.length; i++ ) {
-        if(data[i].status == 'success')
+        if(data[i].status == 'success') {
           success = data[i];
-        else if (data[i].status == 'failed')
-          failed = data[i];
+          success.count = parseInt(success.count);
+        }
+        else if (data[i].status == 'failed') {
+          failed = data[i]; 
+          failed.count = parseInt(failed.count);
+        }
       }
 
       var percentage = Math.round(success.count / (success.count + failed.count) * 100);
@@ -79,10 +83,10 @@
       var platforms = data;
       var total = 0;
       for(var i=0; i<platforms.length; i++) {
-        total += platforms[i].count;
+        total += parseInt(platforms[i].count);
       }
       for(var i=0; i<platforms.length; i++) {
-        platforms[i].percentage = (platforms[i].count / total * 100).toFixed(2);
+        platforms[i].percentage = (parseInt(platforms[i].count) / total * 100).toFixed(2);
         platforms[i].color = colors[i];
       }
 

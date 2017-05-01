@@ -296,9 +296,12 @@
 <!-- virtual market dashboard -->
 <script src="{{asset('dashboard/app/pages/virtualmarket/virtualmarket.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmHelper.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmFilter/vmFilter.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmFilter/vmFilterCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionFilterCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionFilterCtrl.js')}}"></script> -->
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionByHistoryCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionStatsCtrl.js')}}"></script>
 

@@ -10,9 +10,11 @@
 
   /** @ngInject */
   function vmTransactionByHistoryCtrl($scope, $window, $http, baConfig, vmHelper) {
-    var layoutColors = baConfig.colors;
-
-    $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
+    // var layoutColors = baConfig.colors;
+    // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
+    var chartColors = vmHelper.colors.primary;
+    $scope.colors = [chartColors.blue, chartColors.green, chartColors.yellow, chartColors.red,]
+    
     $scope.noData = false;
     $scope.$on('updateVm', function(event, startDate, endDate) {
       $scope.getData(startDate, endDate);
@@ -82,8 +84,9 @@
 
           return hoverInfo;
         },
-        lineColors: colors,
+        lineColors: [chartColors.green],
         smooth: false,
+        continuousLine: true,
         // xLabelAngle: 30,
       };
     };

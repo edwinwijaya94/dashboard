@@ -9,9 +9,12 @@
       .controller('vmTransactionStatsCtrl', vmTransactionStatsCtrl);
 
   /** @ngInject */
-  function vmTransactionStatsCtrl($scope, $timeout, $http, baConfig, baUtil) {
+  function vmTransactionStatsCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
-    var pieColor = baConfig.colors.success;
+    var pieColor = vmHelper.colors.primary.green;
+
+    var chartColors = vmHelper.colors.primary;
+    $scope.colors = [chartColors.blue, chartColors.yellow];
 
     $scope.$on('updateVm', function(event, startDate, endDate) {
       $scope.getData(startDate, endDate);  
@@ -78,8 +81,7 @@
     }
 
     $scope.showPlatform = function(data) {
-
-      var colors = ['info','danger','success','warning'];
+      console.log($scope.colors);
       var platforms = data;
       var total = 0;
       for(var i=0; i<platforms.length; i++) {
@@ -87,7 +89,7 @@
       }
       for(var i=0; i<platforms.length; i++) {
         platforms[i].percentage = (parseInt(platforms[i].count) / total * 100).toFixed(2);
-        platforms[i].color = colors[i];
+        platforms[i].color = $scope.colors[i];
       }
 
       $scope.platforms = platforms;

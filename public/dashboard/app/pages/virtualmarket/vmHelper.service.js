@@ -2,7 +2,15 @@
 angular.module('BlurAdmin.pages.virtualmarket')                                                                                                                                                                        
   .factory("vmHelper", function() {                                                                                                                                                   
     return {
-      defDate : {
+      colors: {
+        primary: { // Google colour
+          blue: '#4285f4',
+          green: '#34a853',
+          yellow: '#fbbc05',
+          red: '#ea4335',
+        }
+      },
+      defDate: {
       	start: moment().subtract(364, 'days'),
       	end : moment()
       },

@@ -13,7 +13,7 @@
     
     //notify all charts ctrl in virtual market dashboard
     $scope.$on('vmFilter', function(event, startDate, endDate) {
-        console.log('vmfilter received');
+      
         $timeout(function() {
           $rootScope.$broadcast('updateVm', startDate, endDate);  
         }, 1000);

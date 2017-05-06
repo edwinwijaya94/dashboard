@@ -302,14 +302,15 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
 <!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionFilterCtrl.js')}}"></script> -->
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionByHistoryCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionStatsCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionByHistoryCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionStatsCtrl.js')}}"></script> -->
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodity.directive.js')}}"></script>
-<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityCtrl.js')}}"></script> -->
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityCtrl.js')}}"></script>
 <!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityFilterCtrl.js')}}"></script> -->
 <!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityByHistoryCtrl.js')}}"></script> -->
 <!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityStatsCtrl.js')}}"></script> -->
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityTopListCtrl.js')}}"></script> -->
 
 
 <!-- marketplace dashboard -->

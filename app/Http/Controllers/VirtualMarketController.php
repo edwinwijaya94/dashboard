@@ -155,17 +155,17 @@ class VirtualMarketController extends Controller
                     ->get();
         // dd ($data);
 
-        // not available products
+        // unavailable products
         $unavailableProducts = DB::connection('virtual_market')
                     ->table('product')
                     ->select('name')
                     ->where('is_available', '=', false)
-                    ->limit(5)
+                    // ->limit(5)
                     // ->toSql();
                     ->get();
         
         $data = array();
-        $data['availablity'] = $availability;
+        $data['availability'] = $availability;
         $data['unavailable_products'] = $unavailableProducts;
 
         $status = $this->setStatus();

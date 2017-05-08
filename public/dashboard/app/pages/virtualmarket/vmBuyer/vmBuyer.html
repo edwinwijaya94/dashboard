@@ -1,0 +1,42 @@
+<div class="row" ng-controller="vmBuyerCtrl">
+  <div class="row col-md-12" ba-panel ba-panel-title="Data Pembeli" ba-panel-class="panel-group">
+
+    <!-- STATS -->
+    <div class="col-lg-12 col-md-12 col-sm-12"
+         ba-panel
+         ba-panel-class="pv-panel" style="height:100px">
+      <div class="row">
+        <!-- unique buyer -->
+        <div class="pie-charts col-md-12">
+          <div class="col-md-3" ng-repeat="stat in stats">
+            <div class="">
+              <!-- <div easypiechart class="chart" options="options" percent="chart.percent"> <span class="percent" ng-bind="chart.percent"></span> </div> -->
+              <div class="description" tooltip-placement="top" uib-tooltip="{{stat.description}}">
+                <div>{{ ::stat.description }}</div>
+                <div class="description-stats" ng-bind="stat.value"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- TRANSACTION HISTORY -->
+    <div class="col-lg-12 col-md-12 col-sm-12"
+         ba-panel
+         ba-panel-title="Tren Pembeli"
+         ba-panel-class="pv-panel" style="height:500px">
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <div id="vmBuyerByHistory" class="pv-chart"></div>
+          <!-- loading / no data handler -->
+          <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+            <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+            <div class="pv-chart-loading" ng-show="loading"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

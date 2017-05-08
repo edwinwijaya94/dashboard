@@ -128,7 +128,7 @@
             x.value = resp[i].value;
             data.push(x);
           }
-          data = vmHelper.fixLineChartNullValues(data); // add null points as zero
+          data = vmHelper.fixLineChartNullValues(data, ['count', 'value']); // add null points as zero
           $scope.data = data; // update data
           $scope.drawChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
         })

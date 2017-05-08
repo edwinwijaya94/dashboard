@@ -309,23 +309,61 @@ class VirtualMarketController extends Controller
 
         if($query['type'] == 'stats')
             return $this->getBuyerStats($query);
+        else if($query['type'] == 'history')
+            return $this->getBuyerHistory($query);
     }
 
     public function getBuyerStats($query)
     {
         DB::enableQueryLog();
         // execute
-        $data = DB::connection('virtual_market')
+        $uniqueBuyers = DB::connection('virtual_market')
                     ->table('order')
-                    ->select(DB::raw('count(distinct buyer_id) as buyer, (count(*) - count(distinct buyer_id)) as returning_user'))
+                    // ->select(DB::raw('distinct buyer_id'))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
-                    // ->groupBy('buyer_id')
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
+
+        // buyers who make transactions more than once
+        $returningBuyers = DB::connection('virtual_market')
+                    ->table('order')
+                    // ->select(DB::raw('count(distinct buyer_id)'))
+                    ->select('buyer_id')
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    ->groupBy('buyer_id')
+                    ->havingRaw('count(buyer_id) > 1')
+                    // ->get();
+                    ->count();
+
+        $data = array();
+        $data['unique_buyers'] = $uniqueBuyers;
+        $data['returning_buyers'] = $returningBuyers;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
+    public function getBuyerHistory($query)
+    {
+        DB::enableQueryLog();
+        // execute
+        $data = DB::connection('virtual_market')
+                    ->table('order')
+                    ->select(DB::raw('extract( year from order_at) as yr, extract(month from order_at) as mo, count(distinct buyer_id)'))
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    ->groupBy('yr')
+                    ->groupBy('mo')
                     ->get();
 
         // $data = array();
-        // $data['successRate'] = $successRates;
-        // $data['appPlatform'] = $appPlatform;
+        // $data['unique_buyers'] = $uniqueBuyers;
+        // $data['returning_buyers'] = $returningBuyers;
         $status = $this->setStatus();
 
         return response()->json([

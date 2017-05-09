@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // use Validator;
 use Auth;
 use DateTime;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -16,6 +17,7 @@ class VirtualMarketController extends Controller
     //     $this->middleware('auth');
     // }
 
+    // HELPER FUNCTIONS
     public function setDefault()
     {
         $default = array();
@@ -53,6 +55,21 @@ class VirtualMarketController extends Controller
         $status['message'] = 'OK';
 
         return $status;
+    }
+
+    public function getPrevDatePeriod($startDate, $endDate) {
+        $prevDatePeriod = array();
+        
+        $start = Carbon::createFromFormat('Y-m-d', $startDate);
+        $end = Carbon::createFromFormat('Y-m-d', $endDate);
+        $diff = $start->diffInDays($end)+1;
+        $start = $start->subDays($diff)->toDateString();
+        $end = $end->subDays($diff)->toDateString();
+
+        $prevDatePeriod['startDate'] = $start;
+        $prevDatePeriod['endDate'] = $end;
+
+        return $prevDatePeriod;
     }
 
     // TRANSACTION
@@ -315,27 +332,45 @@ class VirtualMarketController extends Controller
 
     public function getBuyerStats($query)
     {
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
         DB::enableQueryLog();
         // execute
-        $uniqueBuyers = DB::connection('virtual_market')
-                    ->table('order')
-                    // ->select(DB::raw('distinct buyer_id'))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
-                    ->distinct('buyer_id')
-                    ->count('buyer_id');
+        $uniqueBuyers = array();
+        $uniqueBuyers['current_period'] = DB::connection('virtual_market')
+                                        ->table('order')
+                                        ->where('order_at', '>=', $query['startDate'])
+                                        ->where('order_at', '<=', $query['endDate'])
+                                        ->distinct('buyer_id')
+                                        ->count('buyer_id');
+
+        $uniqueBuyers['prev_period'] = DB::connection('virtual_market')
+                                        ->table('order')
+                                        ->where('order_at', '>=', $prevPeriod['startDate'])
+                                        ->where('order_at', '<=', $prevPeriod['endDate'])
+                                        ->distinct('buyer_id')
+                                        ->count('buyer_id');
+
 
         // buyers who make transactions more than once
-        $returningBuyers = DB::connection('virtual_market')
+        $returningBuyers = array();        
+        $returningBuyers['current_period'] = DB::connection('virtual_market')
                     ->table('order')
-                    // ->select(DB::raw('count(distinct buyer_id)'))
-                    ->select('buyer_id')
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->groupBy('buyer_id')
                     ->havingRaw('count(buyer_id) > 1')
-                    // ->get();
-                    ->count();
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
+
+        $returningBuyers['prev_period'] = DB::connection('virtual_market')
+                    ->table('order')
+                    ->where('order_at', '>=', $prevPeriod['startDate'])
+                    ->where('order_at', '<=', $prevPeriod['endDate'])
+                    ->groupBy('buyer_id')
+                    ->havingRaw('count(buyer_id) > 1')
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
 
         $data = array();
         $data['unique_buyers'] = $uniqueBuyers;

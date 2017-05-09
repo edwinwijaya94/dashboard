@@ -14,18 +14,28 @@
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
     var pieColor = vmHelper.colors.primary.green;
 
-    var chartColors = vmHelper.colors.primary;
-    $scope.colors = [chartColors.blue, chartColors.yellow, chartColors.green, chartColors.red];
+    $scope.colors = vmHelper.colors.primary;
+    $scope.chartColors = [$scope.colors.blue, $scope.colors.yellow, $scope.colors.green, $scope.colors.red];
     
     // DEFAULT CHART SETTINGS
     $scope.stats = {
       unique_buyers: {
         description: 'Jumlah Pembeli',
+        info: 'Persentase perbandingan dihitung dengan periode sebelumnya',
         value: 0,
+        prevValue: 0,
+        change: 0, // as percentage
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green
       },
       returning_buyers: {
         description: 'Jumlah Pelanggan',
+        info: 'Persentase perbandingan dihitung dengan periode sebelumnya',
         value: 0,
+        prevValue: 0,
+        change: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green
       }
     };
 
@@ -55,8 +65,30 @@
     }
 
     $scope.showBuyerStats = function(data) {
-      $scope.stats.unique_buyers.value = parseInt(data.unique_buyers);
-      $scope.stats.returning_buyers.value = parseInt(data.returning_buyers);
+      for(var metric in data) {
+        var stat = {};
+        stat.description = $scope.stats[metric].description;
+        stat.info = $scope.stats[metric].info;
+        stat.value = parseInt(data[metric].current_period);
+        stat.prevValue = parseInt(data[metric].prev_period);
+        var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
+        stat.change = isFinite(change)? change:0;
+        if(stat.change>=0) {
+          stat.icon = 'ion-arrow-up-b';
+          stat.iconColor = $scope.colors.green;
+        } else {
+          stat.change *= -1;
+          stat.icon = 'ion-arrow-down-b';
+          stat.iconColor = $scope.colors.red;
+        }
+        $scope.stats[metric] = stat;
+
+        // $scope.stats[metric].value = stat.value;
+        // $scope.stats[metric].prevValue = stat.prevValue;
+        // $scope.stats[metric].change = stat.change;
+        // $scope.stats[metric].icon = stat.icon;
+        // $scope.stats[metric].iconColor = stat.iconColor;
+      }
     }
 
     // BUYER HISTORY
@@ -77,7 +109,7 @@
           }
           data = vmHelper.fixLineChartNullValues(data, ['count']); // add null points as zero
           $scope.data = data; // update data
-          $scope.drawChart($scope.data, $scope.colors);
+          $scope.drawChart($scope.data, $scope.chartColors);
         })
         .finally(function() {
           $scope.loading= false;
@@ -114,7 +146,7 @@
           hoverInfo += '<p>'+'Jumlah: '+row.count+'</p>';
           return hoverInfo;
         },
-        lineColors: [chartColors.green],
+        lineColors: [$scope.colors.green],
         smooth: false,
         continuousLine: true,
         // xLabelAngle: 30,

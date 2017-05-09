@@ -4,16 +4,22 @@
     <!-- STATS -->
     <div class="col-lg-12 col-md-12 col-sm-12"
          ba-panel
-         ba-panel-class="pv-panel" style="height:100px">
+         ba-panel-class="pv-panel" style="height:150px">
       <div class="row">
         <!-- unique buyer -->
         <div class="pie-charts col-md-12">
           <div class="col-md-3" ng-repeat="stat in stats">
-            <div class="">
-              <!-- <div easypiechart class="chart" options="options" percent="chart.percent"> <span class="percent" ng-bind="chart.percent"></span> </div> -->
-              <div class="description" tooltip-placement="top" uib-tooltip="{{stat.description}}">
-                <div>{{ ::stat.description }}</div>
-                <div class="description-stats" ng-bind="stat.value"></div>
+            <div>
+              <div class="description">
+                <div>
+                  <span>{{ ::stat.description }}</span>
+                  <i class="ion-ios-information-outline" tooltip-placement="top" uib-tooltip="{{stat.info}}"></i>
+                </div><br>
+                <div class="description-stats" ng-bind="stat.value"></div><br>
+                <div>
+                  <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
+                  <span>{{stat.change}}%</span>
+                </div>
               </div>
             </div>
           </div>

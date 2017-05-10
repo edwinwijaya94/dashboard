@@ -309,6 +309,9 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyer.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyerCtrl.js')}}"></script>
 
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopper.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopperCtrl.js')}}"></script>
+
 <!-- marketplace dashboard -->
 <script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>

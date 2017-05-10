@@ -248,7 +248,7 @@ class VirtualMarketController extends Controller
 
         return response()->json([
                     'status' => $status,
-                    'data' => $data
+                    'data' => $data[0]
                 ]);      
     }
 
@@ -258,7 +258,7 @@ class VirtualMarketController extends Controller
         // execute
         $data = DB::connection('virtual_market')
                     ->table('garendongs')
-                    ->select(DB::raw('user_id, rating'))
+                    ->select(DB::raw('user_id as name, rating'))
                     ->orderBy('rating', 'desc')
                     ->limit(5)
                     ->get();
@@ -291,7 +291,7 @@ class VirtualMarketController extends Controller
         $rating = DB::connection('virtual_market')
                     ->table('user_feedback')
                     ->join('order', 'user_feedback.order_id', '=', 'order.id')
-                    ->select(DB::raw('count(*) as buyer, round(avg(rating), 2) as rating'))
+                    ->select(DB::raw('count(*) as transactions, round(avg(rating), 2) as value'))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->get();
@@ -308,7 +308,7 @@ class VirtualMarketController extends Controller
                     ->get();
 
         $data = array();
-        $data['rating'] = $rating;
+        $data['rating'] = $rating[0];
         $data['feedback'] = $feedback;
         $status = $this->setStatus();
 

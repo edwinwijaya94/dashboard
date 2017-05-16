@@ -7,8 +7,7 @@
 
   /** @ngInject */
   function vmShopperCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
-    // var layoutColors = baConfig.colors;
-    // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
+    var layoutColors = baConfig.colors;
     
     // COLORS
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
@@ -96,65 +95,81 @@
       $scope.stats.rating.value = data.value + ' / 5';
     }
 
-
     // FEEDBACK REASON
     $scope.showFeedbackReason = function(data) {
-      $scope.drawChart(data, $scope.chartColors);
+      $scope.drawChart(data, $scope.colors);
     }
 
     // chart options
     $scope.getBarChartOptions = function(data, label, colors) { 
       return {
-        element: 'vmFeedbackReason',
-        data: data,
-        xkey: 'reason',
-        ykeys: ['count'],
-        labels: [label],
-        // xLabels: 'month',
-        // xLabelFormat: function(x){
-        //   return vmHelper.formatMonth(x.getMonth()+1)+' \''+x.getFullYear().toString().substr(-2);
-        // },
-        yLabelFormat : function(y){
-          var yValue;
-          if(y>=1000000000)
-            yValue = (y/1000000000).toString() + ' mi';
-          else if(y>=1000000)
-            yValue = (y/1000000).toString() + ' jt';
-          else if (y>=1000)
-            yValue = (y/1000).toString() + ' rb';
-          else 
-            yValue = y.toString();
+        type: 'serial',
+        theme: 'blur',
+        color: layoutColors.defaultText,
+        marginTop: 10,
+        marginRight: 15,
+        marginBottom: 10,
+        dataProvider: data,
+        valueAxes: [
+          {
+            axisAlpha: 0,
+            title: 'Ulasan',
+            position: 'left',
+            gridAlpha: 0.5,
+            gridColor: layoutColors.border,
+            minimum: 0,
+            integersOnly: true,
+            labelFunction: function(y) {
+              var yValue;
+              if(y>=1000000000)
+                yValue = (y/1000000000).toString() + ' mi';
+              else if(y>=1000000)
+                yValue = (y/1000000).toString() + ' jt';
+              else if (y>=1000)
+                yValue = (y/1000).toString() + ' rb';
+              else 
+                yValue = y.toString();
 
-          return yValue;
-        },
-        hoverCallback: function (index, options, content, row) {
-          var hoverInfo = '<p>'+row.reason+'</p>';
-          hoverInfo += '<p>'+'Jumlah: '+row.count+'</p>';
-          return hoverInfo;
-        },
-        barColors: colors,
-        // xLabelAngle: 30,
+              return yValue;
+            }
+          }
+        ],
+        graphs: [
+          {
+            id: 'g1',
+            balloonFunction: function(item, graph) {
+              var value = item.values.value;
+              var hoverInfo = 'Jumlah Ulasan:<br> <b>'+value+'</b>';
+              return hoverInfo;
+            },
+            lineAlpha: 0,
+            // lineColor: colors.green,
+            // lineThickness: 2,
+            fillColors: colors.green,
+            fillAlphas: 1,
+            type: 'column',
+            valueField: 'count',
+          }
+        ],
+        rotate: 'true',
+        categoryField: 'reason',
+        creditsPosition: 'bottom-right'
       };
     };
 
     $scope.drawChart =  function(data, colors) {
       var label = '';
 
-      if($scope.chart == undefined) {
-        if(data.length == 0) {
-          $scope.noData = true;
-        } else {
-          $scope.chart = new Morris.Bar($scope.getBarChartOptions(data, label, colors));
-          $scope.noData = false;
-        }
-      } else {
+      if($scope.chart != undefined) {
         $('#vmFeedbackReason').empty();
-        if(data.length == 0) {
-          $scope.noData = true;
-        } else {
-          $scope.chart = new Morris.Bar($scope.getBarChartOptions(data, label, colors));
-          $scope.noData = false;
-        } 
+      }
+
+      if(data.length == 0) {
+        $scope.noData = true;
+      } else {
+        // $scope.chart = new Morris.Bar($scope.getBarChartOptions(data, label, colors));
+        $scope.chart = AmCharts.makeChart('vmFeedbackReason',$scope.getBarChartOptions(data, label, colors));
+        $scope.noData = false;
       }
     };
 

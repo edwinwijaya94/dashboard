@@ -37,7 +37,9 @@ class VirtualMarketController extends Controller
         $query['startDate'] = $request->query('start_date', $default['startDate']);
         $query['endDate'] = $request->query('end_date', $default['endDate']);
         $query['type'] = $request->query('type', $default['type']);
-        $query['aggregate'] = $request->query('aggregate', $default['aggregate']).'('.$default['aggregateBy'].')';
+
+        // aggregate query, ex: coalesce(sum(total_price), 0)
+        $query['aggregate'] = 'coalesce('.$request->query('aggregate', $default['aggregate']).'('.$default['aggregateBy'].'), 0 )';
 
         // Round results if using avg function
         if($query['aggregate'] == 'avg('.$default['aggregateBy'].')') {
@@ -86,6 +88,8 @@ class VirtualMarketController extends Controller
 
     public function getTransactionStats($query)
     {
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
         DB::enableQueryLog();
         // execute
         // success rates
@@ -110,9 +114,31 @@ class VirtualMarketController extends Controller
                     ->groupBy('order_type')
                     ->get();
 
+        // total transaction
+        $currentTransaction = DB::connection('virtual_market')
+                    ->table('order')
+                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
+                    ->where('order_at', '>=', $query['startDate'])
+                    ->where('order_at', '<=', $query['endDate'])
+                    ->where('status', '=', 'success')
+                    ->get();
+
+        $prevTransaction = DB::connection('virtual_market')
+                    ->table('order')
+                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
+                    ->where('order_at', '>=', $prevPeriod['startDate'])
+                    ->where('order_at', '<=', $prevPeriod['endDate'])
+                    ->where('status', '=', 'success')
+                    ->get();
+
         $data = array();
         $data['transaction_status'] = $transactionStatus;
         $data['app_platform'] = $appPlatform;
+        $data['transaction'] = array();
+        $data['transaction']['current'] = $currentTransaction[0];
+        $data['transaction']['prev'] = $prevTransaction[0];
         $status = $this->setStatus();
 
         return response()->json([
@@ -128,7 +154,7 @@ class VirtualMarketController extends Controller
         $data = DB::connection('virtual_market')
                     ->table('order')
                     ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
-                    ->select(DB::raw($query['aggregate'].'as value, count(*), extract( year from order_at) as yr, extract(month from order_at) as mo '))
+                    ->select(DB::raw($query['aggregate'].'as value, count(*), extract( year from order_at) as yr, to_char(order_at, \'MM\') as mo '))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->where('status', '=', 'success')

@@ -7,7 +7,7 @@
 
   /** @ngInject */
   function vmBuyerCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
-    // var layoutColors = baConfig.colors;
+    var layoutColors = baConfig.colors;
     // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     
     // COLORS
@@ -82,12 +82,6 @@
           stat.iconColor = $scope.colors.red;
         }
         $scope.stats[metric] = stat;
-
-        // $scope.stats[metric].value = stat.value;
-        // $scope.stats[metric].prevValue = stat.prevValue;
-        // $scope.stats[metric].change = stat.change;
-        // $scope.stats[metric].icon = stat.icon;
-        // $scope.stats[metric].iconColor = stat.iconColor;
       }
     }
 
@@ -109,7 +103,7 @@
           }
           data = vmHelper.fixLineChartNullValues(data, ['count']); // add null points as zero
           $scope.data = data; // update data
-          $scope.drawChart($scope.data, $scope.chartColors);
+          $scope.drawChart($scope.data, $scope.colors);
         })
         .finally(function() {
           $scope.loading= false;
@@ -119,58 +113,81 @@
     // chart options
     $scope.getLineChartOptions = function(data, label, colors) { 
       return {
-        element: 'vmBuyerByHistory',
-        data: data,
-        xkey: 'time',
-        ykeys: ['count'],
-        labels: [label],
-        xLabels: 'month',
-        xLabelFormat: function(x){
-          return vmHelper.formatMonth(x.getMonth()+1)+' \''+x.getFullYear().toString().substr(-2);
-        },
-        yLabelFormat : function(y){
-          var yValue;
-          if(y>=1000000000)
-            yValue = (y/1000000000).toString() + ' mi';
-          else if(y>=1000000)
-            yValue = (y/1000000).toString() + ' jt';
-          else if (y>=1000)
-            yValue = (y/1000).toString() + ' rb';
-          else 
-            yValue = y.toString();
+        type: 'serial',
+        theme: 'blur',
+        color: layoutColors.defaultText,
+        marginTop: 10,
+        marginRight: 15,
+        marginBottom: 10,
+        dataProvider: data,
+        valueAxes: [
+          {
+            axisAlpha: 0,
+            title: 'Jumlah Pembeli',
+            position: 'left',
+            gridAlpha: 0.5,
+            gridColor: layoutColors.border,
+            minimum: 0,
+            integersOnly: true,
+            labelFunction: function(y) {
+              var yValue;
+              if(y>=1000000000)
+                yValue = (y/1000000000).toString() + ' mi';
+              else if(y>=1000000)
+                yValue = (y/1000000).toString() + ' jt';
+              else if (y>=1000)
+                yValue = (y/1000).toString() + ' rb';
+              else 
+                yValue = y.toString();
 
-          return yValue;
+              return yValue;
+            }
+          }
+        ],
+        graphs: [
+          {
+            id: 'g1',
+            balloonFunction: function(item, graph) {
+              var value = item.values.value;
+              var hoverInfo = 'Jumlah Pembeli:<br> <b>'+value+'</b>';
+              return hoverInfo;
+            },
+            bullet: 'round',
+            bulletSize: 8,
+            lineColor: colors.green,
+            lineThickness: 2,
+            type: 'line',
+            valueField: 'count'
+          }
+        ],
+        dataDateFormat: 'YYYY-MM',
+        categoryField: 'time',
+        categoryAxis: {
+          parseDates: true,
+          equalSpacing: true,
+          labelFunction: function(valueText, date, categoryAxis) {
+            return vmHelper.formatMonth(date.getMonth()+1)+' \''+date.getFullYear().toString().substr(-2);
+          }
         },
-        hoverCallback: function (index, options, content, row) {
-          var hoverInfo = '<p>'+vmHelper.formatMonth(row.month)+' '+row.year+'</p>';
-          hoverInfo += '<p>'+'Jumlah: '+row.count+'</p>';
-          return hoverInfo;
+        chartCursor: {
+         categoryBalloonEnabled: false,
         },
-        lineColors: [$scope.colors.green],
-        smooth: false,
-        continuousLine: true,
-        // xLabelAngle: 30,
+        creditsPosition: 'bottom-right'
       };
     };
 
     $scope.drawChart =  function(data, colors) {
       var label = '';
-
-      if($scope.chart == undefined) {
-        if(data.length == 0) {
-          $scope.noData = true;
-        } else {
-          $scope.chart = new Morris.Line($scope.getLineChartOptions(data, label, colors));
-          $scope.noData = false;
-        }
-      } else {
+      if($scope.chart != undefined) {
         $('#vmBuyerByHistory').empty();
-        if(data.length == 0) {
-          $scope.noData = true;
-        } else {
-          $scope.chart = new Morris.Line($scope.getLineChartOptions(data, label, colors));
-          $scope.noData = false;
-        } 
+      }
+       
+      if(data.length == 0) {
+        $scope.noData = true;
+      } else {
+        // $scope.chart = new Morris.Line($scope.getLineChartOptions(data, label, colors));
+        $scope.chart = AmCharts.makeChart('vmBuyerByHistory',$scope.getLineChartOptions(data, label, colors));
+        $scope.noData = false;
       }
     };
 

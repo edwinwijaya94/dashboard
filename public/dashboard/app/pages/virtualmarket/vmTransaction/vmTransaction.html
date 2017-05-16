@@ -2,38 +2,44 @@
   <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group">
 
     <!-- STATS -->
-    <div class="row">
+    <div class="row" style="height:150px">
       <!-- transaction success rate -->
-      <div class="pie-charts col-md-4">
-        <div class="" ng-repeat="chart in charts">
+      <div class="pie-charts col-md-12">
+        <div class="col-md-4" ng-repeat="stat in stats">
           <div class="">
-            <div easypiechart class="chart" options="options" percent="chart.percent"> <span class="percent" ng-bind="chart.percent"></span> </div>
+            <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
             <div class="description">
-              <div>{{ ::chart.description }}</div>
-              <div class="description-stats" ng-bind="chart.stats"></div>
+              <div>{{ ::stat.description }}</div><br>
+              <div class="description-stats" ng-bind="stat.value"></div><br>
+              <div ng-show="stat.showChange">
+                  <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
+                  <span>{{stat.change}}%</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- app platform -->
-      <div class="col-md-8"
-         ba-panel
-         ba-panel-title="Platform Aplikasi"
-         ba-panel-class="pv-panel">
-         <!-- app platform used -->
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div class="progress">
-              <div class="progress-bar" style="width: {{platform.percentage}}%; background-color:{{platform.color}}" ng-repeat="platform in platforms">
-                {{formatPlatform(platform)}}
-              </div>
+      
+    </div>
+
+    <!-- app platform -->
+    <div class="col-md-12"
+       ba-panel
+       ba-panel-title="Platform Aplikasi"
+       ba-panel-class="pv-panel">
+       <!-- app platform used -->
+      <div class="row">
+        <div class="col-lg-12 col-md-12">
+          <div class="progress">
+            <div class="progress-bar" style="width: {{platform.percentage}}%; background-color:{{platform.color}}" ng-repeat="platform in platforms">
+              {{formatPlatform(platform)}}
             </div>
-            <!-- loading / no data handler -->
-            <!-- <div class="pv-chart-medium-overlay" ng-show="loading || noData">
-              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-              <div class="pv-chart-loading" ng-show="loading"></div>
-            </div> -->
           </div>
+          <!-- loading / no data handler -->
+          <!-- <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+            <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+            <div class="pv-chart-loading" ng-show="loading"></div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -60,7 +66,7 @@
           <div class="col-md-1 pull-right">Tampilkan:</div>  
         </div>
         <div class="col-lg-12 col-md-12">
-          <div id="vmTransactionByHistory" class="pv-chart"></div>
+          <div id="vmTransactionByHistory" class="pv-chart" style="height:400px"></div>
           <!-- loading / no data handler -->
           <div class="pv-chart-medium-overlay" ng-show="loading || noData">
             <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>

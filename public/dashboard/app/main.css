@@ -3875,11 +3875,6 @@ th {
     height: 550px; }
   .panel.large-panel {
     height: 974px; }
-  /*custom panel for pasar virtual*/
-  .panel.pv-panel {
-    box-shadow: none;
-  }
-  /*end of custom*/
   .panel.viewport100 {
     height: calc(100vh - 218px); }
   .panel.with-scroll .panel-body {
@@ -6267,69 +6262,3 @@ label.todo-checkbox {
     font-size: 2em; }
   .weather-wrapper .font-x3 {
     font-size: 3em; }
-
-/*custom CSS for pasar virtual*/
-.pv-chart {
-  position: absolute;
-  width: 100%;
-}
-.pv-chart-medium-overlay {
-  width: 100%;
-  height: 400px;
-  z-index: 100;
-  opacity: 0.8;
-}
-.pv-chart-loading {
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #dfb81c;
-  width: 80px;
-  height: 80px;
-  z-index: 102;
-  /*put on center*/
-  position:absolute;
-  left:0; right:0;
-  top:0; bottom:0;
-  margin:auto;
-  max-width:100%;
-  max-height:100%;
-  overflow:auto;
-  -webkit-animation: chartload 2s linear infinite;
-  animation: chartload 2s linear infinite;
-}
-@-webkit-keyframes chartload {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes chartload {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.pv-chart-no-data {
-  /*put on center*/
-  position:absolute;
-  left:0; right:0;
-  top:50%; bottom:0;
-  margin:auto;
-  max-width:100%;
-  max-height:100%;
-  overflow:auto;
-  z-index: 101;
-  font-size: 20px;
-  text-align: center;
-}
-
-.pv-datepicker {
-  background: #fff; 
-  cursor: pointer; 
-  padding: 5px 10px; 
-  border: 1px solid #ccc; 
-  width: 100%;
-}
-.pv-filter-title{
-  padding: 5px;
-  text-align: right;
-}
-

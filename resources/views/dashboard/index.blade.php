@@ -40,6 +40,7 @@
   <!-- build:css({.tmp/serve,src}) styles/app.css -->
   <!-- inject:css -->
   <link rel="stylesheet" href="app/main.css">
+  <link rel="stylesheet" href="app/pasar-virtual.css">
   <!-- endinject -->
   <!-- endbuild -->
 </head>

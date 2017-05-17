@@ -51,19 +51,19 @@
          ba-panel-class="pv-panel" style="height:500px">
       <div class="row">
         <div class="row">
-          <div class="col-md-1 pull-right">
-            <label class="radio-inline custom-radio nowrap">
-              <input type="radio" name="transactionValue" value="value" ng-model="transactionHistory.metric" ng-change="changeMetric()">
-              <span>Nilai</span>
-            </label>
-          </div>
-          <div class="col-md-1 pull-right">
+          <div class="col-md-1 col-md-offset-9">Tampilkan:</div>  
+          <div class="col-md-1">
             <label class="radio-inline custom-radio nowrap">
               <input type="radio" name="transactionCount" value="count" ng-model="transactionHistory.metric" ng-change="changeMetric()">
               <span>Jumlah</span>
             </label>
           </div>
-          <div class="col-md-1 pull-right">Tampilkan:</div>  
+          <div class="col-md-1">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="transactionValue" value="value" ng-model="transactionHistory.metric" ng-change="changeMetric()">
+              <span>Nilai</span>
+            </label>
+          </div>
         </div>
         <div class="col-lg-12 col-md-12">
           <div id="vmTransactionByHistory" class="pv-chart" style="height:400px"></div>

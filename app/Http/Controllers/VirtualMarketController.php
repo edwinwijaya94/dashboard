@@ -282,16 +282,23 @@ class VirtualMarketController extends Controller
     {
         DB::enableQueryLog();
         // execute
-        $data = DB::connection('virtual_market')
+        $highest = DB::connection('virtual_market')
                     ->table('garendongs')
                     ->select(DB::raw('user_id as name, rating'))
                     ->orderBy('rating', 'desc')
                     ->limit(5)
                     ->get();
 
-        // $data = array();
-        // $data['rating'] = $rating;
-        // $data['feedback'] = $feedback;
+        $lowest = DB::connection('virtual_market')
+                    ->table('garendongs')
+                    ->select(DB::raw('user_id as name, rating'))
+                    ->orderBy('rating', 'asc')
+                    ->limit(5)
+                    ->get();
+
+        $data = array();
+        $data['highest'] = $highest;
+        $data['lowest'] = $lowest;
         $status = $this->setStatus();
 
         return response()->json([

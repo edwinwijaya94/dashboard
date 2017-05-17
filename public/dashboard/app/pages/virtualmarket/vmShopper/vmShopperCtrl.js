@@ -29,6 +29,26 @@
       }
     };
 
+    $scope.shopperListOptions = {
+      selected: {
+        label: 'Rating Tertinggi',
+        value: 'highest',
+        color: $scope.colors.green
+      },
+      options: [
+        {
+          label: 'Rating Tertinggi',
+          value: 'highest',
+          color: $scope.colors.green
+        },
+        {
+          label: 'Rating Terendah',
+          value: 'lowest',
+          color: $scope.colors.red
+        }
+      ]
+    };
+
     $scope.noData = false;
 
     // EVENTS
@@ -38,9 +58,9 @@
 
     $scope.getData = function(startDate, endDate) {
       $scope.getShopperStats(startDate, endDate);
-      $scope.getShopperTopList(startDate, endDate);
+      $scope.getShopperList(startDate, endDate);
       $scope.getFeedbackStats(startDate, endDate);
-    }
+    };
 
     // SHOPPER STATS
     $scope.getShopperStats = function(startDate, endDate) {
@@ -53,28 +73,33 @@
         .finally(function() {
           // $scope.loading= false;
         });    
-    }
+    };
 
     $scope.showShopperStats = function(data) {
       $scope.stats.shopper.value = data.count;
-    }
+    };
 
     // SHOPPER TOPLIST
-    $scope.getShopperTopList = function(startDate, endDate) {
+    $scope.getShopperList = function(startDate, endDate) {
       $scope.loading = true;
       $http.get('/api/virtualmarket/shopper?type=toplist&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
-          var data = res.data.data;
-          $scope.showShopperTopList(data);
+          $scope.shopperData = res.data.data;
+          $scope.showShopperList($scope.shopperData, $scope.shopperListOptions.selected.value);
         })
         .finally(function() {
           $scope.loading= false;
         });    
-    }
+    };
 
-    $scope.showShopperTopList = function(data) {
-      $scope.topShoppers = data;
-    }
+    $scope.showShopperList = function(data, sortBy) {
+      $scope.shoppers = data[sortBy];
+    };
+
+    $scope.sortList = function(item, model) {
+      $scope.shopperListOptions.selected = item; // update selected option
+      $scope.showShopperList($scope.shopperData, model);
+    };
 
     // FEEDBACK STATS
     $scope.getFeedbackStats = function(startDate, endDate) {
@@ -88,17 +113,17 @@
         .finally(function() {
           // $scope.loading= false;
         });    
-    }
+    };
 
     $scope.showFeedbackStats = function(data) {
       $scope.stats.rating.transactions = data.transactions;
       $scope.stats.rating.value = data.value + ' / 5';
-    }
+    };
 
     // FEEDBACK REASON
     $scope.showFeedbackReason = function(data) {
       $scope.drawChart(data, $scope.colors);
-    }
+    };
 
     // chart options
     $scope.getBarChartOptions = function(data, label, colors) { 
@@ -167,7 +192,6 @@
       if(data.length == 0) {
         $scope.noData = true;
       } else {
-        // $scope.chart = new Morris.Bar($scope.getBarChartOptions(data, label, colors));
         $scope.chart = AmCharts.makeChart('vmFeedbackReason',$scope.getBarChartOptions(data, label, colors));
         $scope.noData = false;
       }

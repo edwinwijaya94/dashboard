@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.virtualmarket', ['easypiechart'])
+  angular.module('BlurAdmin.pages.virtualmarket', ['easypiechart', 'ui.select', 'ngSanitize'])
       .config(routeConfig);
 
   /** @ngInject */

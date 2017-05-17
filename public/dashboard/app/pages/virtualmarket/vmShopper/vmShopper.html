@@ -43,19 +43,37 @@
       <!-- Top Shopper -->
       <div class="col-md-6"
          ba-panel
-         ba-panel-title="Garendong Terbaik"
-         ba-panel-class="pv-panel with-scroll table-panel" style="max-height:400px">
-        <div class="vertical-scroll">
+         ba-panel-title="Daftar Garendong"
+         ba-panel-class="pv-panel table-panel" style="height:400px">
+        <div class="row" style='margin-bottom:15px'>
+          <div class="col-md-3 col-md-offset-3 pv-filter-title">Urutkan:</div>
+          <div class="col-md-6">
+            <ui-select ng-model="shopperListOptions.selected.value"
+                on-select="sortList($item, $model)"
+                class="btn-group bootstrap-select form-control"
+                ng-disabled="false"
+                append-to-body="true"
+                search-enabled="false">
+              <ui-select-match placeholder="{{shopperListOptions.selected.label}}">
+                <span> {{$select.selected.label}}</span>
+              </ui-select-match>
+              <ui-select-choices repeat="option.value as option in shopperListOptions.options">
+                <span ng-bind-html="option.label"></span>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+        </div>
+        <div>
           <table class="table table-hover">
             <thead>
-              <tr style="background-color:{{colors.green}}">
+              <tr style="background-color:{{shopperListOptions.selected.color}}">
                 <th class="align-left" style="color:white">#</th>
                 <th class="align-left" style="color:white">Nama</th>
                 <th class="align-left" style="color:white">#Rating</th>
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="shopper in topShoppers" class="no-top-border">
+              <tr ng-repeat="shopper in shoppers" class="no-top-border">
                 <td class="align-right">{{$index+1}}</td>
                 <td ng-class="nowrap">{{shopper.name}}</td>
                 <td ng-class="nowrap">{{shopper.rating}}</td>
@@ -68,7 +86,7 @@
       <!-- Feedback Reason -->
       <div class="col-md-6"
          ba-panel
-         ba-panel-title="Feedback"
+         ba-panel-title="Ulasan"
          ba-panel-class="pv-panel" style="height:400px">
         <div class="row">
           <div class="col-lg-12 col-md-12">

@@ -198,19 +198,20 @@
       $scope.loading = true;
       $http.get('/api/virtualmarket/transaction?type=history&aggregate=sum&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
-          var resp = res.data.data;
-          var data = [];
-          var i;
-          for(i=0; i<resp.length; i++) {
-            var x = {};
-            x.time = resp[i].yr+'-'+resp[i].mo;
-            x.year = resp[i].yr;
-            x.month = resp[i].mo;
-            x.count = resp[i].count;
-            x.value = resp[i].value;
-            data.push(x);
-          }
-          data = vmHelper.fixLineChartNullValues(data, ['count', 'value']); // add null points as zero
+          var data = res.data.data;
+
+          // var data = [];
+          // var i;
+          // for(i=0; i<resp.length; i++) {
+          //   var x = {};
+          //   x.time = resp[i].yr+'-'+resp[i].mo;
+          //   x.year = resp[i].yr;
+          //   x.month = resp[i].mo;
+          //   x.count = resp[i].count;
+          //   x.value = resp[i].value;
+          //   data.push(x);
+          // }
+          data.transaction = vmHelper.fixLineChartNullValues(data.transaction, data.granularity, ['count', 'value']); // add null points as zero
           $scope.data = data; // update data
           $scope.drawChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
         })
@@ -220,48 +221,40 @@
     };
 
     // chart options
-    $scope.getLineChartOptions = function(data, metric, label, colors) {
+    $scope.getChartOptions = function(data, metric, label, colors) {
       var title = '';
       if(metric == 'count')
         title = 'Jumlah Transaksi';
       else if(metric == 'value')
         title = 'Nilai Transaksi';
 
-      return {
-        type: 'serial',
-        theme: 'blur',
-        color: layoutColors.defaultText,
-        marginTop: 10,
-        marginRight: 15,
-        marginBottom: 10,
-        dataProvider: data,
-        valueAxes: [
-          {
-            axisAlpha: 0,
-            title: title,
-            position: 'left',
-            gridAlpha: 0.5,
-            gridColor: layoutColors.border,
-            minimum: 0,
-            integersOnly: true,
-            labelFunction: function(y) {
-              var yValue;
-              if(y>=1000000000)
-                yValue = (y/1000000000).toString() + ' mi';
-              else if(y>=1000000)
-                yValue = (y/1000000).toString() + ' jt';
-              else if (y>=1000)
-                yValue = (y/1000).toString() + ' rb';
-              else 
-                yValue = y.toString();
+      var dateFormat;
+      if(data.granularity == 'month')
+        dateFormat = 'YYYY-MM';
+      else if(data.granularity == 'day')
+        dateFormat = 'YYYY-MM-DD';
 
-              if(metric == 'value')
-                return vmHelper.formatCurrency(yValue);
-              else 
-                return yValue;
-            }
-          }
-        ],
+      var options = {
+        color: layoutColors.defaultText,
+        data: data.transaction,
+        title: title,
+        gridColor: layoutColors.border,
+        valueLabelFunction: function(y) {
+          var yValue;
+          if(y>=1000000000)
+            yValue = (y/1000000000).toString() + ' mi';
+          else if(y>=1000000)
+            yValue = (y/1000000).toString() + ' jt';
+          else if (y>=1000)
+            yValue = (y/1000).toString() + ' rb';
+          else 
+            yValue = y.toString();
+
+          if(metric == 'value')
+            return vmHelper.formatCurrency(yValue);
+          else 
+            return yValue;
+        }, 
         graphs: [
           {
             id: 'g1',
@@ -282,20 +275,17 @@
             valueField: metric
           }
         ],
-        dataDateFormat: 'YYYY-MM',
-        categoryField: 'time',
-        categoryAxis: {
-          parseDates: true,
-          equalSpacing: true,
-          labelFunction: function(valueText, date, categoryAxis) {
-            return vmHelper.formatMonth(date.getMonth()+1)+' \''+date.getFullYear().toString().substr(-2);
-          }
-        },
-        chartCursor: {
-         categoryBalloonEnabled: false,
-        },
-        creditsPosition: 'bottom-right'
+        dataDateFormat: dateFormat,
+        categoryField: 'date',
+        categoryLabelFunction: function(valueText, date, categoryAxis) {
+          if(data.granularity == 'month')
+            return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+          else if(data.granularity == 'day')
+            return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+        }
       };
+      
+      return vmHelper.getLineChartOptions(options);
     };
 
     $scope.drawChart =  function(data, metric, colors) {
@@ -309,10 +299,10 @@
         $('#vmTransactionByHistory').empty();
       }
 
-      if(data.length == 0) {
+      if(data.transaction.length == 0) {
         $scope.noData = true;
       } else {
-        $scope.chart = AmCharts.makeChart('vmTransactionByHistory',$scope.getLineChartOptions(data, metric, label, colors));
+        $scope.chart = AmCharts.makeChart('vmTransactionByHistory',$scope.getChartOptions(data, metric, label, colors));
         $scope.noData = false;
       }
     };

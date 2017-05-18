@@ -130,38 +130,25 @@
 
     // chart options
     $scope.getBarChartOptions = function(data, label, colors) { 
-      return {
-        type: 'serial',
-        theme: 'blur',
+      
+      var options = {
         color: layoutColors.defaultText,
-        marginTop: 10,
-        marginRight: 15,
-        marginBottom: 10,
-        dataProvider: data,
-        valueAxes: [
-          {
-            axisAlpha: 0,
-            title: 'Ulasan',
-            position: 'left',
-            gridAlpha: 0.5,
-            gridColor: layoutColors.border,
-            minimum: 0,
-            integersOnly: true,
-            labelFunction: function(y) {
-              var yValue;
-              if(y>=1000000000)
-                yValue = (y/1000000000).toString() + ' mi';
-              else if(y>=1000000)
-                yValue = (y/1000000).toString() + ' jt';
-              else if (y>=1000)
-                yValue = (y/1000).toString() + ' rb';
-              else 
-                yValue = y.toString();
+        data: data,
+        title: 'Ulasan',
+        gridColor: layoutColors.border,
+        valueLabelFunction: function(y) {
+          var yValue;
+          if(y>=1000000000)
+            yValue = (y/1000000000).toString() + ' mi';
+          else if(y>=1000000)
+            yValue = (y/1000000).toString() + ' jt';
+          else if (y>=1000)
+            yValue = (y/1000).toString() + ' rb';
+          else 
+            yValue = y.toString();
 
-              return yValue;
-            }
-          }
-        ],
+          return yValue;
+        }, 
         graphs: [
           {
             id: 'g1',
@@ -171,18 +158,17 @@
               return hoverInfo;
             },
             lineAlpha: 0,
-            // lineColor: colors.green,
-            // lineThickness: 2,
             fillColors: colors.green,
             fillAlphas: 1,
             type: 'column',
             valueField: 'count',
           }
         ],
-        rotate: 'true',
+        rotate: true,
         categoryField: 'reason',
-        creditsPosition: 'bottom-right'
       };
+
+      return vmHelper.getBarChartOptions(options);
     };
 
     $scope.drawChart =  function(data, colors) {

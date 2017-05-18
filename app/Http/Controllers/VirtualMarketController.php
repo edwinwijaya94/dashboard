@@ -74,6 +74,19 @@ class VirtualMarketController extends Controller
         return $prevDatePeriod;
     }
 
+    public function getGranularity($startDate, $endDate) {
+        $start = Carbon::createFromFormat('Y-m-d', $startDate);
+        $end = Carbon::createFromFormat('Y-m-d', $endDate);
+        $diff = $start->diffInDays($end)+1;
+
+        if($diff > 30) {
+            $granularity = 'month';
+        } else {
+            $granularity = 'day';
+        }
+        return $granularity;
+    }
+
     // TRANSACTION
     public function getTransaction(Request $request)
     {
@@ -149,22 +162,35 @@ class VirtualMarketController extends Controller
 
     public function getTransactionByHistory($query)
     {
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(order_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(order_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
+
         DB::enableQueryLog();
         // execute
-        $data = DB::connection('virtual_market')
+        $transaction = DB::connection('virtual_market')
                     ->table('order')
                     ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
-                    ->select(DB::raw($query['aggregate'].'as value, count(*), extract( year from order_at) as yr, to_char(order_at, \'MM\') as mo '))
+                    ->select(DB::raw($query['aggregate'].'as value, count(*),'.$dateQuery))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->where('status', '=', 'success')
-                    ->groupBy('yr')
-                    ->groupBy('mo')
-                    ->orderByRaw('yr asc, mo asc')
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder)
                     // ->toSql();
                     ->get();
         // dd ($data);
 
+        $data = array();
+        $data['granularity'] = $granularity;
+        $data['transaction'] = $transaction;
         $status = $this->setStatus();
 
         return response()->json([
@@ -418,20 +444,31 @@ class VirtualMarketController extends Controller
 
     public function getBuyerHistory($query)
     {
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(order_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(order_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
+
         DB::enableQueryLog();
         // execute
-        $data = DB::connection('virtual_market')
+        $buyer = DB::connection('virtual_market')
                     ->table('order')
-                    ->select(DB::raw('extract( year from order_at) as yr, extract(month from order_at) as mo, count(distinct buyer_id)'))
+                    ->select(DB::raw($dateQuery.',count(distinct buyer_id)'))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
-                    ->groupBy('yr')
-                    ->groupBy('mo')
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder)
                     ->get();
 
-        // $data = array();
-        // $data['unique_buyers'] = $uniqueBuyers;
-        // $data['returning_buyers'] = $returningBuyers;
+        $data = array();
+        $data['granularity'] = $granularity;
+        $data['buyer'] = $buyer;
         $status = $this->setStatus();
 
         return response()->json([

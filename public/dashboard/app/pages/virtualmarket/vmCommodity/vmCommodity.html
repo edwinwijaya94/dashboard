@@ -25,24 +25,30 @@
         <div class="col-md-6"
            ba-panel
            ba-panel-title="Banyak Dibeli"
-           ba-panel-class="pv-panel with-scroll table-panel" style="max-height:400px">
-          <div class="vertical-scroll">
+           ba-panel-class="pv-panel table-panel" style="height:400px">
+          <div>
             <table class="table table-hover">
               <thead>
                 <tr style="background-color:{{colors.green}}">
                   <th class="align-left" style="color:white">#</th>
                   <th class="align-left" style="color:white">Nama Komoditas</th>
                   <th class="align-left" style="color:white">#Penjualan</th>
+                  <th class="align-left" style="color:white">Harga Rata-Rata(Rp)</th>
                 </tr>
               </thead>
               <tbody>
-                <tr ng-repeat="product in topProducts" class="no-top-border">
-                  <td class="align-right">{{$index+1}}</td>
+                <tr ng-repeat="product in productList.product" class="no-top-border">
+                  <td class="align-right">{{getRank($index)}}</td>
                   <td ng-class="nowrap">{{product.name}}</td>
                   <td ng-class="nowrap">{{product.count}}</td>
+                  <td ng-class="nowrap">{{formatPrice(product.avg_price)}}</td>
                 </tr>
               </tbody>
             </table>
+            <!-- pagination -->
+            <div class="row" style="text-align:center" ng-show="productList.totalRows>0">
+              <ul uib-pagination total-items="productList.totalRows" items-per-page="productList.rowsPerPage" max-size="productList.displayedPages" previous-text="<" next-text=">" ng-model="productList.page" ng-change="changeProductPage()"></ul>
+            </div>
           </div>
         </div>
 
@@ -50,7 +56,7 @@
         <div class="col-md-6"
            ba-panel
            ba-panel-title="Tidak Tersedia"
-           ba-panel-class="pv-panel with-scroll table-panel" style="max-height:400px">
+           ba-panel-class="pv-panel table-panel" style="height:400px">
           <div class="vertical-scroll">
             <table class="table table-hover">
               <thead>

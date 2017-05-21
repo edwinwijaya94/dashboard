@@ -27,7 +27,7 @@ class VirtualMarketController extends Controller
         $default['aggregate'] = 'sum';
         $default['aggregateBy'] = 'total_price'; // aggregate this column
         $default['decimals'] = 3; // decimal places
-
+        $default['page'] = 1;
         return $default;
     }
 
@@ -45,6 +45,7 @@ class VirtualMarketController extends Controller
         if($query['aggregate'] == 'avg('.$default['aggregateBy'].')') {
             $query['aggregate'] = 'round('.$query['aggregate'].','.$default['decimals'].')';
         }
+        $query['page'] = $request->query('page', $default['page']);
 
         return $query;
     }
@@ -247,23 +248,31 @@ class VirtualMarketController extends Controller
 
     public function getCommodityTopList($query)
     {
+        $rows = 5;
+        $page = (int)$query['page'];
         DB::enableQueryLog();
         // execute
         // success / failed transaction
-        $data = DB::connection('virtual_market')
+        $query = DB::connection('virtual_market')
                     ->table('shopping_list')
                     ->join('product', 'shopping_list.product_id', '=', 'product.id')
                     ->join('order', 'shopping_list.order_id', '=', 'order.id')
-                    ->select(DB::raw('product.name, count(*)'))
+                    ->select(DB::raw('product.name, count(*) as count, round(avg(shopping_list.subtotal_price/shopping_list.quantity), 2) as avg_price'))
                     ->where('order_at', '>=', $query['startDate'])
                     ->where('order_at', '<=', $query['endDate'])
                     ->groupBy('product.name')
-                    ->orderByRaw('count(*) desc')
-                    ->limit(5)
-                    // ->toSql();
-                    ->get();
-        // dd ($data);
+                    ->orderByRaw('count desc, product.name asc');
 
+        $totalRows = $query->get()->count();
+
+        $product = $query
+                    ->skip($page*$rows - $rows)
+                    ->take($rows)
+                    ->get();
+
+        $data = array();
+        $data['total_rows'] = $totalRows;
+        $data['product'] = $product;
         $status = $this->setStatus();
 
         return response()->json([

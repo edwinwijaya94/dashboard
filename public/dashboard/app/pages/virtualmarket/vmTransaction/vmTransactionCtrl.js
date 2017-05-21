@@ -36,7 +36,7 @@
         color: pieColor,
         description: 'Rata Rata',
         info: '',
-        value: 0,
+        value: vmHelper.formatNumber(0,true,false),
         percent: 0,
         showPie: false,
         showChange: true,
@@ -49,7 +49,7 @@
         color: pieColor,
         description: 'Nilai Transaksi',
         info: '',
-        value: vmHelper.formatCurrency('0'),
+        value: vmHelper.formatNumber(0,true,false),
         percent: 0,
         showPie: false,
         showChange: true,
@@ -147,7 +147,7 @@
     }
 
     $scope.showTransaction = function(data) {
-      // transaction count
+      // transaction average value
       var stat = {};
       stat.description = $scope.stats.transaction_avg.description;
       stat.info = $scope.stats.transaction_avg.info;
@@ -156,8 +156,6 @@
       stat.value = parseInt(data.current.average);
       stat.prevValue = parseInt(data.prev.average);
       var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
-      // format currency
-      stat.value = vmHelper.formatCurrency(data.current.average.toString());
       stat.change = isFinite(change)? change:0;
       if(stat.change>=0) {
         stat.icon = 'ion-arrow-up-b';
@@ -167,6 +165,9 @@
         stat.icon = 'ion-arrow-down-b';
         stat.iconColor = $scope.colors.red;
       }
+      // format currency
+      stat.value = vmHelper.formatNumber(stat.value,true,false);
+      stat.change = vmHelper.formatNumber(stat.change,false,false);
       $scope.stats.transaction_avg = stat;
 
       // transaction value
@@ -178,8 +179,6 @@
       stat.value = data.current.value;
       stat.prevValue = parseInt(data.prev.value);
       var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
-      // format currency
-      stat.value = vmHelper.formatCurrency(data.current.value.toString());
       stat.change = isFinite(change)? change:0;
       if(stat.change>=0) {
         stat.icon = 'ion-arrow-up-b';
@@ -189,7 +188,9 @@
         stat.icon = 'ion-arrow-down-b';
         stat.iconColor = $scope.colors.red;
       }
-      
+      // format numbers
+      stat.value = vmHelper.formatNumber(stat.value,true,false);
+      stat.change = vmHelper.formatNumber(stat.change,false,false);
       $scope.stats.transaction_value = stat;
     }
 
@@ -199,18 +200,6 @@
       $http.get('/api/virtualmarket/transaction?type=history&aggregate=sum&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
           var data = res.data.data;
-
-          // var data = [];
-          // var i;
-          // for(i=0; i<resp.length; i++) {
-          //   var x = {};
-          //   x.time = resp[i].yr+'-'+resp[i].mo;
-          //   x.year = resp[i].yr;
-          //   x.month = resp[i].mo;
-          //   x.count = resp[i].count;
-          //   x.value = resp[i].value;
-          //   data.push(x);
-          // }
           data.transaction = vmHelper.fixLineChartNullValues(data.transaction, data.granularity, ['count', 'value']); // add null points as zero
           $scope.data = data; // update data
           $scope.drawChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
@@ -240,20 +229,26 @@
         title: title,
         gridColor: layoutColors.border,
         valueLabelFunction: function(y) {
-          var yValue;
-          if(y>=1000000000)
-            yValue = (y/1000000000).toString() + ' mi';
-          else if(y>=1000000)
-            yValue = (y/1000000).toString() + ' jt';
-          else if (y>=1000)
-            yValue = (y/1000).toString() + ' rb';
-          else 
-            yValue = y.toString();
+          // var yValue;
+          // if(y>=1000000000)
+          //   yValue = (y/1000000000).toString() + ' mi';
+          // else if(y>=1000000)
+          //   yValue = (y/1000000).toString() + ' jt';
+          // else if (y>=1000)
+          //   yValue = (y/1000).toString() + ' rb';
+          // else 
+          //   yValue = y.toString();
 
+          // if(metric == 'value')
+          //   return vmHelper.formatCurrency(yValue);
+          // else 
+          //   return yValue;
+          var isCurrency;
           if(metric == 'value')
-            return vmHelper.formatCurrency(yValue);
+            isCurrency = true;
           else 
-            return yValue;
+            isCurrency = false;
+          return vmHelper.formatNumber(y,isCurrency,true);
         }, 
         graphs: [
           {
@@ -264,7 +259,7 @@
               if(metric == 'count')
                 hoverInfo += 'Jumlah Transaksi:<br> <b>'+value+'</b>';
               else if(metric == 'value')
-                hoverInfo += 'Nilai Transaksi:<br> <b>'+vmHelper.formatCurrency(value.toString())+'</b>';
+                hoverInfo += 'Nilai Transaksi:<br> <b>'+vmHelper.formatNumber(value,true,false)+'</b>';
               return hoverInfo;
             },
             bullet: 'round',

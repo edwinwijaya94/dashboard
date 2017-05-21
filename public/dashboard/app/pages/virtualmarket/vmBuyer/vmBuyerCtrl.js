@@ -81,6 +81,8 @@
           stat.icon = 'ion-arrow-down-b';
           stat.iconColor = $scope.colors.red;
         }
+        // format numbers
+        stat.change = vmHelper.formatNumber(stat.change,false,false);
         $scope.stats[metric] = stat;
       }
     }

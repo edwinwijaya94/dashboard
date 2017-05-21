@@ -24,8 +24,26 @@ angular.module('BlurAdmin.pages.virtualmarket')
     		var monthName = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
     		return monthName[index];
   	  },
-  	  formatCurrency: function(value) {   
-  		  return 'Rp '+value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  	  formatNumber: function(value, isCurrency, isSimplify) {
+        // max 2 decimal places
+        var formatted = '';
+        if(isSimplify) {
+          if(value>=1000000000)
+            formatted = (value/1000000000).toString() + ' mi';
+          else if(value>=1000000)
+            formatted = (value/1000000).toString() + ' jt';
+          else if (value>=1000)
+            formatted = (value/1000).toString() + ' rb';
+          else 
+            formatted = value.toString();
+        } else {
+          formatted = value.toString();
+        }
+        formatted = formatted.replace('.', ','); // decimals separator
+  		  formatted = formatted.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // thousands separator
+        if(isCurrency)
+          formatted = 'Rp '+formatted;
+        return formatted;
   	  },
   	  fixLineChartNullValues: function(data, granularity, attributes) {
         var dateFormat;

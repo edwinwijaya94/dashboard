@@ -93,14 +93,11 @@
     };
 
     $scope.showShopperList = function(data, sortBy) {
-      console.log('sort: '+sortBy);
       $scope.shoppers = data[sortBy];
     };
 
     $scope.sortList = function(item, model) {
-      console.log(item);
       $scope.shopperListOptions.selected = item; // update selected option
-      console.log(JSON.stringify($scope.shopperListOptions.selected));
       $scope.showShopperList($scope.shopperData, model);
     };
 
@@ -120,7 +117,10 @@
 
     $scope.showFeedbackStats = function(data) {
       $scope.stats.rating.transactions = data.transactions;
-      $scope.stats.rating.value = data.value + ' / 5';
+      if(data.value != null)
+        $scope.stats.rating.value = vmHelper.formatNumber(data.value,false,false) + ' / 5';
+      else
+        $scope.stats.rating.value = 0 + ' / 5';
     };
 
     // FEEDBACK REASON

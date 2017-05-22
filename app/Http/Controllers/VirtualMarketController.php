@@ -28,6 +28,8 @@ class VirtualMarketController extends Controller
         $default['aggregateBy'] = 'total_price'; // aggregate this column
         $default['decimals'] = 3; // decimal places
         $default['page'] = 1;
+        $default['rows'] = 5;
+        $default['sort'] = 'highest';
         return $default;
     }
 
@@ -45,7 +47,10 @@ class VirtualMarketController extends Controller
         if($query['aggregate'] == 'avg('.$default['aggregateBy'].')') {
             $query['aggregate'] = 'round('.$query['aggregate'].','.$default['decimals'].')';
         }
+
         $query['page'] = $request->query('page', $default['page']);
+        $query['rows'] = $request->query('rows', $default['rows']);
+        $query['sort'] = $request->query('sort', $default['sort']);
 
         return $query;
     }
@@ -248,7 +253,7 @@ class VirtualMarketController extends Controller
 
     public function getCommodityTopList($query)
     {
-        $rows = 5;
+        $rows = (int)$query['rows'];
         $page = (int)$query['page'];
         DB::enableQueryLog();
         // execute
@@ -315,25 +320,31 @@ class VirtualMarketController extends Controller
 
     public function getShopperTopList($query)
     {
+        $rows = (int)$query['rows'];
+        $page = (int)$query['page'];
+        if($query['sort'] == 'highest')
+            $ratingOrder = 'rating desc';
+        else if ($query['sort'] == 'lowest')
+            $ratingOrder = 'rating asc';
+        $ratingOrder .= ', name asc';
+
         DB::enableQueryLog();
         // execute
-        $highest = DB::connection('virtual_market')
+        $query = DB::connection('virtual_market')
                     ->table('garendongs')
                     ->select(DB::raw('user_id as name, rating'))
-                    ->orderBy('rating', 'desc')
-                    ->limit(5)
-                    ->get();
+                    ->orderByRaw($ratingOrder);
 
-        $lowest = DB::connection('virtual_market')
-                    ->table('garendongs')
-                    ->select(DB::raw('user_id as name, rating'))
-                    ->orderBy('rating', 'asc')
-                    ->limit(5)
+        $totalRows = $query->get()->count();
+
+        $shopper = $query
+                    ->skip($page*$rows - $rows)
+                    ->take($rows)
                     ->get();
 
         $data = array();
-        $data['highest'] = $highest;
-        $data['lowest'] = $lowest;
+        $data['total_rows'] = $totalRows;
+        $data['shopper'] = $shopper;
         $status = $this->setStatus();
 
         return response()->json([

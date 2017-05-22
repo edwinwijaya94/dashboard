@@ -14,24 +14,27 @@
     $scope.colors = vmHelper.colors.primary;
 
     // INIT DATA
-    $scope.productList = {
-      totalRows: 0,
-      page: 1,
-      rowsPerPage: 5,
-      displayedPages: 1,
-      product:[]
-    };
+    $scope.initProductList = function() {
+      $scope.productList = {
+        totalRows: 0,
+        page: 1,
+        rowsPerPage: 5,
+        displayedPages: 1,
+        product:[]
+      };
+    }
 
     // EVENTS
     $scope.$on('updateVm', function(event, startDate, endDate) {
       $scope.startDate = startDate;
       $scope.endDate = endDate;
+      $scope.initProductList();
       $scope.getData(startDate, endDate);
     });
 
     $scope.getData = function(startDate, endDate) {
       $scope.getStats(startDate, endDate);  
-      $scope.getProductList(startDate, endDate, $scope.productList.page);
+      $scope.getProductList(startDate, endDate, $scope.productList.page, $scope.productList.rowsPerPage);
     };
 
     // PRODUCT STATS
@@ -97,9 +100,9 @@
 
 
     // PRODUCT TOPLIST
-    $scope.getProductList = function(startDate, endDate, page) {
+    $scope.getProductList = function(startDate, endDate, page, rows) {
       $scope.loading = true;
-      $http.get('/api/virtualmarket/commodity?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page)
+      $http.get('/api/virtualmarket/commodity?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
         .then(function(res) {
           var data = res.data.data;
           $scope.showProducts(data);
@@ -107,23 +110,23 @@
         .finally(function() {
           $scope.loading= false;
         });    
-    }
+    };
 
     $scope.showProducts = function(data) {
       $scope.productList.totalRows = data.total_rows;
       $scope.productList.product = data.product;
-    }
+    };
 
     $scope.getRank = function(index) {
       return (index+1+(($scope.productList.page-1)*$scope.productList.rowsPerPage));
-    }
+    };
     
     $scope.formatPrice = function(price) {
       return vmHelper.formatNumber(price,false,false);
-    }
+    };
 
     $scope.changeProductPage = function() {
-      $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page);
-    }
+      $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
+    };
   }
 })();

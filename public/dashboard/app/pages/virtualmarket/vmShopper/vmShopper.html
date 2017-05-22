@@ -45,6 +45,7 @@
          ba-panel
          ba-panel-title="Daftar Garendong"
          ba-panel-class="pv-panel table-panel" style="height:400px">
+        <!-- Sort By -->
         <div class="row" style='margin-bottom:15px'>
           <div class="col-md-3 col-md-offset-3 pv-filter-title">Urutkan:</div>
           <div class="col-md-6">
@@ -73,13 +74,17 @@
               </tr>
             </thead>
             <tbody>
-              <tr ng-repeat="shopper in shoppers" class="no-top-border">
-                <td class="align-right">{{$index+1}}</td>
+              <tr ng-repeat="shopper in shopperList.shopper" class="no-top-border">
+                <td class="align-right">{{getRank($index)}}</td>
                 <td ng-class="nowrap">{{shopper.name}}</td>
                 <td ng-class="nowrap">{{shopper.rating}}</td>
               </tr>
             </tbody>
           </table>
+          <!-- pagination -->
+          <div class="row" style="text-align:center" ng-show="shopperList.totalRows>0">
+            <ul uib-pagination total-items="shopperList.totalRows" items-per-page="shopperList.rowsPerPage" max-size="shopperList.displayedPages" previous-text="<" next-text=">" ng-model="shopperList.page" ng-change="changeShopperPage()"></ul>
+          </div>
         </div>
       </div>
 

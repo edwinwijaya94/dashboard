@@ -16,7 +16,7 @@
     $scope.colors = vmHelper.colors.primary;
     $scope.chartColors = [$scope.colors.blue, $scope.colors.yellow, $scope.colors.green, $scope.colors.red];
     
-    // DEFAULT CHART SETTINGS
+    // INIT DATA
     $scope.stats = {
       shopper: {
         description: 'Jumlah Garendong',
@@ -27,6 +27,16 @@
         transactions: 0,
         value: 0 + ' / 5'
       }
+    };
+
+    $scope.initShopperList = function() {
+      $scope.shopperList = {
+        totalRows: 0,
+        page: 1,
+        rowsPerPage: 5,
+        displayedPages: 1,
+        shopper:[]
+      };
     };
 
     $scope.shopperListOptions = {
@@ -53,12 +63,15 @@
 
     // EVENTS
     $scope.$on('updateVm', function(event, startDate, endDate) {
+      $scope.startDate = startDate;
+      $scope.endDate = endDate;
+      $scope.initShopperList();
       $scope.getData(startDate, endDate);  
     });
 
     $scope.getData = function(startDate, endDate) {
       $scope.getShopperStats(startDate, endDate);
-      $scope.getShopperList(startDate, endDate);
+      $scope.getShopperList(startDate, endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
       $scope.getFeedbackStats(startDate, endDate);
     };
 
@@ -80,25 +93,36 @@
     };
 
     // SHOPPER TOPLIST
-    $scope.getShopperList = function(startDate, endDate) {
-      $scope.loading = true;
-      $http.get('/api/virtualmarket/shopper?type=toplist&start_date='+startDate+'&end_date='+endDate)
+    $scope.getShopperList = function(startDate, endDate, page, rows, sort) {
+      // $scope.loading = true;
+      $http.get('/api/virtualmarket/shopper?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows+'&sort='+sort)
         .then(function(res) {
           $scope.shopperData = res.data.data;
           $scope.showShopperList($scope.shopperData, $scope.shopperListOptions.selected.value);
         })
         .finally(function() {
-          $scope.loading= false;
+          // $scope.loading= false;
         });    
     };
 
     $scope.showShopperList = function(data, sortBy) {
-      $scope.shoppers = data[sortBy];
+      $scope.shopperList.totalRows = data.total_rows;
+      $scope.shopperList.shopper = data.shopper;
     };
 
     $scope.sortList = function(item, model) {
+      $scope.initShopperList();
       $scope.shopperListOptions.selected = item; // update selected option
-      $scope.showShopperList($scope.shopperData, model);
+      // $scope.showShopperList($scope.shopperData, model);
+      $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
+    };
+
+    $scope.getRank = function(index) {
+      return (index+1+(($scope.shopperList.page-1)*$scope.shopperList.rowsPerPage));
+    };
+
+    $scope.changeShopperPage = function() {
+      $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
     };
 
     // FEEDBACK STATS

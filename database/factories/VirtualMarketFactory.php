@@ -20,8 +20,8 @@ $factory->define(App\Model\VirtualMarket\Order::class, function (Faker\Generator
         'order_type' => $faker->randomElement($array = array ('mobile','sms')), // app platform
         'order_at' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
         'orderstatus_id' => $faker->numberBetween($min = 1, $max = 2),
-        'buyer_id' => $faker->numberBetween($min = 1, $max = 10),
-        'garendong_id' => $faker->numberBetween($min = 1, $max = 10),
+        'buyer_id' => $faker->numberBetween($min = 1, $max = 100),
+        'garendong_id' => $faker->numberBetween($min = 1, $max = 100),
     ];
 });
 
@@ -33,8 +33,8 @@ $factory->define(App\Model\VirtualMarket\ShoppingList::class, function (Faker\Ge
         'unit' => $faker->randomElement($array = array ('ons','buah')),
         'subtotal_price' => $faker->numberBetween($min = 5000, $max = 150000),
         'is_priority' => $faker->boolean($chanceOfGettingTrue = 80),
-        'product_id' => $faker->numberBetween($min = 1, $max = 10),
-        'order_id' => $faker->numberBetween($min = 1, $max = 10),
+        'product_id' => $faker->numberBetween($min = 1, $max = 100),
+        'order_id' => $faker->numberBetween($min = 1, $max = 100),
     ];
 });
 
@@ -59,7 +59,7 @@ $factory->define(App\Model\VirtualMarket\UserFeedback::class, function (Faker\Ge
 
     return [
 
-        'order_id' => $faker->numberBetween($min = 1, $max = 10),
+        'order_id' => $faker->numberBetween($min = 1, $max = 100),
         'rating' => $faker->numberBetween($min = 1, $max = 5),
     ];
 });
@@ -69,7 +69,7 @@ $factory->define(App\Model\VirtualMarket\ReasonList::class, function (Faker\Gene
 
     return [
         
-        'user_feedback_id' => $faker->numberBetween($min = 1, $max = 10),
+        'user_feedback_id' => $faker->numberBetween($min = 1, $max = 100),
         'reason_id' => $faker->numberBetween($min = 1, $max = 3),
     ];
 });
@@ -79,7 +79,7 @@ $factory->define(App\Model\VirtualMarket\Garendong::class, function (Faker\Gener
 
     return [
 
-        'user_id' => $faker->numberBetween($min = 1, $max = 10),
+        'user_id' => $faker->numberBetween($min = 1, $max = 100),
         'number_of_allocation' => $faker->numberBetween($min = 1, $max = 10),
         'status' => $faker->numberBetween($min = 1, $max = 3),
         'rating' => $faker->numberBetween($min = 1, $max = 5),

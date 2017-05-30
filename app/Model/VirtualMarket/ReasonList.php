@@ -8,6 +8,6 @@ class ReasonList extends Model
 {
 
     protected $connection = 'virtual_market';
-    protected $table = 'reason_list';
-    public $timestamps = false;
+    protected $table = 'reason_lists';
+    // public $timestamps = false;
 }

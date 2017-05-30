@@ -8,6 +8,6 @@ class Order extends Model
 {
 
     protected $connection = 'virtual_market';
-    protected $table = 'order';
-    public $timestamps = false;
+    protected $table = 'orders';
+    // public $timestamps = false;
 }

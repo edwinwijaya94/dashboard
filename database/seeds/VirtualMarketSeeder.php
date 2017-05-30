@@ -23,11 +23,11 @@ class VirtualMarketSeeder extends Seeder
             ['reason' => 'pelayanan buruk'],
         ]);
 
-        factory(App\Model\VirtualMarket\Order::class, 10)->create();
-        factory(App\Model\VirtualMarket\ShoppingList::class, 25)->create();
-        factory(App\Model\VirtualMarket\Product::class, 10)->create();
-        factory(App\Model\VirtualMarket\UserFeedback::class, 10)->create();
-        factory(App\Model\VirtualMarket\ReasonList::class, 10)->create();
-        factory(App\Model\VirtualMarket\Garendong::class, 10)->create();
+        factory(App\Model\VirtualMarket\Order::class, 100)->create();
+        factory(App\Model\VirtualMarket\ShoppingList::class, 250)->create();
+        factory(App\Model\VirtualMarket\Product::class, 100)->create();
+        factory(App\Model\VirtualMarket\UserFeedback::class, 100)->create();
+        factory(App\Model\VirtualMarket\ReasonList::class, 100)->create();
+        factory(App\Model\VirtualMarket\Garendong::class, 100)->create();
     }
 }

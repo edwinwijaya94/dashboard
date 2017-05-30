@@ -8,6 +8,6 @@ class ShoppingList extends Model
 {
 
     protected $connection = 'virtual_market';
-    protected $table = 'shopping_list';
-    public $timestamps = false;
+    protected $table = 'shopping_lists';
+    // public $timestamps = false;
 }

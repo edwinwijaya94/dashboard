@@ -11,6 +11,7 @@
     // 'BlurAdmin.pages.dashboard',
     'BlurAdmin.pages.virtualmarket',
     'BlurAdmin.pages.marketplace',
+    'BlurAdmin.pages.productManager',
     // 'BlurAdmin.pages.ui',
     // 'BlurAdmin.pages.components',
     // 'BlurAdmin.pages.form',

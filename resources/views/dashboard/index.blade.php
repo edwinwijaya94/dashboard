@@ -313,6 +313,18 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopper.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopperCtrl.js')}}"></script>
 
+<!-- product manager for virtual market -->
+<script src="{{asset('dashboard/app/pages/productManager/productManager.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/pmHelper.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/pmCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/fileModel.directive.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/productManager/product//productForm/productFormService.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/product/productForm/productForm.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/product/productForm/productFormCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/product/productList/productList.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/product/productList/productListCtrl.js')}}"></script>
+
 <!-- marketplace dashboard -->
 <script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>

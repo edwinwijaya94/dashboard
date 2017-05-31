@@ -2345,9 +2345,9 @@ a.learn-more {
   -webkit-transition: all 0.1s ease;
   transition: all 0.1s ease; }
 
-.btn:hover {
+/*.btn:hover {
   -webkit-transform: scale(1.2);
-          transform: scale(1.2); }
+          transform: scale(1.2); }*/
 
 .open > .btn.dropdown-toggle.btn.btn-primary {
   background: #209e91;

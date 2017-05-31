@@ -1,0 +1,83 @@
+<div class="row" ng-controller="productFormCtrl">
+  <div ba-panel ba-panel-title="Tambah Produk" ba-panel-class="panel-group">
+    <form class="form-horizontal" ng-submit="createProduct()">
+      <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">Nama</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" id="name" ng-model="productForm.name">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="category" class="col-sm-2 control-label">Kategori</label>
+        <div class="col-sm-10">
+          <select class="form-control" title="category" selectpicker ng-model="productForm.category_id">
+            <option value="1" selected>Sayuran</option>
+            <option value="2">Daging</option>
+            <option value="3">Buah-Buahan</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="image" class="col-sm-2 control-label">Upload Gambar</label>
+        <div class="col-sm-10">        
+          <input type="file" class="form-control" id="image" file-model="productForm.image">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="price" class="col-sm-2 control-label">Harga</label>
+        <div class="col-sm-10">        
+          <input type="text" class="form-control" id="price" ng-model="productForm.price">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="quantity" class="col-sm-2 control-label">Kuantitas</label>
+        <div class="col-sm-10">        
+          <input type="text" class="form-control" id="quantity" ng-model="productForm.quantity">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="unitType" class="col-md-2 control-label">Satuan</label>
+        <div class="col-md-4">
+          <select class="form-control" title="unit" selectpicker ng-model="productForm.unit_id">
+            <option value="1">Ons</option>
+            <option value="2">Gram</option>
+            <option value="3">Kilogram</option>
+          </select>
+        </div>
+        <!-- <div class="col-md-10">
+          <div class="row form-group">
+            <div class="col-md-2">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" name="unitType" value="mass" ng-model="productForm.unitType">
+                <span>Massa</span>
+              </label>
+            </div>
+            <div class="col-md-4">
+              <select class="form-control" title="massUnit" selectpicker ng-model="productForm.massUnit" ng-disabled="productForm.unitType!='mass'">
+                <option value="ons">Ons</option>
+                <option value="gram">Gram</option>
+                <option value="kilogram">Kilogram</option>
+              </select>
+            </div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-2">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" name="unitType" value="custom" ng-model="productForm.unitType">
+                <span>Lainnya</span>
+              </label>
+            </div>
+            <div class="col-md-4">        
+              <input type="text" class="form-control" id="customUnit" ng-model="productForm.customUnit"  ng-disabled="productForm.unitType=='mass'">
+            </div>
+          </div>
+        </div> -->
+      </div>
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-primary">Tambah</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

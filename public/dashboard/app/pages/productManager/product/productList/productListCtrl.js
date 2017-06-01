@@ -27,7 +27,8 @@
 
     //PRODUCT LIST
     $scope.getProductList = function() {
-      $http.get('http://127.0.0.1:8001/api/virtualmarket/product')
+      var hostname = 'http://'+window.location.hostname+':8001';
+      $http.get(hostname+'/api/virtualmarket/product')
         .then(function(res) {
           $scope.updatedProductList = res.data.products;
         })

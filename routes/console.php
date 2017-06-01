@@ -44,7 +44,12 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             ['unit_id' => 2, 'in_gram' => '1'],
             ['unit_id' => 3, 'in_gram' => '1000'],
         ]);
-
+        // category
+        DB::connection('virtual_market')->table('categories')->insert([
+            ['name' => 'sayuran', 'category_img' => 'a.jpg'],
+            ['name' => 'daging', 'category_img' => 'b.jpg'],
+            ['name' => 'buah-buahan', 'category_img' => 'c.jpg'],
+        ]);
 	}
 	if($system == 'vm') {
 	    factory(App\Model\VirtualMarket\Order::class, $num)->create();

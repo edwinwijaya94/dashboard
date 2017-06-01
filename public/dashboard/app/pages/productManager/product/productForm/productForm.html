@@ -10,10 +10,8 @@
       <div class="form-group">
         <label for="category" class="col-sm-2 control-label">Kategori</label>
         <div class="col-sm-10">
-          <select class="form-control" title="category" selectpicker ng-model="productForm.category_id">
-            <option value="1" selected>Sayuran</option>
-            <option value="2">Daging</option>
-            <option value="3">Buah-Buahan</option>
+          <select class="form-control" title="category" selectpicker ng-model="productForm.category" ng-options="category.name for category in categoryList track by category.id">
+            <!-- <option ng-repeat="category in categoryList" ng-value="category.id" ng-selected="$index==0">{{category.name}}</option>> -->
           </select>
         </div>
       </div>
@@ -38,10 +36,8 @@
       <div class="form-group">
         <label for="unitType" class="col-md-2 control-label">Satuan</label>
         <div class="col-md-4">
-          <select class="form-control" title="unit" selectpicker ng-model="productForm.unit_id">
-            <option value="1">Ons</option>
-            <option value="2">Gram</option>
-            <option value="3">Kilogram</option>
+          <select class="form-control" title="unit" selectpicker ng-model="productForm.unit" ng-options="unit.unit for unit in unitList track by unit.id">
+            <!-- <option ng-repeat="unit in unitList" ng-value="unit.id" ng-selected="$index==0">{{unit.unit}}</option>> -->
           </select>
         </div>
         <!-- <div class="col-md-10">

@@ -23,6 +23,33 @@
     // MODELS
     $scope.productForm = {};
 
+    //FORM OPTIONS
+    // category list
+    $scope.getCategoryList = function() {
+      var hostname = 'http://'+window.location.hostname+':8001';
+      $http.get(hostname+'/api/virtualmarket/categories')
+        .then(function(res) {
+          $scope.categoryList = res.data.categories;
+          $scope.productForm.category = $scope.categoryList[0];
+        })
+        .finally(function() {
+          
+        });
+    };
+    // units list
+    $scope.getUnitList = function() {
+      var hostname = 'http://'+window.location.hostname+':8001';
+      $http.get(hostname+'/api/virtualmarket/units')
+        .then(function(res) {
+          $scope.unitList = res.data.units;
+          $scope.productForm.unit = $scope.unitList[0];
+        })
+        .finally(function() {
+          
+        });
+    };
+    $scope.getCategoryList();
+    $scope.getUnitList();
 
     // CREATE PRODUCT
     $scope.createProduct = function() {
@@ -35,7 +62,9 @@
     };
 
     $scope.resetForm = function() {
-      $scope.productForm = {};      
+      $scope.productForm = {};    
+      $scope.productForm.category = $scope.categoryList[0];
+      $scope.productForm.unit = $scope.unitList[0];
       angular.element("input[type='file']").val(null);
     };
 

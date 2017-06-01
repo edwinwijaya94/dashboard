@@ -10,11 +10,11 @@
         var fd = new FormData();
         //append data
         fd.append('product_name', data.name);
-        fd.append('category_id', data.category_id);
+        fd.append('category_id', data.category.id);
         fd.append('product_image', data.image);
         fd.append('product_price', data.price);
         fd.append('product_quantity', data.quantity);
-        fd.append('unit_id', data.unit_id);
+        fd.append('unit_id', data.unit.id);
 
         $http.post(uploadUrl, fd, {
             transformRequest: angular.identity,

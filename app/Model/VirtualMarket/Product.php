@@ -9,5 +9,5 @@ class Product extends Model
 
     protected $connection = 'virtual_market';
     protected $table = 'products';
-    // public $timestamps = false;
+    public $timestamps = false;
 }

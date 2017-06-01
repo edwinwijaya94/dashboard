@@ -210,5 +210,8 @@
       }
     };
 
+    $scope.formatRating = function(rating) {
+      return vmHelper.formatNumber(rating,false,false);
+    };
   }
 })();

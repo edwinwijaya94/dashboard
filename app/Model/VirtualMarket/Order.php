@@ -9,5 +9,5 @@ class Order extends Model
 
     protected $connection = 'virtual_market';
     protected $table = 'orders';
-    // public $timestamps = false;
+    public $timestamps = false;
 }

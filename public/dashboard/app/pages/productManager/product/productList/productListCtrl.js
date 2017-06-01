@@ -12,80 +12,37 @@
     
     // COLORS
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
-
     $scope.colors = pmHelper.colors.primary;
+
+    // EVENTS
+    $scope.$on('updateProductList', function(event) {
+      $scope.getProductList();
+    });
 
     // MODELS
     $scope.productList = {
       pageSize: 5,
-      data: [
-        {
-          name: 'jeruk',
-          category: 'buah',
-          price_min: 10000,
-          price_max: 15000,
-        },
-        {
-          name: 'apel',
-          category: 'buah',
-          price_min: 11000,
-          price_max: 15000,
-        },
-        {
-          name: 'semangka',
-          category: 'buah',
-          price_min: 10000,
-          price_max: 16000,
-        },
-        {
-          name: 'ayam',
-          category: 'daging',
-          price_min: 10000,
-          price_max: 12000,
-        },
-        {
-          name: 'sapi',
-          category: 'daging',
-          price_min: 8000,
-          price_max: 15000,
-        },
-        {
-          name: 'kambing',
-          category: 'daging',
-          price_min: 10000,
-          price_max: 15000,
-        },
-        {
-          name: 'wortel',
-          category: 'sayuran',
-          price_min: 10000,
-          price_max: 14000,
-        },
-        {
-          name: 'kentang',
-          category: 'sayuran',
-          price_min: 10500,
-          price_max: 15000,
-        },
-        {
-          name: 'kangkung',
-          category: 'sayuran',
-          price_min: 9000,
-          price_max: 11000,
-        },
-      ]
+      data: []
     };
 
-    // GET PRODUCTS
-    $scope.getProduct = function(data) {
-      $http.get('/', data)
+    //PRODUCT LIST
+    $scope.getProductList = function() {
+      $http.get('http://127.0.0.1:8001/api/virtualmarket/product')
         .then(function(res) {
-          $scope.products = res.data;
+          $scope.updatedProductList = res.data.products;
         })
         .finally(function() {
           
-        });    
+        });
+        // copy references
+        $scope.productList.data = [].concat($scope.updatedProductList);
     };
 
+    // get product list
+    $scope.getProductList();
+
+    $scope.formatPrice = function(price) {
+      return pmHelper.formatNumber(price,false,false);
+    };
   }
 })();

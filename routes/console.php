@@ -21,17 +21,30 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
 	
 	$num = (int)$num;
 	if($init == 'yes') {
-		// init order_status
+		// order_status
     	DB::connection('virtual_market')->table('order_statuses')->insert([
             ['status' => 'success'],
             ['status' => 'failed'],
         ]);
-
+    	// reasons
         DB::connection('virtual_market')->table('reasons')->insert([
             ['reason' => 'pelayanan baik'],
             ['reason' => 'pelayanan biasa saja'],
             ['reason' => 'pelayanan buruk'],
         ]);
+        // units
+        DB::connection('virtual_market')->table('units')->insert([
+            ['unit_type' => 'common', 'unit' => 'ons'],
+            ['unit_type' => 'common', 'unit' => 'gram'],
+            ['unit_type' => 'common', 'unit' => 'kilogram'],
+        ]);
+        // converter
+        DB::connection('virtual_market')->table('converters')->insert([
+            ['unit_id' => 1, 'in_gram' => '100'],
+            ['unit_id' => 2, 'in_gram' => '1'],
+            ['unit_id' => 3, 'in_gram' => '1000'],
+        ]);
+
 	}
 	if($system == 'vm') {
 	    factory(App\Model\VirtualMarket\Order::class, $num)->create();

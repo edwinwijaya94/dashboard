@@ -9,14 +9,14 @@
           </select>
         </label>
       </div>
-      <table class="table" st-table="productList.data">
+      <table class="table" st-table="productList.data" st-safe-src="updatedProductList">
         <thead>
         <tr class="sortable ">
           <th class="table-id" st-sort="id" st-sort-default="true">#</th>
           <th st-sort="name">Nama</th>
-          <th st-sort="category">Kategori</th>
-          <th st-sort="price_min">Harga Min.</th>
-          <th st-sort="price_max">Harga Maks.</th>
+          <!-- <th st-sort="category">Kategori</th> -->
+          <th st-sort="price_min">Harga Minimum (Rp)</th>
+          <th st-sort="price_max">Harga Maksimum (Rp)</th>
           <!-- <th st-sort="age">Age</th> -->
         </tr>
         <tr>
@@ -24,9 +24,9 @@
           <th>
             <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/>
           </th>
-          <th>
+          <!-- <th>
             <input st-search="category" placeholder="Cari Kategori" class="input-sm form-control search-input" type="search"/>
-          </th>
+          </th> -->
           <th></th>
           <th></th>
         </tr>
@@ -35,9 +35,9 @@
         <tr ng-repeat="product in productList.data">
           <td class="table-id">{{product.id}}</td>
           <td>{{product.name}}</td>
-          <td>{{product.category}}</td>
-          <td>{{product.price_min}}</td>
-          <td>{{product.price_max}}</td>
+          <!-- <td>{{product.category}}</td> -->
+          <td>{{formatPrice(product.price_min)}}</td>
+          <td>{{formatPrice(product.price_max)}}</td>
         </tr>
         </tbody>
         <tfoot>

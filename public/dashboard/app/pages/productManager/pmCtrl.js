@@ -12,12 +12,12 @@
   function pmCtrl($scope, $rootScope, $window, $http, $timeout, baConfig) {
     
     //notify all charts ctrl in virtual market dashboard
-    // $scope.$on('vmFilter', function(event, startDate, endDate) {
+    $scope.$on('addProduct', function(event, startDate, endDate) {
       
-    //     $timeout(function() {
-    //       $rootScope.$broadcast('updateVm', startDate, endDate);  
-    //     }, 1000);
-    // });
+        $timeout(function() {
+          $rootScope.$broadcast('updateProductList');  
+        }, 1000);
+    });
 
     // angular.element($window).bind('resize', function () {
     //   //$window.Morris.Grid.prototype.redraw();

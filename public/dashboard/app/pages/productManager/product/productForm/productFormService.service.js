@@ -4,8 +4,8 @@
   
   angular.module('BlurAdmin.pages.productManager')
     .service('productFormService', ['$http', function ($http) {
-      this.sendForm = function(data){
-        var uploadUrl = 'http://test.app';
+      this.sendForm = function(data, callbackFunc){
+        var uploadUrl = 'http://127.0.0.1:8001/api/virtualmarket/product/add';
         var fd = new FormData();
         //append data
         fd.append('product_name', data.name);
@@ -20,6 +20,7 @@
             headers: {'Content-Type': undefined}
         })
         .success(function(){
+            callbackFunc();
         })
         .error(function(){
         });

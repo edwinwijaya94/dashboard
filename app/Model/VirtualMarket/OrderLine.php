@@ -4,10 +4,10 @@ namespace App\Model\VirtualMarket;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ShoppingList extends Model
+class OrderLine extends Model
 {
 
     protected $connection = 'virtual_market';
-    protected $table = 'shopping_list';
+    protected $table = 'order_lines';
     public $timestamps = false;
 }

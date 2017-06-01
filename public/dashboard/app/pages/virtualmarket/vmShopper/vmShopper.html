@@ -77,7 +77,7 @@
               <tr ng-repeat="shopper in shopperList.shopper" class="no-top-border">
                 <td class="align-right">{{getRank($index)}}</td>
                 <td ng-class="nowrap">{{shopper.name}}</td>
-                <td ng-class="nowrap">{{shopper.rating}}</td>
+                <td ng-class="nowrap">{{formatRating(shopper.rating)}}</td>
               </tr>
             </tbody>
           </table>

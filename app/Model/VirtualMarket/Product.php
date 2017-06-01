@@ -8,6 +8,6 @@ class Product extends Model
 {
 
     protected $connection = 'virtual_market';
-    protected $table = 'product';
+    protected $table = 'products';
     public $timestamps = false;
 }

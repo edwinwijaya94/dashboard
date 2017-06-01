@@ -113,42 +113,42 @@ class VirtualMarketController extends Controller
         // execute
         // success rates
         $transactionStatus = DB::connection('virtual_market')
-                    ->table('order')
-                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('status, count(*), sum(total_price)'))
                     ->whereIn('status', ['success', 'failed'])
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('status')
                     ->get();
 
         // app platform (mobile / sms)
         $appPlatform = DB::connection('virtual_market')
-                    ->table('order')
-                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('order_type as name, count(*)'))
                     ->where('status', '=', 'success')
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('order_type')
                     ->get();
 
         // total transaction
         $currentTransaction = DB::connection('virtual_market')
-                    ->table('order')
-                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('status', '=', 'success')
                     ->get();
 
         $prevTransaction = DB::connection('virtual_market')
-                    ->table('order')
-                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
-                    ->where('order_at', '>=', $prevPeriod['startDate'])
-                    ->where('order_at', '<=', $prevPeriod['endDate'])
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
                     ->where('status', '=', 'success')
                     ->get();
 
@@ -170,11 +170,11 @@ class VirtualMarketController extends Controller
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
         if($granularity == 'month') {
-            $dateQuery = 'to_char(order_at, \'YYYY-MM\') as date';
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         } else if($granularity == 'day') {
-            $dateQuery = 'to_char(order_at, \'YYYY-MM-DD\') as date';
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         }
@@ -182,11 +182,11 @@ class VirtualMarketController extends Controller
         DB::enableQueryLog();
         // execute
         $transaction = DB::connection('virtual_market')
-                    ->table('order')
-                    ->join('order_status', 'order.orderstatus_id', '=', 'order_status.id')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw($query['aggregate'].'as value, count(*),'.$dateQuery))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('status', '=', 'success')
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
@@ -223,7 +223,7 @@ class VirtualMarketController extends Controller
         // execute
         // product availability
         $availability = DB::connection('virtual_market')
-                    ->table('product')
+                    ->table('products')
                     ->select(DB::raw('is_available, count(*)'))
                     ->groupBy('is_available')
                     // ->toSql();
@@ -232,7 +232,7 @@ class VirtualMarketController extends Controller
 
         // unavailable products
         $unavailableProducts = DB::connection('virtual_market')
-                    ->table('product')
+                    ->table('products')
                     ->select('name')
                     ->where('is_available', '=', false)
                     // ->limit(5)
@@ -259,14 +259,14 @@ class VirtualMarketController extends Controller
         // execute
         // success / failed transaction
         $query = DB::connection('virtual_market')
-                    ->table('shopping_list')
-                    ->join('product', 'shopping_list.product_id', '=', 'product.id')
-                    ->join('order', 'shopping_list.order_id', '=', 'order.id')
-                    ->select(DB::raw('product.name, count(*) as count, round(avg(shopping_list.subtotal_price/shopping_list.quantity), 2) as avg_price'))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
-                    ->groupBy('product.name')
-                    ->orderByRaw('count desc, product.name asc');
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('products.name, count(*) as count, round(avg(order_lines.price/order_lines.quantity), 2) as avg_price'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->groupBy('products.name')
+                    ->orderByRaw('count desc, products.name asc');
 
         $totalRows = $query->get()->count();
 
@@ -332,7 +332,7 @@ class VirtualMarketController extends Controller
         // execute
         $query = DB::connection('virtual_market')
                     ->table('garendongs')
-                    ->select(DB::raw('user_id as name, rating'))
+                    ->select(DB::raw('user_id as name, round((cast(rating as float)/num_rating)::numeric, 2) as rating'))
                     ->orderByRaw($ratingOrder);
 
         $totalRows = $query->get()->count();
@@ -368,22 +368,19 @@ class VirtualMarketController extends Controller
         DB::enableQueryLog();
         // execute
         $rating = DB::connection('virtual_market')
-                    ->table('user_feedback')
-                    ->join('order', 'user_feedback.order_id', '=', 'order.id')
-                    ->select(DB::raw('count(*) as transactions, round(avg(rating), 2) as value'))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
+                    ->table('garendongs')
+                    ->select(DB::raw('sum(num_rating) as transactions, round(avg(rating/num_rating), 2) as value'))
                     ->get();
 
         $feedback = DB::connection('virtual_market')
-                    ->table('reason_list')
-                    ->join('reason', 'reason_list.reason_id', '=', 'reason.id')
-                    ->join('user_feedback', 'reason_list.user_feedback_id', '=', 'user_feedback.id')
-                    ->join('order', 'user_feedback.order_id', '=', 'order.id')
+                    ->table('user_feedbacks')
+                    ->join('reasons', 'user_feedbacks.reason_id', '=', 'reasons.id')
+                    // ->join('user_feedbacks', 'user_feedbacks.user_feedback_id', '=', 'user_feedbacks.id')
+                    ->join('orders', 'user_feedbacks.order_id', '=', 'orders.id')
                     ->select(DB::raw('reason, count(*)'))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
-                    ->groupBy('reason.reason')
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->groupBy('reasons.reason')
                     ->get();
 
         $data = array();
@@ -417,39 +414,39 @@ class VirtualMarketController extends Controller
         // execute
         $uniqueBuyers = array();
         $uniqueBuyers['current_period'] = DB::connection('virtual_market')
-                                        ->table('order')
-                                        ->where('order_at', '>=', $query['startDate'])
-                                        ->where('order_at', '<=', $query['endDate'])
-                                        ->distinct('buyer_id')
-                                        ->count('buyer_id');
+                                        ->table('orders')
+                                        ->where('orders.created_at', '>=', $query['startDate'])
+                                        ->where('orders.created_at', '<=', $query['endDate'])
+                                        ->distinct('customer_id')
+                                        ->count('customer_id');
 
         $uniqueBuyers['prev_period'] = DB::connection('virtual_market')
-                                        ->table('order')
-                                        ->where('order_at', '>=', $prevPeriod['startDate'])
-                                        ->where('order_at', '<=', $prevPeriod['endDate'])
-                                        ->distinct('buyer_id')
-                                        ->count('buyer_id');
+                                        ->table('orders')
+                                        ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                                        ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                                        ->distinct('customer_id')
+                                        ->count('customer_id');
 
 
         // buyers who make transactions more than once
         $returningBuyers = array();        
         $returningBuyers['current_period'] = DB::connection('virtual_market')
-                    ->table('order')
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
-                    ->groupBy('buyer_id')
-                    ->havingRaw('count(buyer_id) > 1')
-                    ->distinct('buyer_id')
-                    ->count('buyer_id');
+                    ->table('orders')
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->groupBy('customer_id')
+                    ->havingRaw('count(customer_id) > 1')
+                    ->distinct('customer_id')
+                    ->count('customer_id');
 
         $returningBuyers['prev_period'] = DB::connection('virtual_market')
-                    ->table('order')
-                    ->where('order_at', '>=', $prevPeriod['startDate'])
-                    ->where('order_at', '<=', $prevPeriod['endDate'])
-                    ->groupBy('buyer_id')
-                    ->havingRaw('count(buyer_id) > 1')
-                    ->distinct('buyer_id')
-                    ->count('buyer_id');
+                    ->table('orders')
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->groupBy('customer_id')
+                    ->havingRaw('count(customer_id) > 1')
+                    ->distinct('customer_id')
+                    ->count('customer_id');
 
         $data = array();
         $data['unique_buyers'] = $uniqueBuyers;
@@ -466,11 +463,11 @@ class VirtualMarketController extends Controller
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
         if($granularity == 'month') {
-            $dateQuery = 'to_char(order_at, \'YYYY-MM\') as date';
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         } else if($granularity == 'day') {
-            $dateQuery = 'to_char(order_at, \'YYYY-MM-DD\') as date';
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         }
@@ -478,10 +475,10 @@ class VirtualMarketController extends Controller
         DB::enableQueryLog();
         // execute
         $buyer = DB::connection('virtual_market')
-                    ->table('order')
-                    ->select(DB::raw($dateQuery.',count(distinct buyer_id)'))
-                    ->where('order_at', '>=', $query['startDate'])
-                    ->where('order_at', '<=', $query['endDate'])
+                    ->table('orders')
+                    ->select(DB::raw($dateQuery.',count(distinct customer_id)'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
                     ->get();

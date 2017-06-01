@@ -24,10 +24,10 @@ angular.module('BlurAdmin.pages.virtualmarket')
     		var monthName = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
     		return monthName[index];
   	  },
-  	  formatNumber: function(value, isCurrency, isSimplify) {
+  	  formatNumber: function(value, isCurrency, isSimplified) {
         // max 2 decimal places
         var formatted = '';
-        if(isSimplify) {
+        if(isSimplified) {
           if(value>=1000000000)
             formatted = (value/1000000000).toString() + ' mi';
           else if(value>=1000000)

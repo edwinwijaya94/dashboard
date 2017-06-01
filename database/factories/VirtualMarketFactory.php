@@ -18,23 +18,23 @@ $factory->define(App\Model\VirtualMarket\Order::class, function (Faker\Generator
         'total_product' => $faker->numberBetween($min = 1, $max = 10),
         'total_price' => $faker->numberBetween($min = 5000, $max = 150000),
         'order_type' => $faker->randomElement($array = array ('mobile','sms')), // app platform
-        'order_at' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
-        'orderstatus_id' => $faker->numberBetween($min = 1, $max = 2),
-        'buyer_id' => $faker->numberBetween($min = 1, $max = 10),
-        'garendong_id' => $faker->numberBetween($min = 1, $max = 10),
+        'created_at' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
+        'order_status' => $faker->numberBetween($min = 1, $max = 2),
+        'customer_id' => $faker->numberBetween($min = 1, $max = 100),
+        'garendong_id' => $faker->numberBetween($min = 1, $max = 100),
     ];
 });
 
-// shopping list
-$factory->define(App\Model\VirtualMarket\ShoppingList::class, function (Faker\Generator $faker) {
+// order line
+$factory->define(App\Model\VirtualMarket\OrderLine::class, function (Faker\Generator $faker) {
 
     return [
         'quantity' => $faker->numberBetween($min = 1, $max = 10),
-        'unit' => $faker->randomElement($array = array ('ons','buah')),
-        'subtotal_price' => $faker->numberBetween($min = 5000, $max = 150000),
+        'unit_id' => $faker->numberBetween($min = 1, $max = 3),
+        'price' => $faker->numberBetween($min = 5000, $max = 150000),
         'is_priority' => $faker->boolean($chanceOfGettingTrue = 80),
-        'product_id' => $faker->numberBetween($min = 1, $max = 10),
-        'order_id' => $faker->numberBetween($min = 1, $max = 10),
+        'product_id' => $faker->numberBetween($min = 1, $max = 100),
+        'order_id' => $faker->numberBetween($min = 1, $max = 100),
     ];
 });
 
@@ -44,11 +44,11 @@ $factory->define(App\Model\VirtualMarket\Product::class, function (Faker\Generat
     return [
 
         'name' => $faker->word,
-        'quantity' => $faker->numberBetween($min = 1, $max = 10),
-        'unit_id' => $faker->numberBetween($min = 1, $max = 10),
+        'default_quantity' => $faker->numberBetween($min = 1, $max = 10),
+        'default_unit_id' => $faker->numberBetween($min = 1, $max = 10),
         'price_min' => $faker->numberBetween($min = 5000, $max = 10000),
         'price_max' => $faker->numberBetween($min = 10001, $max = 25000),
-        'file_img' => $faker->url,
+        'product_img' => $faker->url,
         'is_available' => $faker->boolean($chanceOfGettingTrue = 80),
         'category_id' => $faker->numberBetween($min = 1, $max = 10),
     ];
@@ -59,17 +59,7 @@ $factory->define(App\Model\VirtualMarket\UserFeedback::class, function (Faker\Ge
 
     return [
 
-        'order_id' => $faker->numberBetween($min = 1, $max = 10),
-        'rating' => $faker->numberBetween($min = 1, $max = 5),
-    ];
-});
-
-// reason list
-$factory->define(App\Model\VirtualMarket\ReasonList::class, function (Faker\Generator $faker) {
-
-    return [
-        
-        'user_feedback_id' => $faker->numberBetween($min = 1, $max = 10),
+        'order_id' => $faker->numberBetween($min = 1, $max = 100),
         'reason_id' => $faker->numberBetween($min = 1, $max = 3),
     ];
 });
@@ -79,10 +69,10 @@ $factory->define(App\Model\VirtualMarket\Garendong::class, function (Faker\Gener
 
     return [
 
-        'user_id' => $faker->numberBetween($min = 1, $max = 10),
+        'user_id' => $faker->numberBetween($min = 1, $max = 100),
         'number_of_allocation' => $faker->numberBetween($min = 1, $max = 10),
         'status' => $faker->numberBetween($min = 1, $max = 3),
-        'rating' => $faker->numberBetween($min = 1, $max = 5),
-        // 'rating' => $faker->randomFloat($nbMaxDecimals = 2, $min = 1, $max = 5),
+        'rating' => $faker->numberBetween($min = 1, $max = 25),
+        'num_rating' => $faker->numberBetween($min = 3, $max = 7)
     ];
 });

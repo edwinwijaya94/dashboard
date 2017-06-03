@@ -45,12 +45,23 @@
 
     // edit unit
     $scope.editUnit = function(unit) {
-      $scope.unitData = {
-        id: unit.id,
-        name: unit.unit,
-        type: unit.unit_type
-      };
-
+      var hostname = 'http://'+window.location.hostname+':8001';
+      $http.get(hostname+'/api/virtualmarket/units/'+unit.id)
+      .then(function(res) {
+        var data = res.data;
+        $scope.unitData = {
+          id: data.unit.id,
+          name: data.unit.unit,
+          type: data.unit.unit_type,
+        };
+        if(data.unit.unit_type == 'common')
+          $scope.unitData.convertInGram = data.converter.in_gram;
+        else if(data.unit.unit_type == 'uncommon')
+          $scope.unitData.convertInGram = 1;
+      })
+      .finally(function() {
+        
+      });
       $scope.showEditForm = true;
       $scope.formMode = 'edit';
 

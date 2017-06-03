@@ -331,6 +331,12 @@
 <script src="{{asset('dashboard/app/pages/productManager/category/categoryList/categoryList.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/category/categoryList/categoryListCtrl.js')}}"></script>
 
+<script src="{{asset('dashboard/app/pages/productManager/unit/unitForm/unitFormService.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/unit/unitForm/unitForm.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/unit/unitForm/unitFormCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitList.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitListCtrl.js')}}"></script>
+
 <!-- marketplace dashboard -->
 <script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>

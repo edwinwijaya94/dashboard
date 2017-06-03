@@ -13,6 +13,7 @@
     
     $scope.productData={};
     $scope.categoryData={};
+    $scope.unitData={};
     $scope.formMode = 'create';
 
     // notify
@@ -26,6 +27,12 @@
       
         $timeout(function() {
           $rootScope.$broadcast('updateCategoryList');  
+        }, 1000);
+    });
+    $scope.$on('addUnit', function(event) {
+      
+        $timeout(function() {
+          $rootScope.$broadcast('updateUnitList');  
         }, 1000);
     });
   }

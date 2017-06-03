@@ -1,19 +1,20 @@
-<div class="row" ng-controller="categoryListCtrl">
-  <div ba-panel ba-panel-title="Daftar Produk" ba-panel-class="panel-group">
-    <!-- category list -->
+<div class="row" ng-controller="unitListCtrl">
+  <div ba-panel ba-panel-title="Daftar Satuan" ba-panel-class="panel-group">
+    <!-- unit list -->
     <div class="horizontal-scroll">
       <div class="form-group select-page-size-wrap ">
         <label>Data per halaman
           <select class="form-control show-tick" title="Rows on page" selectpicker
-                  ng-model="categoryList.pageSize" ng-options="i for i in [10,25,50]">
+                  ng-model="unitList.pageSize" ng-options="i for i in [10,25,50]">
           </select>
         </label>
       </div>
-      <table class="table" st-table="categoryList.data" st-safe-src="updatedCategoryList">
+      <table class="table" st-table="unitList.data" st-safe-src="updatedUnitList">
         <thead>
         <tr class="sortable ">
           <th class="table-id" st-sort="id" st-sort-default="true">#</th>
           <th st-sort="name">Nama</th>
+          <th st-sort="name">Tipe</th>
           <th>Kelola</th>
         </tr>
         <tr>
@@ -25,13 +26,14 @@
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="category in categoryList.data">
-          <td class="table-id">{{category.id}}</td>
-          <td>{{category.name}}</td>
+        <tr ng-repeat="unit in unitList.data">
+          <td class="table-id">{{unit.id}}</td>
+          <td>{{unit.unit}}</td>
+          <td>{{formatUnitType(unit.unit_type)}}</td>
           <td>
             <div class="buttons">
-              <button class="btn btn-primary editable-table-button btn-xs" ng-click="editCategory(category)">Ubah</button>
-              <button class="btn btn-danger editable-table-button btn-xs" ng-click="confirmDelete(category)">Hapus</button>
+              <button class="btn btn-primary editable-table-button btn-xs" ng-click="editUnit(unit)">Ubah</button>
+              <button class="btn btn-danger editable-table-button btn-xs" ng-click="confirmDelete(unit)">Hapus</button>
             </div>
           </td>
         </tr>
@@ -39,7 +41,7 @@
         <tfoot>
         <tr>
           <td colspan="6" class="text-center">
-            <div st-pagination="" st-items-by-page="categoryList.pageSize" st-displayed-pages="5"></div>
+            <div st-pagination="" st-items-by-page="unitList.pageSize" st-displayed-pages="5"></div>
           </td>
         </tr>
         </tfoot>

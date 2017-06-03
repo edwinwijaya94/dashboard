@@ -1,0 +1,38 @@
+<div ng-controller="unitFormCtrl">
+  <form class="form-horizontal" ng-submit="submitForm()">
+    <div class="form-group">
+      <label for="name" class="col-sm-2 control-label">Nama</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="name" ng-model="unit.name" ng-required="1">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="type" class="col-sm-2 control-label">Tipe Satuan</label>
+      <div class="row form-group">
+        <div class="col-md-2">
+          <label class="radio-inline custom-radio nowrap">
+            <input type="radio" name="unitType" value="common" ng-model="unit.type">
+            <span>Massa</span>
+          </label>
+        </div>
+        <div class="col-md-2">
+          <label class="radio-inline custom-radio nowrap">
+            <input type="radio" name="unitType" value="uncommon" ng-model="unit.type">
+            <span>Lainnya</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group" ng-show="unit.type=='common'">
+      <label for="name" class="col-sm-2 control-label">Nilai (dalam Gram)</label>
+      <div class="col-md-4">        
+        <input type="text" class="form-control" id="customUnit" ng-model="unit.convertInGram" ng-required="unit.type=='common'">
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">{{submitText}}</button>
+      </div>
+    </div>
+  </form>
+</div>

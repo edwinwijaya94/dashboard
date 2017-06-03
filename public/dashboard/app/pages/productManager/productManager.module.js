@@ -36,15 +36,15 @@
           sidebarMeta: {
             order: 2,
           },
+        })
+        .state('productManager.unit', {
+          url: '/unit',
+          templateUrl: 'app/pages/productManager/unit/unit.html',
+          title: 'Satuan',
+          sidebarMeta: {
+            order: 3,
+          },
         });
-        // .state('productManager.unit', {
-        //   url: '/unit',
-        //   templateUrl: 'app/pages/productManager/category/category.html',
-        //   title: 'Unit',
-        //   sidebarMeta: {
-        //     order: 3,
-        //   },
-        // });
   }
 
 })();

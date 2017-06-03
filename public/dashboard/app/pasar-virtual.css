@@ -71,3 +71,12 @@
   padding: 5px;
   text-align: right;
 }
+
+.pv-product-modal {
+  z-index: 1050;
+  width: 100%;
+  height: 125%;
+}
+.pv-product-modal .modal-dialog{
+  bottom: 275px;
+}

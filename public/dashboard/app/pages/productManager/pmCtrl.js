@@ -11,6 +11,9 @@
   /** @ngInject */
   function pmCtrl($scope, $rootScope, $window, $http, $timeout, baConfig) {
     
+    $scope.productData={};
+    $scope.formMode = 'create';
+
     //notify all charts ctrl in virtual market dashboard
     $scope.$on('addProduct', function(event, startDate, endDate) {
       
@@ -18,10 +21,6 @@
           $rootScope.$broadcast('updateProductList');  
         }, 1000);
     });
-
-    // angular.element($window).bind('resize', function () {
-    //   //$window.Morris.Grid.prototype.redraw();
-    // });
   }
 
  

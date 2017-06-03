@@ -5,7 +5,7 @@
       <div class="form-group select-page-size-wrap ">
         <label>Produk per halaman
           <select class="form-control show-tick" title="Rows on page" selectpicker
-                  ng-model="productList.pageSize" ng-options="i for i in [5,10,15,20,25]">
+                  ng-model="productList.pageSize" ng-options="i for i in [10,25,50]">
           </select>
         </label>
       </div>
@@ -17,7 +17,7 @@
           <!-- <th st-sort="category">Kategori</th> -->
           <th st-sort="price_min">Harga Minimum (Rp)</th>
           <th st-sort="price_max">Harga Maksimum (Rp)</th>
-          <!-- <th st-sort="age">Age</th> -->
+          <th>Kelola</th>
         </tr>
         <tr>
           <th></th>
@@ -29,6 +29,7 @@
           </th> -->
           <th></th>
           <th></th>
+          <th></th>
         </tr>
         </thead>
         <tbody>
@@ -38,6 +39,12 @@
           <!-- <td>{{product.category}}</td> -->
           <td>{{formatPrice(product.price_min)}}</td>
           <td>{{formatPrice(product.price_max)}}</td>
+          <td>
+            <div class="buttons">
+              <button class="btn btn-primary editable-table-button btn-xs" ng-click="editProduct(product)">Ubah</button>
+              <button class="btn btn-danger editable-table-button btn-xs" ng-click="confirmDelete(product)">Hapus</button>
+            </div>
+          </td>
         </tr>
         </tbody>
         <tfoot>

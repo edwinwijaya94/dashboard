@@ -9,8 +9,14 @@
   function productForm() {
     return {
       restrict: 'E',
-      // controller: 'productFormCtrl',
+      scope: {
+        product: '=product',
+        mode: '=mode'
+      },
       templateUrl: 'app/pages/productManager/product/productForm/productForm.html'
+      // link: function (scope, element, attrs) {
+      //   console.log('Scope property:', scope.product);
+      // }
     };
   }
 })();

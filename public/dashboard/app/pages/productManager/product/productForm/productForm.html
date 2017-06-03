@@ -1,79 +1,88 @@
-<div class="row" ng-controller="productFormCtrl">
-  <div ba-panel ba-panel-title="Tambah Produk" ba-panel-class="panel-group">
-    <form class="form-horizontal" ng-submit="createProduct()">
-      <div class="form-group">
-        <label for="name" class="col-sm-2 control-label">Nama</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control" id="name" ng-model="productForm.name">
+<div ng-controller="productFormCtrl">
+  <form class="form-horizontal" ng-submit="submitForm()">
+    <div class="form-group">
+      <label for="name" class="col-sm-2 control-label">Nama</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="name" ng-model="product.name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="category" class="col-sm-2 control-label">Kategori</label>
+      <div class="col-sm-10">
+        <select class="form-control" title="category" selectpicker ng-model="product.category" ng-options="category.name for category in categoryList track by category.id">
+          <!-- <option ng-repeat="category in categoryList" ng-value="category.id" ng-selected="$index==0">{{category.name}}</option>> -->
+        </select>
+      </div>
+    </div>
+    <div class="form-group" ng-show="mode=='edit'">
+      <div class="col-sm-offset-2 col-sm-10">
+        <div class="checkbox">
+          <label class="custom-checkbox">
+            <input type="checkbox" ng-model="product.isUploadImg">
+            <span>Ganti Gambar</span>
+          </label>
         </div>
       </div>
-      <div class="form-group">
-        <label for="category" class="col-sm-2 control-label">Kategori</label>
-        <div class="col-sm-10">
-          <select class="form-control" title="category" selectpicker ng-model="productForm.category" ng-options="category.name for category in categoryList track by category.id">
-            <!-- <option ng-repeat="category in categoryList" ng-value="category.id" ng-selected="$index==0">{{category.name}}</option>> -->
-          </select>
-        </div>
+    </div>
+    <div class="form-group">
+      <label for="image" class="col-sm-2 control-label" >Gambar</label>
+      <div class="col-sm-10">        
+        <input type="file" class="form-control" id="image" file-model="product.image" onchange="angular.element(this).scope().loadImg(this)" ng-show="product.isUploadImg">
+        <img ng-src="{{product.imgUrl}}" width="100" height="100" ng-show="product.showImg">
       </div>
-      <div class="form-group">
-        <label for="image" class="col-sm-2 control-label">Upload Gambar</label>
-        <div class="col-sm-10">        
-          <input type="file" class="form-control" id="image" file-model="productForm.image">
-        </div>
+    </div>
+    <div class="form-group">
+      <label for="price" class="col-sm-2 control-label">Harga</label>
+      <div class="col-sm-10">        
+        <input type="text" class="form-control" id="price" ng-model="product.price">
       </div>
-      <div class="form-group">
-        <label for="price" class="col-sm-2 control-label">Harga</label>
-        <div class="col-sm-10">        
-          <input type="text" class="form-control" id="price" ng-model="productForm.price">
-        </div>
+    </div>
+    <div class="form-group">
+      <label for="quantity" class="col-sm-2 control-label">Kuantitas</label>
+      <div class="col-sm-10">        
+        <input type="text" class="form-control" id="quantity" ng-model="product.quantity">
       </div>
-      <div class="form-group">
-        <label for="quantity" class="col-sm-2 control-label">Kuantitas</label>
-        <div class="col-sm-10">        
-          <input type="text" class="form-control" id="quantity" ng-model="productForm.quantity">
-        </div>
+    </div>
+    <div class="form-group">
+      <label for="unitType" class="col-md-2 control-label">Satuan</label>
+      <div class="col-md-4">
+        <select class="form-control" title="unit" selectpicker ng-model="product.unit" ng-options="unit.unit for unit in unitList track by unit.id">
+          <!-- <option ng-repeat="unit in unitList" ng-value="unit.id" ng-selected="$index==0">{{unit.unit}}</option>> -->
+        </select>
       </div>
-      <div class="form-group">
-        <label for="unitType" class="col-md-2 control-label">Satuan</label>
-        <div class="col-md-4">
-          <select class="form-control" title="unit" selectpicker ng-model="productForm.unit" ng-options="unit.unit for unit in unitList track by unit.id">
-            <!-- <option ng-repeat="unit in unitList" ng-value="unit.id" ng-selected="$index==0">{{unit.unit}}</option>> -->
-          </select>
-        </div>
-        <!-- <div class="col-md-10">
-          <div class="row form-group">
-            <div class="col-md-2">
-              <label class="radio-inline custom-radio nowrap">
-                <input type="radio" name="unitType" value="mass" ng-model="productForm.unitType">
-                <span>Massa</span>
-              </label>
-            </div>
-            <div class="col-md-4">
-              <select class="form-control" title="massUnit" selectpicker ng-model="productForm.massUnit" ng-disabled="productForm.unitType!='mass'">
-                <option value="ons">Ons</option>
-                <option value="gram">Gram</option>
-                <option value="kilogram">Kilogram</option>
-              </select>
-            </div>
+      <!-- <div class="col-md-10">
+        <div class="row form-group">
+          <div class="col-md-2">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="unitType" value="mass" ng-model="productForm.unitType">
+              <span>Massa</span>
+            </label>
           </div>
-          <div class="row form-group">
-            <div class="col-md-2">
-              <label class="radio-inline custom-radio nowrap">
-                <input type="radio" name="unitType" value="custom" ng-model="productForm.unitType">
-                <span>Lainnya</span>
-              </label>
-            </div>
-            <div class="col-md-4">        
-              <input type="text" class="form-control" id="customUnit" ng-model="productForm.customUnit"  ng-disabled="productForm.unitType=='mass'">
-            </div>
+          <div class="col-md-4">
+            <select class="form-control" title="massUnit" selectpicker ng-model="productForm.massUnit" ng-disabled="productForm.unitType!='mass'">
+              <option value="ons">Ons</option>
+              <option value="gram">Gram</option>
+              <option value="kilogram">Kilogram</option>
+            </select>
           </div>
-        </div> -->
-      </div>
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-primary">Tambah</button>
         </div>
+        <div class="row form-group">
+          <div class="col-md-2">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="unitType" value="custom" ng-model="productForm.unitType">
+              <span>Lainnya</span>
+            </label>
+          </div>
+          <div class="col-md-4">        
+            <input type="text" class="form-control" id="customUnit" ng-model="productForm.customUnit"  ng-disabled="productForm.unitType=='mass'">
+          </div>
+        </div>
+      </div> -->
+    </div>
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-primary">{{submitText}}</button>
       </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>

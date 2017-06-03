@@ -319,11 +319,17 @@
 <script src="{{asset('dashboard/app/pages/productManager/pmCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/fileModel.directive.js')}}"></script>
 
-<script src="{{asset('dashboard/app/pages/productManager/product//productForm/productFormService.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/product/productForm/productFormService.service.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/product/productForm/productForm.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/product/productForm/productFormCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/product/productList/productList.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/product/productList/productListCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/productManager/category/categoryForm/categoryFormService.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/category/categoryForm/categoryForm.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/category/categoryForm/categoryFormCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/category/categoryList/categoryList.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/productManager/category/categoryList/categoryListCtrl.js')}}"></script>
 
 <!-- marketplace dashboard -->
 <script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>

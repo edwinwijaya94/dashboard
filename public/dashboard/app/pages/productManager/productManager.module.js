@@ -28,15 +28,15 @@
           sidebarMeta: {
             order: 1,
           },
+        })
+        .state('productManager.category', {
+          url: '/category',
+          templateUrl: 'app/pages/productManager/category/category.html',
+          title: 'Kategori',
+          sidebarMeta: {
+            order: 2,
+          },
         });
-        // .state('productManager.category', {
-        //   url: '/category',
-        //   templateUrl: 'app/pages/productManager/category/category.html',
-        //   title: 'Kategori',
-        //   sidebarMeta: {
-        //     order: 2,
-        //   },
-        // })
         // .state('productManager.unit', {
         //   url: '/unit',
         //   templateUrl: 'app/pages/productManager/category/category.html',

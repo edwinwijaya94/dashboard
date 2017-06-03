@@ -80,3 +80,11 @@
 .pv-product-modal .modal-dialog{
   bottom: 275px;
 }
+.pv-category-modal {
+  z-index: 1050;
+  width: 100%;
+  height: 125%;
+}
+.pv-category-modal .modal-dialog{
+  bottom: 275px;
+}

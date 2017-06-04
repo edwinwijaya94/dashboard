@@ -6,7 +6,7 @@
       .controller('vmBuyerCtrl', vmBuyerCtrl);
 
   /** @ngInject */
-  function vmBuyerCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
+  function vmBuyerCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper, uiGmapGoogleMapApi) {
     var layoutColors = baConfig.colors;
     // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     
@@ -171,5 +171,55 @@
       }
     };
 
+    // MAPS CONTROL
+    $scope.buyerMap = {};
+    $scope.buyerMap.showDetail = function(index) {
+      console.log(id);
+    }
+    $scope.buyerMap.circles = [];
+    $scope.buyerMap.options = {
+      center: { latitude: -0.2298, longitude: 100.6309 },
+      zoom: 13
+    };
+
+    uiGmapGoogleMapApi.then(function(maps) {
+      var geocoder =  new google.maps.Geocoder();
+      var districts = ['Payakumbuh Barat', 'Payakumbuh Timur', 'Payakumbuh Selatan', 'Payakumbuh Utara', 'Lamposi Tigo Nagari'];
+      for(let i=0; i<districts.length; i++) { // use 'let' for binding index on loop
+        geocoder.geocode( { 'address': districts[i]+', id'}, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            var circle = {
+              id: i+1,
+              center: {
+                  latitude: results[0].geometry.location.lat(),
+                  longitude: results[0].geometry.location.lng()
+              },
+              radius: (Math.floor(Math.random() * 2000) + 500),
+              stroke: {
+                  color: 'white',
+                  weight: 2,
+                  opacity: 1
+              },
+              fill: {
+                  color: 'red',
+                  opacity: 0.5
+              },
+              geodesic: true, // optional: defaults to false
+              draggable: false, // optional: defaults to false
+              clickable: true, // optional: defaults to true
+              editable: false, // optional: defaults to false
+              visible: true, // optional: defaults to true
+              control: {}
+            };
+            $scope.buyerMap.circles.push(circle);
+            
+          } else {
+            console.log('error gmaps geocoder');
+          }
+        });
+      }
+      console.log($scope.buyerMap.circles);
+
+    });
   }
 })();

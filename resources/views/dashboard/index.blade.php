@@ -147,9 +147,16 @@
 <script src="{{asset('dashboard/lib/ngJsTree.js')}}"></script>
 <script src="{{asset('dashboard/lib/select.js')}}"></script>
 <script src="{{asset('dashboard/lib/daterangepicker.js')}}"></script>
+<!-- Google Maps Library -->
+<script src="{{asset('dashboard/lib/lodash.min.js')}}"></script>
+<script src="{{asset('dashboard/lib/angular-simple-logger.js')}}"></script>
+<script src="{{asset('dashboard/lib/angular-google-maps.min.js')}}"></script>
 <!-- endbower -->
 <!-- endbuild -->
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<!-- <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script> -->
+
+<!-- GOOGLE MAPS API -->
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBjNwqA1TB6RC_5rnlIE4Aqfijd3iHoRRs"></script> -->
 
 <!-- build:js({.tmp/serve,.tmp/partials,src}) scripts/app.js -->
 <!-- inject:js -->

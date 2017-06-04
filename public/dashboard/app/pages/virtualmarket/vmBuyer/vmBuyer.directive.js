@@ -7,7 +7,7 @@
 
   angular.module('BlurAdmin.pages.virtualmarket')
       .directive('vmBuyer', vmBuyer);
-
+      
   /** @ngInject */
   function vmBuyer() {
     return {

@@ -96,3 +96,5 @@
 .pv-unit-modal .modal-dialog{
   bottom: 275px;
 }
+
+.angular-google-map-container { height: 400px; }

@@ -11,19 +11,15 @@
 |
 */
 
-// Marketplace transaction
-$factory->define(App\Model\Marketplace\Transaction::class, function (Faker\Generator $faker) {
+// Marketplace order
+$factory->define(App\Model\Marketplace\Order::class, function (Faker\Generator $faker) {
 
     return [
-    	'datetime' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
-        'seller_type' => $faker->randomElement($array = array ('sentra','perorangan')),
-        'seller_id' => $faker->randomDigit,
-        'buyer_id' => $faker->randomDigit,
-        'product_id' => $faker->randomDigit,
-        'quantity' => $faker->randomDigit,
-        'amount' => $faker->numberBetween($min = 5000, $max = 150000),
-        'payment_method' => $faker->randomElement($array = array ('cod','credit_card','debit_card')),
-        'delivery_id' => $faker->randomDigit,
-        'status' => $faker->randomElement($array = array ('ordered','on_delivery','closed')),
+        'buyer_id' => $faker->numberBetween($min = 1, $max = 10),
+        'store_id' => $faker->numberBetween($min = 5000, $max = 150000),
+        'quantity' => $faker->randomElement($array = array ('mobile','sms')), // app platform
+        'time' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
+        'payment_method' => $faker->numberBetween($min = 1, $max = 2),
+        'status' => $faker->randomElement($array = array ('success','failed')),
     ];
 });

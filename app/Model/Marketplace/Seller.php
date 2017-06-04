@@ -4,10 +4,10 @@ namespace App\Model\Marketplace;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Transaction extends Model
+class Seller extends Model
 {
 
     protected $connection = 'marketplace';
-    protected $table = 'transaction';
-
+    protected $table = 'sellers';
+    protected $timestamps = false;
 }

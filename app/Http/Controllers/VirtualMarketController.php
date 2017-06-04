@@ -235,7 +235,7 @@ class VirtualMarketController extends Controller
                     ->table('products')
                     ->select('name')
                     ->where('is_available', '=', false)
-                    // ->limit(5)
+                    ->limit(5) //separate this api and create pagination
                     // ->toSql();
                     ->get();
         
@@ -265,7 +265,7 @@ class VirtualMarketController extends Controller
                     ->select(DB::raw('products.name, count(*) as count, round(avg(order_lines.price/order_lines.quantity), 2) as avg_price'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->groupBy('products.name')
+                    ->groupBy('products.id')
                     ->orderByRaw('count desc, products.name asc');
 
         $totalRows = $query->get()->count();

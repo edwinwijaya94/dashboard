@@ -57,6 +57,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
 	    factory(App\Model\VirtualMarket\Product::class, $num)->create();
 	    factory(App\Model\VirtualMarket\UserFeedback::class, $num)->create();
 	    factory(App\Model\VirtualMarket\Garendong::class, $num)->create();
+        factory(App\Model\VirtualMarket\Address::class, $num)->create();
 	} else if($system == 'mp') {
         
 	}

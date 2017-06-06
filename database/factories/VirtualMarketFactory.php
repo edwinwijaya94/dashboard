@@ -76,3 +76,16 @@ $factory->define(App\Model\VirtualMarket\Garendong::class, function (Faker\Gener
         'num_rating' => $faker->numberBetween($min = 3, $max = 7)
     ];
 });
+
+// address
+$factory->define(App\Model\VirtualMarket\Address::class, function (Faker\Generator $faker) {
+    $cities = array('Payakumbuh');
+    $districts = array('Payakumbuh Barat', 'Payakumbuh Timur', 'Payakumbuh Selatan', 'Payakumbuh Utara', 'Lamposi Tigo Nagari');
+    return [
+
+        'user_id' => $faker->numberBetween($min = 1, $max = 100),
+        'city' => $faker->randomElement($cities),
+        'district' => $faker->randomElement($districts),
+        'address' => $faker->streetAddress
+    ];
+});

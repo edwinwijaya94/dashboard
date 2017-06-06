@@ -38,6 +38,10 @@ class VirtualMarketController extends Controller
         $query = array();
         $query['startDate'] = $request->query('start_date', $default['startDate']);
         $query['endDate'] = $request->query('end_date', $default['endDate']);
+        // modify date to timestamp format
+        $query['startDate'] = $query['startDate'].' 00:00:00';
+        $query['endDate'] = $query['endDate'].' 23:59:59';
+        
         $query['type'] = $request->query('type', $default['type']);
 
         // aggregate query, ex: coalesce(sum(total_price), 0)
@@ -68,12 +72,12 @@ class VirtualMarketController extends Controller
     public function getPrevDatePeriod($startDate, $endDate) {
         $prevDatePeriod = array();
         
-        $start = Carbon::createFromFormat('Y-m-d', $startDate);
-        $end = Carbon::createFromFormat('Y-m-d', $endDate);
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $startDate);
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $endDate);
         $diff = $start->diffInDays($end)+1;
-        $start = $start->subDays($diff)->toDateString();
-        $end = $end->subDays($diff)->toDateString();
-
+        $start = $start->subDays($diff)->toDateTimeString();
+        $end = $end->subDays($diff)->toDateTimeString();
+        
         $prevDatePeriod['startDate'] = $start;
         $prevDatePeriod['endDate'] = $end;
 
@@ -81,8 +85,8 @@ class VirtualMarketController extends Controller
     }
 
     public function getGranularity($startDate, $endDate) {
-        $start = Carbon::createFromFormat('Y-m-d', $startDate);
-        $end = Carbon::createFromFormat('Y-m-d', $endDate);
+        $start = Carbon::createFromFormat('Y-m-d  H:i:s', $startDate);
+        $end = Carbon::createFromFormat('Y-m-d  H:i:s', $endDate);
         $diff = $start->diffInDays($end)+1;
 
         if($diff > 30) {
@@ -404,6 +408,8 @@ class VirtualMarketController extends Controller
             return $this->getBuyerStats($query);
         else if($query['type'] == 'history')
             return $this->getBuyerHistory($query);
+        else if($query['type'] == 'map')
+            return $this->getBuyerMap($query);
     }
 
     public function getBuyerStats($query)
@@ -486,6 +492,31 @@ class VirtualMarketController extends Controller
         $data = array();
         $data['granularity'] = $granularity;
         $data['buyer'] = $buyer;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
+    public function getBuyerMap($query)
+    {
+        
+        DB::enableQueryLog();
+        // execute
+        $data = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
+                    ->join('addresses', 'orders.customer_id', '=', 'addresses.user_id')
+                    // ->select('*')
+                    ->select(DB::raw('addresses.district, count(*)'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('order_statuses.status', '=', 'success')
+                    ->groupBy('addresses.district')
+                    ->get();
+
         $status = $this->setStatus();
 
         return response()->json([

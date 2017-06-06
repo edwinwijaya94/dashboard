@@ -86,6 +86,8 @@ $factory->define(App\Model\VirtualMarket\Address::class, function (Faker\Generat
         'user_id' => $faker->numberBetween($min = 1, $max = 100),
         'city' => $faker->randomElement($cities),
         'district' => $faker->randomElement($districts),
-        'address' => $faker->streetAddress
+        'address' => $faker->streetAddress,
+        'latitude' => $faker->latitude($min = -0.274, $max = -0.184),
+        'longitude' => $faker->latitude($min = 100.579, $max = 100.682)
     ];
 });

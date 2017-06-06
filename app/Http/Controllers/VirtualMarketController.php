@@ -509,12 +509,11 @@ class VirtualMarketController extends Controller
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->join('addresses', 'orders.customer_id', '=', 'addresses.user_id')
-                    // ->select('*')
-                    ->select(DB::raw('addresses.district, count(*)'))
+                    ->select(DB::raw('addresses.user_id, addresses.latitude, addresses.longitude'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('order_statuses.status', '=', 'success')
-                    ->groupBy('addresses.district')
+                    // ->groupBy('addresses.district')
                     ->get();
 
         $status = $this->setStatus();

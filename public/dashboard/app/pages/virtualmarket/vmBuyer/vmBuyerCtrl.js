@@ -177,64 +177,96 @@
     $scope.buyerMap.showDetail = function(index) {
       console.log(id);
     }
-    $scope.buyerMap.circles = [];
+    // $scope.buyerMap.circles = [];
     $scope.buyerMap.config = {
       center: { latitude: -0.2298, longitude: 100.6309 },
       zoom: 13,
       options: {scrollwheel: false}
     };
+
     $scope.getMap = function(startDate, endDate) {
-      $scope.buyerMap.circles = [];
+      // $scope.buyerMap.circles = [];
+      $scope.buyerMap.points = [];
       uiGmapIsReady.promise(1).then(function(instances) {
         instances.forEach(function(inst) {
           var map = inst.map
           $http.get('/api/virtualmarket/buyer?type=map&start_date='+startDate+'&end_date='+endDate)
             .then(function(res) {
               var data = res.data.data;
-              var geocoder =  new google.maps.Geocoder();
-              // var districts = ['Payakumbuh Barat', 'Payakumbuh Timur', 'Payakumbuh Selatan', 'Payakumbuh Utara', 'Lamposi Tigo Nagari'];
               for(let i=0; i<data.length; i++) { // use 'let' for binding index on loop
-                geocoder.geocode( { 'address': data[i].district+', id'}, function(results, status) {
-                  if (status == google.maps.GeocoderStatus.OK) {
-                    var circle = {
-                      id: i+1,
-                      center: {
-                          latitude: results[0].geometry.location.lat(),
-                          longitude: results[0].geometry.location.lng()
-                      },
-                      radius: Math.sqrt(data[i].count * 10000),
-                      stroke: {
-                          color: 'white',
-                          weight: 2,
-                          opacity: 1
-                      },
-                      fill: {
-                          color: 'red',
-                          opacity: 0.5
-                      },
-                      geodesic: true, // optional: defaults to false
-                      draggable: false, // optional: defaults to false
-                      clickable: true, // optional: defaults to true
-                      editable: false, // optional: defaults to false
-                      visible: true, // optional: defaults to true
-                      control: {}
-                    };
-                    $scope.buyerMap.circles.push(circle);
-                    
-                  } else {
-                    console.log('error gmaps geocoder');
-                  }
-                });
+                var point = {
+                  id: i,
+                  latitude: data[i].latitude,
+                  longitude: data[i].longitude
+                };
+                $scope.buyerMap.points.push(point);
               }
             })
             .finally(function() {
-              $scope.loading= false;
+              // $scope.loading= false;
             });    
           
 
         });
       });
     };
+
+
+
+
+
+    // $scope.getMap = function(startDate, endDate) {
+    //   $scope.buyerMap.circles = [];
+    //   uiGmapIsReady.promise(1).then(function(instances) {
+    //     instances.forEach(function(inst) {
+    //       var map = inst.map
+    //       $http.get('/api/virtualmarket/buyer?type=map&start_date='+startDate+'&end_date='+endDate)
+    //         .then(function(res) {
+    //           var data = res.data.data;
+    //           var geocoder =  new google.maps.Geocoder();
+    //           // var districts = ['Payakumbuh Barat', 'Payakumbuh Timur', 'Payakumbuh Selatan', 'Payakumbuh Utara', 'Lamposi Tigo Nagari'];
+    //           for(let i=0; i<data.length; i++) { // use 'let' for binding index on loop
+    //             geocoder.geocode( { 'address': data[i].district+', id'}, function(results, status) {
+    //               if (status == google.maps.GeocoderStatus.OK) {
+    //                 var circle = {
+    //                   id: i+1,
+    //                   center: {
+    //                       latitude: results[0].geometry.location.lat(),
+    //                       longitude: results[0].geometry.location.lng()
+    //                   },
+    //                   radius: Math.sqrt(data[i].count * 10000),
+    //                   stroke: {
+    //                       color: 'white',
+    //                       weight: 2,
+    //                       opacity: 1
+    //                   },
+    //                   fill: {
+    //                       color: 'red',
+    //                       opacity: 0.5
+    //                   },
+    //                   geodesic: true, // optional: defaults to false
+    //                   draggable: false, // optional: defaults to false
+    //                   clickable: true, // optional: defaults to true
+    //                   editable: false, // optional: defaults to false
+    //                   visible: true, // optional: defaults to true
+    //                   control: {}
+    //                 };
+    //                 $scope.buyerMap.circles.push(circle);
+                    
+    //               } else {
+    //                 console.log('error gmaps geocoder');
+    //               }
+    //             });
+    //           }
+    //         })
+    //         .finally(function() {
+    //           $scope.loading= false;
+    //         });    
+          
+
+    //     });
+    //   });
+    // };
 
   }
 })();

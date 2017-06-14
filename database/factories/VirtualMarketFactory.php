@@ -22,6 +22,7 @@ $factory->define(App\Model\VirtualMarket\Order::class, function (Faker\Generator
         'order_status' => $faker->numberBetween($min = 1, $max = 2),
         'customer_id' => $faker->numberBetween($min = 1, $max = 100),
         'garendong_id' => $faker->numberBetween($min = 1, $max = 100),
+        'rating' => $faker->numberBetween($min = 1, $max = 5),
     ];
 });
 
@@ -33,6 +34,7 @@ $factory->define(App\Model\VirtualMarket\OrderLine::class, function (Faker\Gener
         'unit_id' => $faker->numberBetween($min = 1, $max = 3),
         'price' => $faker->numberBetween($min = 5000, $max = 150000),
         'is_priority' => $faker->boolean($chanceOfGettingTrue = 80),
+        'is_available' => $faker->boolean($chanceOfGettingTrue = 80),
         'product_id' => $faker->numberBetween($min = 1, $max = 100),
         'order_id' => $faker->numberBetween($min = 1, $max = 100),
     ];

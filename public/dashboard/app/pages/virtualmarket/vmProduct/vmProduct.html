@@ -1,9 +1,9 @@
-<div class="row" ng-controller="vmCommodityCtrl">
-  <div class="row col-md-12" ba-panel ba-panel-title="Data Komoditas" ba-panel-class="panel-group">
+<div class="row" ng-controller="vmProductCtrl">
+  <div class="row col-md-12" ba-panel ba-panel-title="Data Produk" ba-panel-class="panel-group">
 
     <div class="row">
-      <div class="row">
-        <!-- availability rates -->
+      <!-- availability rates -->
+      <!-- <div class="row">  
         <div class="pie-charts">
           <div class="pie-chart-item-container" ng-repeat="chart in charts">
             <div ba-panel
@@ -18,22 +18,23 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
 
       <div class="row">
         <!-- top commodities -->
-        <div class="col-md-6"
+        <div class="col-md-12"
            ba-panel
-           ba-panel-title="Banyak Dibeli"
+           ba-panel-title="Daftar Produk"
            ba-panel-class="pv-panel table-panel" style="height:400px">
           <div>
             <table class="table table-hover">
               <thead>
                 <tr style="background-color:{{colors.green}}">
                   <th class="align-left" style="color:white">#</th>
-                  <th class="align-left" style="color:white">Nama Komoditas</th>
+                  <th class="align-left" style="color:white">Nama Produk</th>
                   <th class="align-left" style="color:white">#Penjualan</th>
                   <th class="align-left" style="color:white">Harga Rata-Rata(Rp)</th>
+                  <th class="align-left" style="color:white">Ketersediaan(%)</th>
                 </tr>
               </thead>
               <tbody>
@@ -41,7 +42,8 @@
                   <td class="align-right">{{getRank($index)}}</td>
                   <td ng-class="nowrap">{{product.name}}</td>
                   <td ng-class="nowrap">{{product.count}}</td>
-                  <td ng-class="nowrap">{{formatPrice(product.avg_price)}}</td>
+                  <td ng-class="nowrap">{{formatNumber(product.avg_price)}}</td>
+                  <td ng-class="nowrap">{{formatNumber(product.availability)}}</td>
                 </tr>
               </tbody>
             </table>
@@ -53,7 +55,7 @@
         </div>
 
         <!-- unavailable commodities -->
-        <div class="col-md-6"
+        <!-- <div class="col-md-6"
            ba-panel
            ba-panel-title="Tidak Tersedia"
            ba-panel-class="pv-panel table-panel" style="height:400px">
@@ -73,7 +75,7 @@
               </tbody>
             </table>
           </div>
-        </div>
+        </div> -->
 
       </div>
     </div>

@@ -311,8 +311,8 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
 
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodity.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmCommodity/vmCommodityCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProduct.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyer.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyerCtrl.js')}}"></script>

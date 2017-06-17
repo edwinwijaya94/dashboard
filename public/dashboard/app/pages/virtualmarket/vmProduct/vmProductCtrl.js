@@ -3,10 +3,10 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.virtualmarket')
-      .controller('vmCommodityCtrl', vmCommodityCtrl);
+      .controller('vmProductCtrl', vmProductCtrl);
 
   /** @ngInject */
-  function vmCommodityCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
+  function vmProductCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
     // COLORS
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
     var pieColor = vmHelper.colors.primary.green;
@@ -40,11 +40,11 @@
     // PRODUCT STATS
     $scope.getStats = function(startDate, endDate) {
       $scope.loading = true;
-      $http.get('/api/virtualmarket/commodity?type=stats&start_date='+startDate+'&end_date='+endDate)
+      $http.get('/api/virtualmarket/product?type=stats&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
           var data = res.data.data;
           $scope.showAvailability(data.availability);
-          $scope.showUnavailableProducts(data.unavailable_products);
+          // $scope.showUnavailableProducts(data.unavailable_products);
         })
         .finally(function() {
           $scope.loading= false;
@@ -102,7 +102,7 @@
     // PRODUCT TOPLIST
     $scope.getProductList = function(startDate, endDate, page, rows) {
       $scope.loading = true;
-      $http.get('/api/virtualmarket/commodity?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
+      $http.get('/api/virtualmarket/product?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
         .then(function(res) {
           var data = res.data.data;
           $scope.showProducts(data);
@@ -121,8 +121,8 @@
       return (index+1+(($scope.productList.page-1)*$scope.productList.rowsPerPage));
     };
     
-    $scope.formatPrice = function(price) {
-      return vmHelper.formatNumber(price,false,false);
+    $scope.formatNumber = function(number) {
+      return vmHelper.formatNumber(number,false,false);
     };
 
     $scope.changeProductPage = function() {

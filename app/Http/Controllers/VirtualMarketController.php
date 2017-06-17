@@ -209,19 +209,19 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
-    // COMMODITY
-    public function getCommodity(Request $request)
+    // PRODUCT
+    public function getProduct(Request $request)
     {
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
 
         if($query['type'] == 'toplist')
-            return $this->getCommodityTopList($query);
+            return $this->getProductTopList($query);
         else if($query['type'] == 'stats')
-            return $this->getCommodityStats($query);
+            return $this->getProductStats($query);
     }
     
-    public function getCommodityStats($query)
+    public function getProductStats($query)
     {
         DB::enableQueryLog();
         // execute
@@ -255,7 +255,7 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
-    public function getCommodityTopList($query)
+    public function getProductTopList($query)
     {
         $rows = (int)$query['rows'];
         $page = (int)$query['page'];
@@ -266,7 +266,7 @@ class VirtualMarketController extends Controller
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
                     ->join('orders', 'order_lines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('products.name, count(*) as count, round(avg(order_lines.price/order_lines.quantity), 2) as avg_price'))
+                    ->select(DB::raw('products.name, count(*), round(avg(order_lines.price/order_lines.quantity), 2) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
@@ -335,11 +335,18 @@ class VirtualMarketController extends Controller
         DB::enableQueryLog();
         // execute
         $query = DB::connection('virtual_market')
-                    ->table('garendongs')
-                    ->select(DB::raw('user_id as name, round((cast(rating as float)/num_rating)::numeric, 2) as rating'))
+                    ->table('orders')
+                    ->join('garendongs', 'garendongs.id', '=', 'orders.garendong_id')
+                    ->select(DB::raw('garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->groupBy('garendongs.user_id')
                     ->orderByRaw($ratingOrder);
 
         $totalRows = $query->get()->count();
+
+        $avgRating = round($query->get()->avg('rating'), 2);
+        // dd($avgRating);
 
         $shopper = $query
                     ->skip($page*$rows - $rows)
@@ -348,6 +355,7 @@ class VirtualMarketController extends Controller
 
         $data = array();
         $data['total_rows'] = $totalRows;
+        $data['avg_rating'] = $avgRating;
         $data['shopper'] = $shopper;
         $status = $this->setStatus();
 

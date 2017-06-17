@@ -13,9 +13,9 @@
             <div>
               <div class="description">
                 <div>
-                  <span>{{ ::stats.shopper.description }}</span>
+                  <span>Garendong Aktif</span>
                 </div><br>
-                <div class="description-stats" ng-bind="stats.shopper.value"></div><br>
+                <div class="description-stats" ng-bind="shopperList.totalRows"></div><br>
               </div>
             </div>
           </div>
@@ -24,12 +24,12 @@
             <div>
               <div class="description">
                 <div>
-                  <span>{{ ::stats.rating.description }}</span>
+                  <span>Rata-Rata Rating</span>
                 </div><br>
-                <div class="description-stats" ng-bind="stats.rating.value"></div><br>
-                <div>
+                <div class="description-stats" ng-bind="shopperList.avgRating"></div><br>
+                <!-- <div>
                   <span>dari {{stats.rating.transactions}} transaksi</span>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -70,13 +70,15 @@
               <tr style="background-color:{{shopperListOptions.selected.color}}">
                 <th class="align-left" style="color:white">#</th>
                 <th class="align-left" style="color:white">Nama</th>
-                <th class="align-left" style="color:white">#Rating</th>
+                <th class="align-left" style="color:white">Jumlah Order</th>
+                <th class="align-left" style="color:white">Rating</th>
               </tr>
             </thead>
             <tbody>
               <tr ng-repeat="shopper in shopperList.shopper" class="no-top-border">
                 <td class="align-right">{{getRank($index)}}</td>
                 <td ng-class="nowrap">{{shopper.name}}</td>
+                <td ng-class="nowrap">{{shopper.orders}}</td>
                 <td ng-class="nowrap">{{formatRating(shopper.rating)}}</td>
               </tr>
             </tbody>

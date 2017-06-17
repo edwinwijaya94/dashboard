@@ -6,14 +6,14 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.virtualmarket')
-      .directive('vmCommodity', vmCommodity);
+      .directive('vmProduct', vmProduct);
 
   /** @ngInject */
-  function vmCommodity() {
+  function vmProduct() {
     return {
       restrict: 'E',
-      // controller: 'vmCommodityCtrl',
-      templateUrl: 'app/pages/virtualmarket/vmCommodity/vmCommodity.html'
+      // controller: 'vmProductCtrl',
+      templateUrl: 'app/pages/virtualmarket/vmProduct/vmProduct.html'
     };
   }
 })();

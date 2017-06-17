@@ -49,7 +49,7 @@
     $scope.getData = function(startDate, endDate) {
       $scope.getStats(startDate, endDate);
       $scope.getHistory(startDate, endDate);
-      $scope.getMap(startDate, endDate);
+      // $scope.getMap(startDate, endDate);
     }
 
     // BUYER STATS

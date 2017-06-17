@@ -19,7 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 // virtual market
 Route::get('/virtualmarket/transaction', 'VirtualMarketController@getTransaction');
-Route::get('/virtualmarket/commodity', 'VirtualMarketController@getCommodity');
+Route::get('/virtualmarket/product', 'VirtualMarketController@getProduct');
 Route::get('/virtualmarket/shopper', 'VirtualMarketController@getShopper');
 Route::get('/virtualmarket/feedback', 'VirtualMarketController@getFeedback');
 Route::get('/virtualmarket/buyer', 'VirtualMarketController@getBuyer');

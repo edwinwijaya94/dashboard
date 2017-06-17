@@ -18,10 +18,10 @@
     
     // INIT DATA
     $scope.stats = {
-      shopper: {
-        description: 'Jumlah Garendong',
-        value: 0
-      },
+      // shopper: {
+      //   description: 'Jumlah Garendong',
+      //   value: 0
+      // },
       rating: {
         description: 'Rating',
         transactions: 0,
@@ -32,6 +32,7 @@
     $scope.initShopperList = function() {
       $scope.shopperList = {
         totalRows: 0,
+        avgRating: 0 + ' / 5',
         page: 1,
         rowsPerPage: 5,
         displayedPages: 1,
@@ -70,7 +71,7 @@
     });
 
     $scope.getData = function(startDate, endDate) {
-      $scope.getShopperStats(startDate, endDate);
+      // $scope.getShopperStats(startDate, endDate);
       $scope.getShopperList(startDate, endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
       $scope.getFeedbackStats(startDate, endDate);
     };
@@ -107,6 +108,7 @@
 
     $scope.showShopperList = function(data, sortBy) {
       $scope.shopperList.totalRows = data.total_rows;
+      $scope.shopperList.avgRating = $scope.formatRating(data.avg_rating) + ' / 5';
       $scope.shopperList.shopper = data.shopper;
     };
 

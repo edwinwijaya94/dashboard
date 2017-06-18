@@ -29,12 +29,15 @@
       }
     };
 
+    
     $scope.initShopperList = function() {
+      $scope.shopperPageIndex = 1;
+      $scope.shopperPageSize = 5;
       $scope.shopperList = {
         totalRows: 0,
         avgRating: 0 + ' / 5',
-        page: 1,
-        rowsPerPage: 5,
+        // pageIndex: 1,
+        // pageSize: 5,
         displayedPages: 1,
         shopper:[]
       };
@@ -72,7 +75,7 @@
 
     $scope.getData = function(startDate, endDate) {
       // $scope.getShopperStats(startDate, endDate);
-      $scope.getShopperList(startDate, endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
+      $scope.getShopperList(startDate, endDate, $scope.shopperList.page, $scope.shopperList.pageSize, $scope.shopperListOptions.selected.value);
       $scope.getFeedbackStats(startDate, endDate);
     };
 
@@ -109,22 +112,30 @@
     $scope.showShopperList = function(data, sortBy) {
       $scope.shopperList.totalRows = data.total_rows;
       $scope.shopperList.avgRating = $scope.formatRating(data.avg_rating) + ' / 5';
-      $scope.shopperList.shopper = data.shopper;
+      // $scope.shopperList.shopper = data.shopper;
+
+      $scope.updatedShopperList = data.shopper;
+      // copy references
+      $scope.shopperList.shopper = [].concat($scope.updatedShopperList);
     };
 
     $scope.sortList = function(item, model) {
       $scope.initShopperList();
       $scope.shopperListOptions.selected = item; // update selected option
       // $scope.showShopperList($scope.shopperData, model);
-      $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
+      $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.pageSize, $scope.shopperListOptions.selected.value);
     };
 
     $scope.getRank = function(index) {
-      return (index+1+(($scope.shopperList.page-1)*$scope.shopperList.rowsPerPage));
+      return (index+1+(($scope.shopperList.page-1)*$scope.shopperList.pageSize));
     };
 
-    $scope.changeShopperPage = function() {
-      $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.rowsPerPage, $scope.shopperListOptions.selected.value);
+    $scope.changeShopperPage = function(newPage) {
+      // $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.pageSize, $scope.shopperListOptions.selected.value);
+      // console.log(newPage);
+      $scope.shopperPageIndex = newPage;
+      // console.log($scope.shopperList.pageIndex);
+      // console.log($scope.shopperList.pageSize);
     };
 
     // FEEDBACK STATS

@@ -27,7 +27,7 @@
            ba-panel-title="Daftar Produk"
            ba-panel-class="pv-panel table-panel" style="height:400px">
           <div>
-            <table class="table table-hover">
+            <!-- <table class="table table-hover">
               <thead>
                 <tr style="background-color:{{colors.green}}">
                   <th class="align-left" style="color:white">#</th>
@@ -46,11 +46,50 @@
                   <td ng-class="nowrap">{{formatNumber(product.availability)}}</td>
                 </tr>
               </tbody>
-            </table>
+            </table> -->
             <!-- pagination -->
-            <div class="row" style="text-align:center" ng-show="productList.totalRows>0">
+            <!-- <div class="row" style="text-align:center" ng-show="productList.totalRows>0">
               <ul uib-pagination total-items="productList.totalRows" items-per-page="productList.rowsPerPage" max-size="productList.displayedPages" previous-text="<" next-text=">" ng-model="productList.page" ng-change="changeProductPage()"></ul>
-            </div>
+            </div> -->
+
+            <!-- NEW TABLE -->
+          <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
+            <thead>
+            <tr class="sortable ">
+              <th class="table-id">#</th>
+              <th st-sort="name">Nama Produk</th>
+              <th st-sort="count" st-sort-default="reverse">Penjualan</th>
+              <th st-sort="avg_price">Harga Rata-Rata(Rp)</th>
+              <th st-sort="availability">Ketersediaan(%)</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>
+                <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/>
+              </th>
+              <th></th>
+              <th></th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="product in productList.product">
+              <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+              <td>{{product.name}}</td>
+              <td>{{product.count}}</td>
+              <td>{{formatNumber(product.avg_price)}}</td>
+              <td>{{formatNumber(product.availability)}}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="6" class="text-center">
+                <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+
           </div>
         </div>
 

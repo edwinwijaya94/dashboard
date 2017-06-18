@@ -15,10 +15,12 @@
 
     // INIT DATA
     $scope.initProductList = function() {
+      $scope.productPageIndex = 1;
+      $scope.productPageSize = 5;
       $scope.productList = {
         totalRows: 0,
-        page: 1,
-        rowsPerPage: 5,
+        // page: 1,
+        // rowsPerPage: 5,
         displayedPages: 1,
         product:[]
       };
@@ -114,7 +116,11 @@
 
     $scope.showProducts = function(data) {
       $scope.productList.totalRows = data.total_rows;
-      $scope.productList.product = data.product;
+      // $scope.productList.product = data.product;
+
+      $scope.updatedProductList = data.product;
+      // copy references
+      $scope.productList.product = [].concat($scope.updatedProductList);
     };
 
     $scope.getRank = function(index) {
@@ -125,8 +131,9 @@
       return vmHelper.formatNumber(number,false,false);
     };
 
-    $scope.changeProductPage = function() {
-      $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
+    $scope.changeProductPage = function(newPage) {
+      // $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
+      $scope.productPageIndex = newPage;
     };
   }
 })();

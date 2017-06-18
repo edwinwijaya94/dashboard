@@ -275,8 +275,8 @@ class VirtualMarketController extends Controller
         $totalRows = $query->get()->count();
 
         $product = $query
-                    ->skip($page*$rows - $rows)
-                    ->take($rows)
+                    // ->skip($page*$rows - $rows)
+                    // ->take($rows)
                     ->get();
 
         $data = array();
@@ -349,8 +349,8 @@ class VirtualMarketController extends Controller
         // dd($avgRating);
 
         $shopper = $query
-                    ->skip($page*$rows - $rows)
-                    ->take($rows)
+                    // ->skip($page*$rows - $rows)
+                    // ->take($rows)
                     ->get();
 
         $data = array();

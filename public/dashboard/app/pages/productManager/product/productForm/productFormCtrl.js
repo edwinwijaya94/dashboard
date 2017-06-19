@@ -118,7 +118,10 @@
     };
 
     $scope.resetForm = function() {
-      $scope.product = {};    
+      $scope.product = {
+        isUploadImg: true,
+        isShowImg: false
+      };    
       $scope.product.category = $scope.categoryList[0];
       $scope.product.unit = $scope.unitList[0];
       angular.element("input[type='file']").val(null);

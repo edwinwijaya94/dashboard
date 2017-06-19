@@ -69,7 +69,10 @@
     };
 
     $scope.resetForm = function() {
-      $scope.category = {};
+      $scope.category = {
+        isUploadImg: true,
+        isShowImg: false
+      };
       angular.element("input[type='file']").val(null);
     };
 

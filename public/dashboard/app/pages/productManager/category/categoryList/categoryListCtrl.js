@@ -6,7 +6,7 @@
       .controller('categoryListCtrl', categoryListCtrl);
 
   /** @ngInject */
-  function categoryListCtrl($scope, $timeout, $http, $rootScope, $uibModal, baConfig, baUtil, pmHelper) {
+  function categoryListCtrl($scope, $timeout, $http, $rootScope, $uibModal, baConfig, baUtil, pmHelper, toastr) {
     var layoutColors = baConfig.colors;
     // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     
@@ -88,9 +88,10 @@
 
       var id = $scope.categoryDelete.id;
       var hostname = 'http://'+window.location.hostname+':8001';
-      $http.delete(hostname+'/api/virtualmarket/category/'+id)
+      $http.post(hostname+'/api/virtualmarket/categories/delete/'+id)
         .then(function(res) {
           $scope.getCategoryList(); // get updated category list
+          $rootScope.deleteModalInstance.close('a');
           $scope.showMessage();
         })
         .finally(function() {

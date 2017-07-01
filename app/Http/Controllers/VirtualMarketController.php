@@ -340,6 +340,7 @@ class VirtualMarketController extends Controller
                     ->select(DB::raw('garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
+                    ->whereNotNull('orders.rating')
                     ->groupBy('garendongs.user_id')
                     ->orderByRaw($ratingOrder);
 

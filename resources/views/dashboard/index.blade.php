@@ -96,7 +96,7 @@
 <!-- <script src="{{asset('dashboard/lib/responsive.min.js')}}"></script> -->
 <script src="{{asset('dashboard/lib/serial.js')}}"></script>
 <!-- <script src="{{asset('dashboard/lib/funnel.js')}}"></script> -->
-<!-- <script src="{{asset('dashboard/lib/pie.js')}}"></script> -->
+<script src="{{asset('dashboard/lib/pie.js')}}"></script>
 <!-- <script src="{{asset('dashboard/lib/gantt.js')}}"></script> -->
 <!-- <script src="{{asset('dashboard/lib/amstock.js')}}"></script> -->
 <!-- <script src="{{asset('dashboard/lib/ammap.js')}}"></script> -->

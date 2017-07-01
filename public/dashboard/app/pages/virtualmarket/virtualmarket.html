@@ -1,7 +1,29 @@
 <div ng-controller="vmCtrl">
 	<vm-filter></vm-filter>
-	<vm-transaction></vm-transaction>
+	<!-- <vm-transaction></vm-transaction>
 	<vm-product></vm-product>
 	<vm-buyer></vm-buyer>
-	<vm-shopper></vm-shopper>
+	<vm-shopper></vm-shopper> -->
+	<div
+		class="row col-md-12"
+    ba-panel
+    ba-panel-class="horizontal-tabs panel-group" style="margin-bottom:75px">
+
+		<uib-tabset active="active">
+		  <uib-tab heading="Transaksi">
+		  	<vm-transaction></vm-transaction>
+		  </uib-tab>
+		  <uib-tab heading="Produk">
+		    <vm-product></vm-product>
+		  </uib-tab>
+		  <uib-tab heading="Pembeli">
+		    <vm-buyer></vm-buyer>
+		  </uib-tab>
+		  <uib-tab heading="Garendong">
+				<vm-shopper></vm-shopper>	    
+		  </uib-tab>
+		</uib-tabset>  
+
+	</div>
+	
 </div>

@@ -1,11 +1,11 @@
 <div class="row" ng-controller="vmTransactionCtrl">
-  <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group"> -->
 
     <!-- STATS -->
-    <div class="row" style="min-height:150px">
+    <div class="row" style="height:150px">
       <!-- transaction success rate -->
       <div class="pie-charts col-md-12">
-        <div class="col-md-4" ng-repeat="stat in stats">
+        <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
           <div class="">
             <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
             <div class="description">
@@ -18,16 +18,23 @@
             </div>
           </div>
         </div>
+        <!-- app platform -->        
+        <div class="col-md-4">
+          <div class="description">
+            <div>Platform Aplikasi</div><br>
+          </div>
+          <div id="vmTransactionPlatform" class="admin-chart" style="height:150px"></div>
+        </div>
+
       </div>
       
     </div>
 
     <!-- app platform -->
-    <div class="col-md-12"
+    <!-- <div class="col-md-12"
        ba-panel
        ba-panel-title="Platform Aplikasi"
        ba-panel-class="pv-panel">
-       <!-- app platform used -->
       <div class="row">
         <div class="col-lg-12 col-md-12">
           <div class="progress">
@@ -35,20 +42,15 @@
               {{formatPlatform(platform)}}
             </div>
           </div>
-          <!-- loading / no data handler -->
-          <!-- <div class="pv-chart-medium-overlay" ng-show="loading || noData">
-            <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-            <div class="pv-chart-loading" ng-show="loading"></div>
-          </div> -->
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- TRANSACTION HISTORY -->
     <div class="col-lg-12 col-md-12 col-sm-12"
          ba-panel
          ba-panel-title="Tren Transaksi"
-         ba-panel-class="pv-panel" style="height:500px">
+         ba-panel-class="pv-panel" style="height:350px; margin-bottom:25px">
       <div class="row">
         <div class="row">
           <div class="col-md-1 col-md-offset-8">Tampilkan:</div>  
@@ -66,7 +68,7 @@
           </div>
         </div>
         <div class="col-lg-12 col-md-12">
-          <div id="vmTransactionByHistory" class="pv-chart" style="height:400px"></div>
+          <div id="vmTransactionByHistory" class="pv-chart" style="height:300px"></div>
           <!-- loading / no data handler -->
           <div class="pv-chart-medium-overlay" ng-show="loading || noData">
             <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
@@ -75,5 +77,5 @@
         </div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 </div>

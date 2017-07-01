@@ -25,7 +25,7 @@
       rating: {
         description: 'Rating',
         transactions: 0,
-        value: 0 + ' / 5'
+        value: 0
       }
     };
 
@@ -111,7 +111,7 @@
 
     $scope.showShopperList = function(data, sortBy) {
       $scope.shopperList.totalRows = data.total_rows;
-      $scope.shopperList.avgRating = $scope.formatRating(data.avg_rating) + ' / 5';
+      $scope.shopperList.avgRating = $scope.formatRating(data.avg_rating);
       // $scope.shopperList.shopper = data.shopper;
 
       $scope.updatedShopperList = data.shopper;

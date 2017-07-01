@@ -21,7 +21,7 @@
     $scope.stats = {
       transaction_status: {
         color: pieColor,
-        description: 'Transaksi Sukses',
+        description: '% Sukses',
         info: '',
         value: 0,
         percent: 0,
@@ -31,19 +31,7 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-      },
-      transaction_avg: {
-        color: pieColor,
-        description: 'Rata Rata',
-        info: '',
-        value: vmHelper.formatNumber(0,true,false),
-        percent: 0,
-        showPie: false,
-        showChange: true,
-        change: 0,
-        prevValue: 0,
-        icon:'ion-arrow-up-b',
-        iconColor: $scope.colors.green,
+        colSize: 3,
       },
       transaction_value: {
         color: pieColor,
@@ -57,6 +45,21 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
+        colSize: 3,
+      },
+      transaction_avg: {
+        color: pieColor,
+        description: 'Rata Rata',
+        info: '',
+        value: vmHelper.formatNumber(0,true,false),
+        percent: 0,
+        showPie: false,
+        showChange: true,
+        change: 0,
+        prevValue: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 2,
       }
     };
 
@@ -83,7 +86,7 @@
       $scope.getHistory(startDate, endDate);
     }
 
-    // TRANSACTION STATS
+    // TRANSACTION STATS AND PLATFORM
     $scope.getStats = function(startDate, endDate) {
       // $scope.loading = true;
       $http.get('/api/virtualmarket/transaction?type=stats&start_date='+startDate+'&end_date='+endDate)
@@ -91,7 +94,7 @@
           var data = res.data.data;
           $scope.showSuccessRate(data.transaction_status);
           $scope.showTransaction(data.transaction);
-          $scope.showPlatform(data.app_platform);
+          $scope.drawPlatformChart(data.app_platform);
         })
         .finally(function() {
           // $scope.loading= false;
@@ -128,23 +131,47 @@
       $scope.stats.transaction_status.percent = percentage;
     }
 
-    $scope.showPlatform = function(data) {
-      var platforms = data;
-      var total = 0;
-      for(var i=0; i<platforms.length; i++) {
-        total += parseInt(platforms[i].count);
-      }
-      for(var i=0; i<platforms.length; i++) {
-        platforms[i].percentage = (parseInt(platforms[i].count) / total * 100).toFixed(2);
-        platforms[i].color = $scope.chartColors[i];
-      }
+    // $scope.showPlatform = function(data) {
+    //   var platforms = data;
+    //   var total = 0;
+    //   for(var i=0; i<platforms.length; i++) {
+    //     total += parseInt(platforms[i].count);
+    //   }
+    //   for(var i=0; i<platforms.length; i++) {
+    //     platforms[i].percentage = (parseInt(platforms[i].count) / total * 100).toFixed(2);
+    //     platforms[i].color = $scope.chartColors[i];
+    //   }
 
-      $scope.platforms = platforms;
-    }
+    //   $scope.platforms = platforms;
+    // };
 
-    $scope.formatPlatform = function(platform) {
-      return platform.name + '(' + Math.round(platform.percentage) + ' %)';
-    }
+    // $scope.formatPlatform = function(platform) {
+    //   return platform.name + '(' + Math.round(platform.percentage) + ' %)';
+    // };
+
+    $scope.drawPlatformChart = function(data) {
+      var chart = AmCharts.makeChart( "vmTransactionPlatform", {
+        "type": "pie",
+        "theme": "light",
+        "dataProvider": data,
+        "valueField": "count",
+        "titleField": "name",
+         "balloon":{
+         "fixedPosition":true
+        },
+        "export": {
+          "enabled": true
+        },
+        "colors": $scope.chartColors,
+        "radius": "60px",
+        "marginTop": 0,
+        "marginBottom": 0,
+        "marginLeft": 5,
+        "marginRight": 0,
+        "pullOutRadius": 0,
+        "startDuration": 0,
+      } );
+    };
 
     $scope.showTransaction = function(data) {
       // transaction average value
@@ -165,6 +192,7 @@
         stat.icon = 'ion-arrow-down-b';
         stat.iconColor = $scope.colors.red;
       }
+      stat.colSize = $scope.stats.transaction_avg.colSize;
       // format currency
       stat.value = vmHelper.formatNumber(stat.value,true,false);
       stat.change = vmHelper.formatNumber(stat.change,false,false);
@@ -188,6 +216,7 @@
         stat.icon = 'ion-arrow-down-b';
         stat.iconColor = $scope.colors.red;
       }
+      stat.colSize = $scope.stats.transaction_value.colSize;
       // format numbers
       stat.value = vmHelper.formatNumber(stat.value,true,false);
       stat.change = vmHelper.formatNumber(stat.change,false,false);
@@ -202,7 +231,7 @@
           var data = res.data.data;
           data.transaction = vmHelper.fixLineChartNullValues(data.transaction, data.granularity, ['count', 'value']); // add null points as zero
           $scope.data = data; // update data
-          $scope.drawChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
+          $scope.drawTrendChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
         })
         .finally(function() {
           $scope.loading= false;
@@ -283,7 +312,7 @@
       return vmHelper.getLineChartOptions(options);
     };
 
-    $scope.drawChart =  function(data, metric, colors) {
+    $scope.drawTrendChart =  function(data, metric, colors) {
       var label = '';
       if(metric == 'count')
         label = 'Jumlah Transaksi'
@@ -303,7 +332,7 @@
     };
 
     $scope.changeMetric = function() {
-      $scope.drawChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
+      $scope.drawTrendChart($scope.data, $scope.transactionHistory.metric, $scope.colors);
     };
 
   }

@@ -26,3 +26,7 @@ Route::get('/virtualmarket/buyer', 'VirtualMarketController@getBuyer');
 
 // marketplace
 Route::get('/marketplace/transaction', 'MarketplaceController@getTransaction');
+Route::get('/marketplace/product', 'MarketplaceController@getProduct');
+Route::get('/marketplace/sentra', 'MarketplaceController@getSentra');
+Route::get('/marketplace/feedback', 'MarketplaceController@getFeedback');
+Route::get('/marketplace/buyer', 'MarketplaceController@getBuyer');

@@ -9,5 +9,5 @@ class Buyer extends Model
 
     protected $connection = 'marketplace';
     protected $table = 'buyers';
-    protected $timestamps = false;
+    public $timestamps = false;
 }

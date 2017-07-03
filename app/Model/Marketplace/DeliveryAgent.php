@@ -9,5 +9,5 @@ class DeliveryAgent extends Model
 
     protected $connection = 'marketplace';
     protected $table = 'delivery_agents';
-    protected $timestamps = false;
+    public $timestamps = false;
 }

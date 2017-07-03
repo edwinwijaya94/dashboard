@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
+use Phpml\Regression\LeastSquares;
+
 class VirtualMarketController extends Controller
 {
     
@@ -30,6 +32,7 @@ class VirtualMarketController extends Controller
         $default['page'] = 1;
         $default['rows'] = 5;
         $default['sort'] = 'highest';
+        $default['productId'] = 1;
         return $default;
     }
 
@@ -55,6 +58,8 @@ class VirtualMarketController extends Controller
         $query['page'] = $request->query('page', $default['page']);
         $query['rows'] = $request->query('rows', $default['rows']);
         $query['sort'] = $request->query('sort', $default['sort']);
+
+        $query['productId'] = $request->query('product_id', $default['productId']);
 
         return $query;
     }
@@ -219,6 +224,8 @@ class VirtualMarketController extends Controller
             return $this->getProductTopList($query);
         else if($query['type'] == 'stats')
             return $this->getProductStats($query);
+        else if($query['type'] == 'prediction')
+            return $this->getProductPrediction($query);
     }
     
     public function getProductStats($query)
@@ -257,8 +264,8 @@ class VirtualMarketController extends Controller
 
     public function getProductTopList($query)
     {
-        $rows = (int)$query['rows'];
-        $page = (int)$query['page'];
+        // $rows = (int)$query['rows'];
+        // $page = (int)$query['page'];
         DB::enableQueryLog();
         // execute
         // success / failed transaction
@@ -282,6 +289,93 @@ class VirtualMarketController extends Controller
         $data = array();
         $data['total_rows'] = $totalRows;
         $data['product'] = $product;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
+    public function getProductPrediction($query)
+    {
+        // $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        // if($granularity == 'month') {
+        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+        //     $dateGroupBy = array('date');
+        //     $dateOrder = 'date asc';
+        // } else if($granularity == 'day') {
+        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+        //     $dateGroupBy = array('date');
+        //     $dateOrder = 'date asc';
+        // }
+
+        $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+        $dateGroupBy = array('date');
+        $dateOrder = 'date asc';
+
+        DB::enableQueryLog();
+        // execute
+        $query = DB::connection('virtual_market')
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('count(*),'.$dateQuery))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('order_lines.product_id', '=', $query['productId'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder);
+
+        $product = $query
+                    ->get()
+                    ->toArray();
+        
+        //fix null values
+        $trendData = [];
+        $prevTime = NULL;
+        for($i=0; $i<count($product); $i++) {
+          $item = $product[$i];
+          
+          $currentTime = Carbon::createFromFormat('Y-m-d', $item->date);
+          if ($prevTime != NULL) {
+            for ($time=$prevTime->addDay(); $time->lt($currentTime); $time->addDay()) {
+
+              $x = array();
+              $x['date'] = $time->toDateString();
+              $x['count'] = 0;
+              
+              array_push($trendData, (object)$x);
+            }
+          }
+          array_push($trendData, $item);
+          $prevTime = $currentTime;
+        }
+        // print_r($trendData);
+        
+
+        // predict using regression
+        $samples = [];
+        $targets = [];
+        for($i=0; $i<count($trendData); $i++) {
+            array_push($samples, [$i+1]);
+            array_push($targets, $trendData[$i]->count);
+        }
+        // print_r($samples);
+        // print_r($targets);
+
+        $regression = new LeastSquares();
+        $regression->train($samples, $targets);
+
+        $prediction = [];
+        $prediction['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDay()->toDateString();
+        $prediction['count'] = round($regression->predict([count($trendData)+1]), 0);
+
+
+        $data = array();
+        $data['trend'] = $trendData;
+        $data['prediction'] = $prediction;
+
         $status = $this->setStatus();
 
         return response()->json([

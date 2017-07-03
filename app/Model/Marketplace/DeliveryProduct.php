@@ -9,5 +9,5 @@ class DeliveryProduct extends Model
 
     protected $connection = 'marketplace';
     protected $table = 'delivery_products';
-    protected $timestamps = false;
+    public $timestamps = false;
 }

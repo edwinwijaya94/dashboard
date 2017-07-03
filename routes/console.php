@@ -21,6 +21,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
 	
 	$num = (int)$num;
 	if($system == 'vm') {
+        
         if($init == 'yes') {
             // order_status
             DB::connection('virtual_market')->table('order_statuses')->insert([
@@ -59,6 +60,24 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
 	    factory(App\Model\VirtualMarket\Garendong::class, $num)->create();
         factory(App\Model\VirtualMarket\Address::class, $num)->create();
 	} else if($system == 'mp') {
-        
+
+        if($init == 'yes') {
+            // payment method
+            DB::connection('marketplace')->table('payment_method_types')->insert([
+                ['name' => 'transfer', 'type' => 'a', 'image' => 'a', 'description' => 'a' ],
+                ['name' => 'kartu debit', 'type' => 'a', 'image' => 'a', 'description' => 'a' ],
+                ['name' => 'kartu kredit', 'type' => 'a', 'image' => 'a', 'description' => 'a' ],
+            ]);
+        }
+        factory(App\Model\Marketplace\Buyer::class, $num)->create();
+        factory(App\Model\Marketplace\Sentra::class, $num)->create();
+        factory(App\Model\Marketplace\Store::class, $num)->create();
+        factory(App\Model\Marketplace\Category::class, $num)->create();
+        factory(App\Model\Marketplace\Product::class, $num)->create();
+        factory(App\Model\Marketplace\DeliveryAgent::class, $num)->create();
+        // factory(App\Model\Marketplace\StoreProduct::class, $num)->create();
+        factory(App\Model\Marketplace\Order::class, $num)->create();
+        factory(App\Model\Marketplace\OrderLine::class, $num*3)->create();
+        factory(App\Model\Marketplace\Rating::class, $num)->create();
 	}
 })->describe('Seed db with specific number of records');

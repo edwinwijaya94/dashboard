@@ -9,5 +9,5 @@ class SellerStore extends Model
 
     protected $connection = 'marketplace';
     protected $table = 'seller_stores';
-    protected $timestamps = false;
+    public $timestamps = false;
 }

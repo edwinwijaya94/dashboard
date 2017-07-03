@@ -4,10 +4,10 @@ namespace App\Model\Marketplace;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Center extends Model
+class Category extends Model
 {
 
     protected $connection = 'marketplace';
-    protected $table = 'centers';
-    protected $timestamps = false;
+    protected $table = 'categories';
+    public $timestamps = false;
 }

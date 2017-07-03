@@ -163,11 +163,11 @@
           "enabled": true
         },
         "colors": $scope.chartColors,
-        "radius": "60px",
+        "radius": 60,
         "marginTop": 0,
         "marginBottom": 0,
-        "marginLeft": 5,
-        "marginRight": 0,
+        "marginLeft": 20,
+        "marginRight": 20,
         "pullOutRadius": 0,
         "startDuration": 0,
       } );
@@ -258,20 +258,6 @@
         title: title,
         gridColor: layoutColors.border,
         valueLabelFunction: function(y) {
-          // var yValue;
-          // if(y>=1000000000)
-          //   yValue = (y/1000000000).toString() + ' mi';
-          // else if(y>=1000000)
-          //   yValue = (y/1000000).toString() + ' jt';
-          // else if (y>=1000)
-          //   yValue = (y/1000).toString() + ' rb';
-          // else 
-          //   yValue = y.toString();
-
-          // if(metric == 'value')
-          //   return vmHelper.formatCurrency(yValue);
-          // else 
-          //   return yValue;
           var isCurrency;
           if(metric == 'value')
             isCurrency = true;

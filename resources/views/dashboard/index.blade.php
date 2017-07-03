@@ -313,12 +313,16 @@
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProduct.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductTrendCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyer.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyerCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopper.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopperCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmFeedback/vmFeedback.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmFeedback/vmFeedbackCtrl.js')}}"></script>
 
 <!-- product manager for virtual market -->
 <script src="{{asset('dashboard/app/pages/productManager/productManager.module.js')}}"></script>

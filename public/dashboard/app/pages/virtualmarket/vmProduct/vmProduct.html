@@ -61,12 +61,14 @@
               <th st-sort="count" st-sort-default="reverse">Penjualan</th>
               <th st-sort="avg_price">Harga Rata-Rata(Rp)</th>
               <th st-sort="availability">Ketersediaan(%)</th>
+              <th >Tren</th>
             </tr>
             <tr>
               <th></th>
               <th>
                 <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/>
               </th>
+              <th></th>
               <th></th>
               <th></th>
               <th></th>
@@ -79,6 +81,11 @@
               <td>{{product.count}}</td>
               <td>{{formatNumber(product.avg_price)}}</td>
               <td>{{formatNumber(product.availability)}}</td>
+              <td>
+                <div class="buttons">
+                  <button class="btn btn-primary editable-table-button btn-xs" ng-click="viewTrend(product)">Lihat</button>
+                </div>
+              </td> 
             </tr>
             </tbody>
             <tfoot>

@@ -72,6 +72,15 @@
   text-align: right;
 }
 
+.pv-product-trend-modal {
+  z-index: 1050;
+  width: 100%;
+  height: 125%;
+}
+.pv-product-trend-modal .modal-dialog{
+  bottom: 50px;
+}
+
 .pv-product-modal {
   z-index: 1050;
   width: 100%;

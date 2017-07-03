@@ -11,7 +11,7 @@ angular.module('BlurAdmin.pages.virtualmarket')
         }
       },
       defDate: {
-      	start: moment().subtract(364, 'days'),
+      	start: moment().subtract(29, 'days'),
       	end : moment()
       },
       formatDateRange: function(start, end) {

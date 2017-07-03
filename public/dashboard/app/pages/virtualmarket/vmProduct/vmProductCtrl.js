@@ -6,7 +6,7 @@
       .controller('vmProductCtrl', vmProductCtrl);
 
   /** @ngInject */
-  function vmProductCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
+  function vmProductCtrl($scope, $timeout, $http, $rootScope, $uibModal, baConfig, baUtil, vmHelper) {
     // COLORS
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
     var pieColor = vmHelper.colors.primary.green;
@@ -135,5 +135,39 @@
       // $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
       $scope.productPageIndex = newPage;
     };
+
+    // TREND AND PREDICTION
+    $scope.viewTrend = function(product) {
+      var startDate = $scope.startDate;
+      var endDate = $scope.endDate;
+
+      $http.get('/api/virtualmarket/product?type=prediction&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
+        .then(function(res) {
+          var data = res.data.data;
+          for(var i=0; i<data.trend.length-1; i++) {
+            var date = moment(data.trend[i+1].date, 'YYYY-MM-DD');
+            if(date.isAfter(moment(),'day'))
+              data.trend[i].dashLength = 2;  
+            else
+              data.trend[i].dashLength = 0;  
+          }
+          $scope.productTrendData = data;
+        })
+        .finally(function() {
+          // $scope.loading= false;
+          // open edit modal
+          var page = 'app/pages/virtualmarket/vmProduct/productTrendModal.html';
+          var size = 'lg';
+          $rootScope.productTrendModalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: page,
+            size: size,
+            scope: $scope,
+            windowClass: 'pv-product-trend-modal'
+          });
+        });    
+
+    };
+
   }
 })();

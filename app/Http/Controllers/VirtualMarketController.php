@@ -269,19 +269,19 @@ class VirtualMarketController extends Controller
         DB::enableQueryLog();
         // execute
         // success / failed transaction
-        $query = DB::connection('virtual_market')
+        $dbQuery = DB::connection('virtual_market')
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
                     ->join('orders', 'order_lines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('products.name, count(*), round(avg(order_lines.price/order_lines.quantity), 2) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
+                    ->select(DB::raw('products.id, products.name, count(*), round(avg(order_lines.price/order_lines.quantity), 2) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
                     ->orderByRaw('count desc, products.name asc');
 
-        $totalRows = $query->get()->count();
+        $totalRows = $dbQuery->get()->count();
 
-        $product = $query
+        $product = $dbQuery
                     // ->skip($page*$rows - $rows)
                     // ->take($rows)
                     ->get();
@@ -315,8 +315,11 @@ class VirtualMarketController extends Controller
         $dateOrder = 'date asc';
 
         DB::enableQueryLog();
+        
+        
+
         // execute
-        $query = DB::connection('virtual_market')
+        $dbQuery = DB::connection('virtual_market')
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
                     ->join('orders', 'order_lines.order_id', '=', 'orders.id')
@@ -327,7 +330,13 @@ class VirtualMarketController extends Controller
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder);
 
-        $product = $query
+        $productName = DB::connection('virtual_market')
+                    ->table('products')
+                    ->select(DB::raw('name'))
+                    ->where('id', '=', $query['productId'])
+                    ->get();
+
+        $product = $dbQuery
                     ->get()
                     ->toArray();
         
@@ -351,7 +360,16 @@ class VirtualMarketController extends Controller
           array_push($trendData, $item);
           $prevTime = $currentTime;
         }
-        // print_r($trendData);
+        //check null values on endDate
+        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
+        $lastTime = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date);
+        for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
+          $x = array();
+          $x['date'] = $time->toDateString();
+          $x['count'] = 0;
+          
+          array_push($trendData, (object)$x);
+        }
         
 
         // predict using regression
@@ -367,14 +385,24 @@ class VirtualMarketController extends Controller
         $regression = new LeastSquares();
         $regression->train($samples, $targets);
 
-        $prediction = [];
-        $prediction['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDay()->toDateString();
-        $prediction['count'] = round($regression->predict([count($trendData)+1]), 0);
-
+        // predict for number of days
+        $predictions = [];
+        for($i=1; $i<=3; $i++) {
+            $x = [];
+            $x['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDays($i)->toDateString();
+            $predictedValue = $regression->predict([count($trendData)+$i]);
+            if($predictedValue < 0)
+                $predictedValue = 0;
+            $x['count'] = round($predictedValue, 0);
+            array_push($predictions, (object)$x);
+        }
+        // array_push($trendData, $predictions);
+        $trendData = array_merge($trendData, $predictions);
 
         $data = array();
+        $data['product_name'] = $productName;
         $data['trend'] = $trendData;
-        $data['prediction'] = $prediction;
+        // $data['prediction'] = $prediction;
 
         $status = $this->setStatus();
 
@@ -428,7 +456,7 @@ class VirtualMarketController extends Controller
 
         DB::enableQueryLog();
         // execute
-        $query = DB::connection('virtual_market')
+        $dbQuery = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('garendongs', 'garendongs.id', '=', 'orders.garendong_id')
                     ->select(DB::raw('garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
@@ -438,12 +466,12 @@ class VirtualMarketController extends Controller
                     ->groupBy('garendongs.user_id')
                     ->orderByRaw($ratingOrder);
 
-        $totalRows = $query->get()->count();
+        $totalRows = $dbQuery->get()->count();
 
-        $avgRating = round($query->get()->avg('rating'), 2);
+        $avgRating = round($dbQuery->get()->avg('rating'), 2);
         // dd($avgRating);
 
-        $shopper = $query
+        $shopper = $dbQuery
                     // ->skip($page*$rows - $rows)
                     // ->take($rows)
                     ->get();

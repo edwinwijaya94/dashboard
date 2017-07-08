@@ -120,16 +120,57 @@ class VirtualMarketController extends Controller
 
         DB::enableQueryLog();
         // execute
-        // success rates
+        // transaction count
+        $currentTransactionCount = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
+                    ->select(DB::raw('count(*)'))
+                    ->whereIn('status', ['success'])
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    // ->groupBy('status')
+                    ->get();
+
+        $prevTransactionCount = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
+                    ->select(DB::raw('count(*)'))
+                    ->whereIn('status', ['success'])
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    // ->groupBy('status')
+                    ->get();
+
+        // total transaction
+        $currentTransactionValue = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
+                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('status', '=', 'success')
+                    ->get();
+
+        $prevTransactionValue = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
+                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('status', '=', 'success')
+                    ->get();
+
+        // transaction status
         $transactionStatus = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->select(DB::raw('status, count(*), sum(total_price)'))
-                    ->whereIn('status', ['success', 'failed'])
+                    ->select(DB::raw('status, count(*)'))
+                    // ->whereIn('status', ['success'])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('status')
-                    ->get();
+                    ->orderByRaw('count desc')
+                    ->get();        
 
         // app platform (mobile / sms)
         $appPlatform = DB::connection('virtual_market')
@@ -142,31 +183,19 @@ class VirtualMarketController extends Controller
                     ->groupBy('order_type')
                     ->get();
 
-        // total transaction
-        $currentTransaction = DB::connection('virtual_market')
-                    ->table('orders')
-                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
-                    ->get();
-
-        $prevTransaction = DB::connection('virtual_market')
-                    ->table('orders')
-                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
-                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
-                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
-                    ->where('status', '=', 'success')
-                    ->get();
 
         $data = array();
+        $data['transaction'] = array();
+        $data['transaction']['count'] = array();
+        $data['transaction']['count']['current'] = $currentTransactionCount[0];
+        $data['transaction']['count']['prev'] = $prevTransactionCount[0];
+        $data['transaction']['value'] = array();
+        $data['transaction']['value']['current'] = $currentTransactionValue[0];
+        $data['transaction']['value']['prev'] = $prevTransactionValue[0];
+
         $data['transaction_status'] = $transactionStatus;
         $data['app_platform'] = $appPlatform;
-        $data['transaction'] = array();
-        $data['transaction']['current'] = $currentTransaction[0];
-        $data['transaction']['prev'] = $prevTransaction[0];
+        
         $status = $this->setStatus();
 
         return response()->json([

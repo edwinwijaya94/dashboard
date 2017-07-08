@@ -1,0 +1,50 @@
+<div class="row" ng-controller="mpFeedbackCtrl">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Petugas Garendong" ba-panel-class="panel-group"> -->
+
+    <!-- STATS -->
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12"
+         ba-panel
+         ba-panel-class="pv-panel" style="height:150px"> -->
+      <div class="pie-charts row">
+        <!-- Rating -->
+          <div class="col-md-3">
+            <div>
+              <div class="description">
+                <div>
+                  <span>Rata-Rata Rating</span>
+                </div><br>
+                <div class="description-stats" ng-bind="rating.avg"></div><br>
+                <!-- <div>
+                  <span>dari {{stats.rating.transactions}} transaksi</span>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        
+      </div>
+    <!-- </div> -->
+
+    
+    <div class="row">
+      <!-- Feedback Reason -->
+      <div class="col-md-12"
+         ba-panel
+         ba-panel-title="Tren Rating"
+         ba-panel-class="pv-panel" style="height:400px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="mpRatingTrend" class="pv-chart" style="height:300px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-small-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+  <!-- </div> -->
+</div>

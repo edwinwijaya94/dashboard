@@ -315,14 +315,37 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductCtrl.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductTrendCtrl.js')}}"></script>
 
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyer.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyerCtrl.js')}}"></script>
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyer.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmBuyer/vmBuyerCtrl.js')}}"></script> -->
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopper.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmShopper/vmShopperCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmFeedback/vmFeedback.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmFeedback/vmFeedbackCtrl.js')}}"></script>
+
+<!-- marketplace dashboard -->
+<script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpHelper.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpFilter/mpFilter.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpFilter/mpFilterCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/marketplace/mpProduct/mpProduct.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpProduct/mpProductCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpProduct/mpProductTrendCtrl.js')}}"></script>
+
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpBuyer/mpBuyer.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpBuyer/mpBuyerCtrl.js')}}"></script> -->
+
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpSentra/mpSentra.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpSentra/mpSentraCtrl.js')}}"></script> -->
+
+<script src="{{asset('dashboard/app/pages/marketplace/mpFeedback/mpFeedback.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpFeedback/mpFeedbackCtrl.js')}}"></script>
 
 <!-- product manager for virtual market -->
 <script src="{{asset('dashboard/app/pages/productManager/productManager.module.js')}}"></script>
@@ -348,14 +371,7 @@
 <script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitList.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitListCtrl.js')}}"></script>
 
-<!-- marketplace dashboard -->
-<script src="{{asset('dashboard/app/pages/marketplace/marketplace.module.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionFilterCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionByHistoryCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionBySentraCtrl.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionStatsCtrl.js')}}"></script>
+
 
 <!-- endinject -->
 

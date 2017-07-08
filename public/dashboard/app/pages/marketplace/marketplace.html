@@ -1,18 +1,29 @@
-<!-- <div class="row">
-  <div class="row col-md-12" ba-panel ba-panel-title="Transaksi" ba-panel-class="panel-group">
-    <mp-transaction-filter></mp-transaction-filter>
-    <div class="col-lg-6 col-md-12 col-sm-12"
-         ba-panel
-         ba-panel-title="Tren Nilai Transaksi"
-         ba-panel-class="pv-medium-panel">
-      <mp-transaction-by-history></mp-transaction-by-history>
-    </div>
-    <div class="col-lg-6 col-md-12 col-sm-12"
-         ba-panel
-         ba-panel-title="Nilai Transaksi Per Sentra"
-         ba-panel-class="pv-medium-panel">
-      <mp-transaction-by-sentra></mp-transaction-by-sentra>
-    </div>
-  </div>
-</div> -->
-<mp-transaction></mp-transaction>
+<div ng-controller="mpCtrl">
+	<mp-filter></mp-filter>
+	
+	<div
+		class="row col-md-12"
+    ba-panel
+    ba-panel-class="horizontal-tabs panel-group" style="margin-bottom:75px">
+
+		<uib-tabset active="active">
+		  <uib-tab heading="Transaksi">
+		  	<mp-transaction></mp-transaction>
+		  </uib-tab>
+		  <uib-tab heading="Produk">
+		    <mp-product></mp-product>
+		  </uib-tab>
+		  <!-- <uib-tab heading="Pembeli">
+		    <mp-buyer></mp-buyer>
+		  </uib-tab> -->
+		  <uib-tab heading="Sentra">
+				<mp-sentra></mp-sentra>	    
+		  </uib-tab>
+		  <uib-tab heading="Ulasan">
+				<mp-feedback></mp-feedback>
+		  </uib-tab>
+		</uib-tabset>  
+
+	</div>
+	
+</div>

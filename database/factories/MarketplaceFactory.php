@@ -89,7 +89,7 @@ $factory->define(App\Model\Marketplace\Order::class, function (Faker\Generator $
         'buyer_address' => $faker->word,
         'buyer_phone_number' => $faker->e164PhoneNumber,
         'seller_invoice' => $faker->word,
-        'created_at' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
+        'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),
     ];
 });
 
@@ -106,7 +106,7 @@ $factory->define(App\Model\Marketplace\OrderLine::class, function (Faker\Generat
         'status' => $faker->randomElement($array = array ('success','failed')),
         'quantity' => $faker->numberBetween($min = 1, $max = 10),
         'note' => $faker->word,
-        'created_at' => $faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = date_default_timezone_get()),
+        'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),
     ];
 });
 

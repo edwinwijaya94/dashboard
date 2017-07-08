@@ -1,63 +1,98 @@
 <div class="row" ng-controller="mpTransactionCtrl">
-  <div class="row col-md-12" ba-panel ba-panel-title="Transaksi" ba-panel-class="panel-group">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group"> -->
 
-    <!-- filter -->
-    <div class="col-md-4 col-md-offset-8">
-      <div id="mpTransactionDate" class="pull-right pv-datepicker" ng-controller="mpTransactionFilterCtrl">
-        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>&nbsp;
-        <span ng-bind="dateRange"></span> <b class="caret"></b>
-      </div>
-    </div>
-    <!-- end of filter -->
-
-    <!-- stats -->
-    <div class="row pie-charts" ng-controller="mpTransactionStatsCtrl">
-      <div class="pie-chart-item-container" ng-repeat="chart in charts">
-        <div ba-panel
-             ba-panel-class="pv-panel">
-          <div class="pie-chart-item">
-            <div class="chart" rel="{{ ::chart.color }}" data-percent="60"> <span class="percent"></span> </div>
+    <!-- STATS -->
+    <div class="row" style="height:150px">
+      <!-- transaction success rate -->
+      <div class="pie-charts col-md-12">
+        <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
+          <div class="">
+            <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
             <div class="description">
-              <div>{{ ::chart.description }}</div>
-              <div class="description-stats" ng-bind="chart.stats"></div>
+              <div>{{ ::stat.description }}</div><br>
+              <div class="description-stats" ng-bind="stat.value"></div><br>
+              <div ng-show="stat.showChange">
+                  <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
+                  <span>{{stat.change}}%</span>
+              </div>
             </div>
-            <i class="chart-icon i-{{ ::chart.icon }}"></i>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-6 col-md-12 col-sm-12"
+    <div class="row">
+      <!-- TRANSACTION HISTORY -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Tren Transaksi"
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+        <div class="row">
+          <div class="row">
+            <div class="col-md-2 col-md-offset-4">Tampilkan:</div>  
+            <div class="col-md-2">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" name="transactionCount" value="count" ng-model="transactionHistory.metric" ng-change="changeMetric()">
+                <span>Jumlah</span>
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" name="transactionValue" value="value" ng-model="transactionHistory.metric" ng-change="changeMetric()">
+                <span>Nilai(Rupiah)</span>
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-12 col-md-12">
+            <div id="mpTransactionByHistory" class="pv-chart" style="height:250px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- BUYER TREND -->
+      <div class="col-md-6"
          ba-panel
-         ba-panel-title="Tren Nilai Transaksi"
-         ba-panel-class="medium-panel pv-panel">
-         <!-- transaction by history -->
-      <div class="row" ng-controller="mpTransactionByHistoryCtrl">
-        <div class="col-md-12">
-          <div id="mpTransactionByHistory" class="pv-chart"></div>
-          <!-- loading / no data handler -->
-          <div class="pv-chart-medium-overlay" ng-show="loading || noData">
-            <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-            <div class="pv-chart-loading" ng-show="loading"></div>
+         ba-panel-title="Tren Pembeli"
+         ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="mpBuyerByHistory" class="pv-chart" style="height:250px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-6 col-md-12 col-sm-12"
-         ba-panel
-         ba-panel-title="Nilai Transaksi Per Sentra"
-         ba-panel-class="medium-panel pv-panel">
-      <!-- transaction by sentra -->
-      <div class="row" ng-controller="mpTransactionBySentraCtrl">
-        <div class="col-md-12">
-          <div id="mpTransactionBySentra" class="pv-chart"></div>
-          <!-- loading / no data handler -->
-          <div class="pv-chart-medium-overlay" ng-show="loading || noData">
-            <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-            <div class="pv-chart-loading" ng-show="loading"></div>
+
+    <div class="row">
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Status Transaksi"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="mpTransactionStatus" class="admin-chart" style="height:200px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Metode Pembayaran"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="mpPaymentMethod" class="admin-chart" style="height:200px"></div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+  <!-- </div> -->
 </div>

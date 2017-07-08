@@ -115,18 +115,28 @@ class MarketplaceController extends Controller
 
         DB::enableQueryLog();
         // execute
-        // success rates
-        $transactionStatus = DB::connection('marketplace')
+        // transaction count
+        $currentTransactionCount = DB::connection('marketplace')
                     ->table('orderlines')
-                    ->select(DB::raw('status, count(*)'))
-                    ->whereIn('status', ['success', 'failed'])
+                    ->select(DB::raw('count(*)'))
+                    ->whereIn('status', ['success'])
                     ->where('created_at', '>=', $query['startDate'])
                     ->where('created_at', '<=', $query['endDate'])
-                    ->groupBy('status')
+                    // ->groupBy('status')
                     ->get();
 
-        // total transaction
-        $currentTransaction = DB::connection('marketplace')
+        $prevTransactionCount = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->select(DB::raw('count(*)'))
+                    ->whereIn('status', ['success'])
+                    ->where('created_at', '>=', $prevPeriod['startDate'])
+                    ->where('created_at', '<=', $prevPeriod['endDate'])
+                    // ->groupBy('status')
+                    ->get();
+
+
+        // total transaction value
+        $currentTransactionValue = DB::connection('marketplace')
                     ->table('orderlines')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
                     ->where('created_at', '>=', $query['startDate'])
@@ -134,12 +144,23 @@ class MarketplaceController extends Controller
                     ->where('status', '=', 'success')
                     ->get();
 
-        $prevTransaction = DB::connection('marketplace')
+        $prevTransactionValue = DB::connection('marketplace')
                     ->table('orderlines')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
                     ->where('created_at', '>=', $prevPeriod['startDate'])
                     ->where('created_at', '<=', $prevPeriod['endDate'])
                     ->where('status', '=', 'success')
+                    ->get();
+
+        // transaction status
+        $transactionStatus = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->select(DB::raw('status, count(*)'))
+                    // ->whereIn('status', ['success'])
+                    ->where('created_at', '>=', $query['startDate'])
+                    ->where('created_at', '<=', $query['endDate'])
+                    ->groupBy('status')
+                    ->orderByRaw('count desc')
                     ->get();
 
         // payment method
@@ -151,14 +172,21 @@ class MarketplaceController extends Controller
                     ->where('orders.created_at', '<=', $query['endDate'])
                     // ->where('status', '=', 'success')
                     ->groupBy('payment_method_types.name')
+                    ->orderByRaw('count desc')
                     ->get();        
 
         $data = array();
+
+        $data['transaction'] = array();
+        $data['transaction']['count'] = array();
+        $data['transaction']['count']['current'] = $currentTransactionCount[0];
+        $data['transaction']['count']['prev'] = $prevTransactionCount[0];
+        $data['transaction']['value'] = array();
+        $data['transaction']['value']['current'] = $currentTransactionValue[0];
+        $data['transaction']['value']['prev'] = $prevTransactionValue[0];
+        
         $data['transaction_status'] = $transactionStatus;
         $data['payment_method'] = $paymentMethod;
-        $data['transaction'] = array();
-        $data['transaction']['current'] = $currentTransaction[0];
-        $data['transaction']['prev'] = $prevTransaction[0];
         
         $status = $this->setStatus();
 
@@ -260,10 +288,10 @@ class MarketplaceController extends Controller
         // execute
         // success / failed transaction
         $query = DB::connection('marketplace')
-                    ->table('order_lines')
-                    ->join('products', 'order_lines.product_id', '=', 'products.id')
-                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('products.name, count(*), round(avg(order_lines.price/order_lines.quantity), 2) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
+                    ->table('orderlines')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('orders', 'orderlines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('products.name, count(*), round(avg(orderlines.subtotal/orderlines.quantity), 2) as avg_price'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
@@ -371,27 +399,43 @@ class MarketplaceController extends Controller
 
     public function getFeedbackStats($query)
     {
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
+
         DB::enableQueryLog();
         // execute
         $rating = DB::connection('marketplace')
-                    ->table('garendongs')
-                    ->select(DB::raw('sum(num_rating) as transactions, round(avg(rating/num_rating), 2) as value'))
+                    ->table('ratings')
+                    ->join('orderlines', 'ratings.orderline_id', '=', 'orderlines.id')
+                    ->select(DB::raw('round(avg(value), 2) as rating'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->get();
 
-        $feedback = DB::connection('marketplace')
-                    ->table('user_feedbacks')
-                    ->join('reasons', 'user_feedbacks.reason_id', '=', 'reasons.id')
-                    // ->join('user_feedbacks', 'user_feedbacks.user_feedback_id', '=', 'user_feedbacks.id')
-                    ->join('orders', 'user_feedbacks.order_id', '=', 'orders.id')
-                    ->select(DB::raw('reason, count(*)'))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
-                    ->groupBy('reasons.reason')
+        $ratingTrend = DB::connection('marketplace')
+                    ->table('ratings')
+                    ->join('orderlines', 'ratings.orderline_id', '=', 'orderlines.id')
+                    ->select(DB::raw('round(avg(value), 2) as rating,'.$dateQuery))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder)
                     ->get();
 
         $data = array();
         $data['rating'] = $rating[0];
-        $data['feedback'] = $feedback;
+        $data['rating_trend'] = array();
+        $data['rating_trend']['granularity'] = $granularity;
+        $data['rating_trend']['trend'] = $ratingTrend;
+
         $status = $this->setStatus();
 
         return response()->json([
@@ -425,15 +469,15 @@ class MarketplaceController extends Controller
                                         ->table('orders')
                                         ->where('orders.created_at', '>=', $query['startDate'])
                                         ->where('orders.created_at', '<=', $query['endDate'])
-                                        ->distinct('customer_id')
-                                        ->count('customer_id');
+                                        ->distinct('buyer_id')
+                                        ->count('buyer_id');
 
         $uniqueBuyers['prev_period'] = DB::connection('marketplace')
                                         ->table('orders')
                                         ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                                         ->where('orders.created_at', '<=', $prevPeriod['endDate'])
-                                        ->distinct('customer_id')
-                                        ->count('customer_id');
+                                        ->distinct('buyer_id')
+                                        ->count('buyer_id');
 
 
         // buyers who make transactions more than once
@@ -442,23 +486,23 @@ class MarketplaceController extends Controller
                     ->table('orders')
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->groupBy('customer_id')
-                    ->havingRaw('count(customer_id) > 1')
-                    ->distinct('customer_id')
-                    ->count('customer_id');
+                    ->groupBy('buyer_id')
+                    ->havingRaw('count(buyer_id) > 1')
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
 
         $returningBuyers['prev_period'] = DB::connection('marketplace')
                     ->table('orders')
                     ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orders.created_at', '<=', $prevPeriod['endDate'])
-                    ->groupBy('customer_id')
-                    ->havingRaw('count(customer_id) > 1')
-                    ->distinct('customer_id')
-                    ->count('customer_id');
+                    ->groupBy('buyer_id')
+                    ->havingRaw('count(buyer_id) > 1')
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
 
         $data = array();
         $data['unique_buyers'] = $uniqueBuyers;
-        $data['returning_buyers'] = $returningBuyers;
+        // $data['returning_buyers'] = $returningBuyers;
         $status = $this->setStatus();
 
         return response()->json([
@@ -484,7 +528,7 @@ class MarketplaceController extends Controller
         // execute
         $buyer = DB::connection('marketplace')
                     ->table('orders')
-                    ->select(DB::raw($dateQuery.',count(distinct customer_id)'))
+                    ->select(DB::raw($dateQuery.',count(distinct buyer_id)'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy($dateGroupBy)

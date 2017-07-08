@@ -1,0 +1,83 @@
+<div class="row" ng-controller="mpProductCtrl">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Produk" ba-panel-class="panel-group"> -->
+
+    <div class="row">
+      <!-- availability rates -->
+      <!-- <div class="row">  
+        <div class="pie-charts">
+          <div class="pie-chart-item-container" ng-repeat="chart in charts">
+            <div ba-panel
+                 ba-panel-class="pv-panel">
+              <div class="pie-chart-item">
+                <div easypiechart class="chart" options="options" percent="percent"> <span class="percent" ng-bind="percent"></span> </div>
+                <div class="description">
+                  <div>{{ ::chart.description }}</div>
+                  <div class="description-stats" ng-bind="chart.stats"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="row">
+        <!-- top commodities -->
+        <div class="col-md-12"
+           ba-panel
+           ba-panel-title="Daftar Produk"
+           ba-panel-class="pv-panel table-panel" style="height:400px">
+          <div>
+            
+          <!-- NEW TABLE -->
+          <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
+            <thead>
+            <tr class="sortable ">
+              <th class="table-id">#</th>
+              <th st-sort="name">Nama Produk</th>
+              <th st-sort="count" st-sort-default="reverse">Penjualan</th>
+              <th st-sort="avg_price">Harga Rata-Rata(Rp)</th>
+              <!-- <th st-sort="availability">Ketersediaan(%)</th> -->
+              <th >Tren</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>
+                <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/>
+              </th>
+              <th></th>
+              <th></th>
+              <!-- <th></th> -->
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="product in productList.product">
+              <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+              <td>{{product.name}}</td>
+              <td>{{product.count}}</td>
+              <td>{{formatNumber(product.avg_price)}}</td>
+              <!-- <td>{{formatNumber(product.availability)}}</td> -->
+              <td>
+                <div class="buttons">
+                  <button class="btn btn-primary editable-table-button btn-xs" ng-click="viewTrend(product)">Lihat</button>
+                </div>
+              </td> 
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="6" class="text-center">
+                <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  <!-- </div> -->
+</div>

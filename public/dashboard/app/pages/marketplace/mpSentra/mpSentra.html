@@ -1,0 +1,153 @@
+<div class="row" ng-controller="vmShopperCtrl">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Petugas Garendong" ba-panel-class="panel-group"> -->
+
+    <!-- STATS -->
+    <!-- <div class="col-lg-12 col-md-12 col-sm-12"
+         ba-panel
+         ba-panel-class="pv-panel" style="height:150px"> -->
+      <div class="row">
+        
+        <div class="pie-charts col-md-12">
+          <!-- Total Shopper -->
+          <div class="col-md-3">
+            <div>
+              <div class="description">
+                <div>
+                  <span>Garendong Aktif</span>
+                </div><br>
+                <div class="description-stats" ng-bind="shopperList.totalRows"></div><br>
+              </div>
+            </div>
+          </div>
+          <!-- Shopper Rating -->
+          <div class="col-md-3">
+            <div>
+              <div class="description">
+                <div>
+                  <span>Rata-Rata Rating</span>
+                </div><br>
+                <div class="description-stats" ng-bind="shopperList.avgRating"></div><br>
+                <!-- <div>
+                  <span>dari {{stats.rating.transactions}} transaksi</span>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    <!-- </div> -->
+
+    
+    <div class="row">
+      <!-- Top Shopper -->
+      <div class="col-md-6"
+         ba-panel
+         ba-panel-title="Daftar Garendong"
+         ba-panel-class="pv-panel table-panel" style="height:400px">
+        
+        <!-- Sort By -->
+        <!-- <div class="row" style='margin-bottom:15px'>
+          <div class="col-md-3 col-md-offset-3 pv-filter-title">Urutkan:</div>
+          <div class="col-md-6">
+            <ui-select ng-model="shopperListOptions.selected"
+                on-select="sortList($item, $model)"
+                class="btn-group bootstrap-select form-control"
+                ng-disabled="false"
+                append-to-body="true"
+                search-enabled="false">
+              <ui-select-match placeholder="{{shopperListOptions.selected.label}}">
+                <span> {{$select.selected.label}}</span>
+              </ui-select-match>
+              <ui-select-choices repeat="option.value as option in shopperListOptions.options">
+                <span ng-bind-html="option.label"></span>
+              </ui-select-choices>
+            </ui-select>
+          </div>
+        </div> -->
+
+        <div>
+          <!-- <table class="table table-hover">
+            <thead>
+              <tr style="background-color:{{shopperListOptions.selected.color}}">
+                <th class="align-left" style="color:white">#</th>
+                <th class="align-left" style="color:white">Nama</th>
+                <th class="align-left" style="color:white">Jumlah Order</th>
+                <th class="align-left" style="color:white">Rating</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="shopper in shopperList.shopper" class="no-top-border">
+                <td class="align-right">{{getRank($index)}}</td>
+                <td ng-class="nowrap">{{shopper.name}}</td>
+                <td ng-class="nowrap">{{shopper.orders}}</td>
+                <td ng-class="nowrap">{{formatRating(shopper.rating)}}</td>
+              </tr>
+            </tbody>
+          </table> -->
+          <!-- pagination -->
+          <!-- <div class="row" style="text-align:center" ng-show="shopperList.totalRows>0">
+            <ul uib-pagination total-items="shopperList.totalRows" items-per-page="shopperList.rowsPerPage" max-size="shopperList.displayedPages" previous-text="<" next-text=">" ng-model="shopperList.page" ng-change="changeShopperPage()"></ul>
+          </div> -->
+
+          <!-- NEW TABLE -->
+          <table class="table" st-table="shopperList.shopper" st-safe-src="updatedShopperList">
+            <thead>
+            <tr class="sortable ">
+              <th class="table-id">#</th>
+              <th st-sort="name">Nama</th>
+              <th st-sort="orders">Jumlah Order</th>
+              <th st-sort="rating" st-sort-default="reverse">Rating</th>
+            </tr>
+            <tr>
+              <th></th>
+              <th>
+                <input st-search="name" placeholder="Cari Garendong" class="input-sm form-control search-input" type="search"/>
+              </th>
+              <th></th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="shopper in shopperList.shopper">
+              <td class="table-id">{{$index+1+(shopperPageIndex-1)*shopperPageSize}}</td>
+              <td>{{shopper.name}}</td>
+              <td>{{shopper.orders}}</td>
+              <td>{{formatRating(shopper.rating)}}</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+              <td colspan="6" class="text-center">
+                <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeShopperPage(newPage)"></div>
+              </td>
+            </tr>
+            </tfoot>
+          </table>
+
+
+        </div>
+      </div>
+
+      <!-- Feedback Reason -->
+      <!-- <div class="col-md-6"
+         ba-panel
+         ba-panel-title="Ulasan"
+         ba-panel-class="pv-panel" style="height:400px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmFeedbackReason" class="pv-chart" style="height:300px"></div> -->
+            <!-- loading / no data handler -->
+      <!--       <div class="pv-chart-small-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+    </div>
+
+
+  <!-- </div> -->
+</div>

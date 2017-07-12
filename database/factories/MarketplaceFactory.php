@@ -25,9 +25,11 @@ $factory->define(App\Model\Marketplace\Store::class, function (Faker\Generator $
 
     return [
 
-        'sentra_id' => $faker->numberBetween($min = 1, $max = 100),
+        'sentra_id' => $faker->numberBetween($min = 1, $max = 5),
         'name' => $faker->unique()->regexify('[A-Z]+'), 
-        'description' => $faker->word
+        'description' => $faker->word,
+        'image' => $faker->url,
+        'bank_account' => $faker->unique()->regexify('[A-Z]+')
     ];
 });
 
@@ -49,7 +51,7 @@ $factory->define(App\Model\Marketplace\Product::class, function (Faker\Generator
     return [
 
     	'category_id' => $faker->numberBetween($min = 1, $max = 10),
-        'name' => $faker->word,
+        'name' => $faker->unique()->regexify('[A-Z]+'),
         'image' => $faker->url,
         'unit' => $faker->randomElement($array = array ('bungkus','ons')),
         'description' => $faker->word,
@@ -101,6 +103,7 @@ $factory->define(App\Model\Marketplace\OrderLine::class, function (Faker\Generat
         'order_id' => $faker->numberBetween($min = 1, $max = 100),
         'buyer_id' => $faker->numberBetween($min = 1, $max = 100),
         'product_id' => $faker->numberBetween($min = 1, $max = 100),
+        'store_id' => $faker->numberBetween($min = 1, $max = 100),
         'delivery_agent_id' => $faker->numberBetween($min = 1, $max = 100),
         'subtotal' => $faker->numberBetween($min = 5000, $max = 150000),
         'status' => $faker->randomElement($array = array ('success','failed')),
@@ -110,14 +113,23 @@ $factory->define(App\Model\Marketplace\OrderLine::class, function (Faker\Generat
     ];
 });
 
-// rating
-$factory->define(App\Model\Marketplace\Rating::class, function (Faker\Generator $faker) {
+// feedback
+$factory->define(App\Model\Marketplace\Feedback::class, function (Faker\Generator $faker) {
 
     return [
 
         'orderline_id' => $faker->numberBetween($min = 1, $max = 100),
         'order_id' => $faker->numberBetween($min = 1, $max = 100),
         'buyer_id' => $faker->numberBetween($min = 1, $max = 10),
+    ];
+});
+
+// rating
+$factory->define(App\Model\Marketplace\Rating::class, function (Faker\Generator $faker) {
+
+    return [
+
+        'feedback_id' => $faker->numberBetween($min = 1, $max = 10),
         'value' => $faker->numberBetween($min = 1, $max = 5),
     ];
 });

@@ -308,8 +308,11 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmFilter/vmFilter.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmFilter/vmFilterCtrl.js')}}"></script>
 
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmOverview/vmOverview.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmOverview/vmOverviewCtrl.js')}}"></script>
+
+<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script> -->
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProduct.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductCtrl.js')}}"></script>
@@ -331,8 +334,11 @@
 <script src="{{asset('dashboard/app/pages/marketplace/mpFilter/mpFilter.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpFilter/mpFilterCtrl.js')}}"></script>
 
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpOverview/mpOverview.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpOverview/mpOverviewCtrl.js')}}"></script>
+
+<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransaction.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpTransaction/mpTransactionCtrl.js')}}"></script> -->
 
 <script src="{{asset('dashboard/app/pages/marketplace/mpProduct/mpProduct.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpProduct/mpProductCtrl.js')}}"></script>
@@ -341,8 +347,8 @@
 <!-- <script src="{{asset('dashboard/app/pages/marketplace/mpBuyer/mpBuyer.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpBuyer/mpBuyerCtrl.js')}}"></script> -->
 
-<!-- <script src="{{asset('dashboard/app/pages/marketplace/mpSentra/mpSentra.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/marketplace/mpSentra/mpSentraCtrl.js')}}"></script> -->
+<script src="{{asset('dashboard/app/pages/marketplace/mpSentra/mpSentra.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/marketplace/mpSentra/mpSentraCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/marketplace/mpFeedback/mpFeedback.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpFeedback/mpFeedbackCtrl.js')}}"></script>

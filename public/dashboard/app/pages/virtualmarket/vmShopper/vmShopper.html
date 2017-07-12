@@ -13,9 +13,13 @@
             <div>
               <div class="description">
                 <div>
-                  <span>Garendong Aktif</span>
+                  <span>{{stats.shopperCount.description}}</span>
                 </div><br>
-                <div class="description-stats" ng-bind="shopperList.totalRows"></div><br>
+                <div class="description-stats" ng-bind="stats.shopperCount.value"></div><br>
+                <div>
+                  <i class="{{stats.shopperCount.icon}}" style="color:{{stats.shopperCount.iconColor}}"></i>
+                  <span>{{stats.shopperCount.change}}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -24,9 +28,13 @@
             <div>
               <div class="description">
                 <div>
-                  <span>Rata-Rata Rating</span>
+                  <span>{{stats.avgRating.description}}</span>
                 </div><br>
-                <div class="description-stats" ng-bind="shopperList.avgRating"></div><br>
+                <div class="description-stats" ng-bind="stats.avgRating.value"></div><br>
+                <div>
+                  <i class="{{stats.avgRating.icon}}" style="color:{{stats.avgRating.iconColor}}"></i>
+                  <span>{{stats.avgRating.change}}</span>
+                </div>
                 <!-- <div>
                   <span>dari {{stats.rating.transactions}} transaksi</span>
                 </div> -->
@@ -112,8 +120,18 @@
             <tr ng-repeat="shopper in shopperList.shopper">
               <td class="table-id">{{$index+1+(shopperPageIndex-1)*shopperPageSize}}</td>
               <td>{{shopper.name}}</td>
-              <td>{{shopper.orders}}</td>
-              <td>{{formatRating(shopper.rating)}}</td>
+              <td class="align-right">
+                {{shopper.orders}}
+                &nbsp
+                <i class="{{getArrowIcon(shopper.orders_change)}}" style="color:{{getArrowColor(shopper.orders_change)}}"></i>
+                <span>{{shopper.orders_change}}</span>
+              </td>
+              <td class="align-right">
+                {{formatRating(shopper.rating)}}
+                &nbsp
+                <i class="{{getArrowIcon(shopper.rating_change)}}" style="color:{{getArrowColor(shopper.rating_change)}}"></i>
+                <span>{{shopper.orders_change}}</span>
+              </td>
             </tr>
             </tbody>
             <tfoot>

@@ -1,0 +1,197 @@
+<div class="row" ng-controller="vmOverviewCtrl">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group"> -->
+
+    <!-- STATS -->
+    <div class="row" style="height:150px">
+      <!-- transaction success rate -->
+      <div class="pie-charts col-md-12">
+        <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
+          <div class="">
+            <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
+            <div class="description">
+              <div>{{ ::stat.description }}</div><br>
+              <div class="description-stats" ng-bind="stat.value"></div><br>
+              <div ng-show="stat.showChange">
+                  <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
+                  <span>{{stat.change}}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- TRANSACTION HISTORY -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Tren Transaksi"
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+        <div class="row">
+          <!-- <div class="row">
+            <div class="col-md-2 col-md-offset-4">Tampilkan:</div>  
+            <div class="col-md-2">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" name="transactionCount" value="count" ng-model="transactionHistory.metric" ng-change="changeMetric()">
+                <span>Jumlah</span>
+              </label>
+            </div>
+            <div class="col-md-2">
+              <label class="radio-inline custom-radio nowrap">
+                <input type="radio" name="transactionValue" value="value" ng-model="transactionHistory.metric" ng-change="changeMetric()">
+                <span>Nilai(Rupiah)</span>
+              </label>
+            </div>
+          </div> -->
+          <div class="col-lg-12 col-md-12">
+            <div id="vmTransactionByHistory" class="pv-chart" style="height:250px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- BUYER TREND -->
+      <div class="col-md-6"
+         ba-panel
+         ba-panel-title="Tren Pembeli"
+         ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmBuyerByHistory" class="pv-chart" style="height:250px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- PRODUK -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Produk"
+           ba-panel-class="pv-panel" style="">
+        <div class="row">
+          <div>
+            <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th st-sort="name">Nama</th>
+                <th st-sort="avg_price">Harga(Rp)</th>
+                <th st-sort="availability">Ketersediaan(%)</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="product in productList.product">
+                <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+                <td>{{product.name}}</td>
+                <td>{{formatNumber(product.avg_price)}}</td>
+                <td>{{formatNumber(product.availability)}}</td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <!-- <tr>
+                <td colspan="6" class="text-center">
+                  <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
+                </td>
+              </tr> -->
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+      </div>
+      <!-- STATUS TRANSAKSI -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Status Transaksi"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmTransactionStatus" class="admin-chart" style="height:200px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">  
+      <!-- GARENDONG -->
+      <!-- <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Garendong"
+           ba-panel-class="pv-panel" style="">
+        <div class="row">
+          <div>
+            <table class="table" st-table="shopperList.shopper" st-safe-src="updatedShopperList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th st-sort="name">Nama</th>
+                <th st-sort="orders">Jumlah Order</th>
+                <th st-sort="rating" st-sort-default="reverse">Rating</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="shopper in shopperList.shopper">
+                <td class="table-id">{{$index+1+(shopperPageIndex-1)*shopperPageSize}}</td>
+                <td>{{shopper.name}}</td>
+                <td>{{shopper.orders}}</td>
+                <td>{{formatRating(shopper.rating)}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> -->
+      <!-- Feedback Reason -->
+      <div class="col-md-6"
+         ba-panel
+         ba-panel-title="Ulasan"
+         ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmFeedbackReason" class="pv-chart" style="height:200px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-small-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- APP PLATFORM -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Platform Aplikasi"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmTransactionPlatform" class="admin-chart" style="height:200px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    </div>
+
+  <!-- </div> -->
+</div>

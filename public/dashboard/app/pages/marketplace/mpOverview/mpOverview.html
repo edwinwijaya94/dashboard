@@ -1,4 +1,4 @@
-<div class="row" ng-controller="vmTransactionCtrl">
+<div class="row" ng-controller="mpOverviewCtrl">
   <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group"> -->
 
     <!-- STATS -->
@@ -13,7 +13,7 @@
               <div class="description-stats" ng-bind="stat.value"></div><br>
               <div ng-show="stat.showChange">
                   <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
-                  <span>{{stat.change}}%</span>
+                  <span>{{stat.change}}</span>
               </div>
             </div>
           </div>
@@ -28,7 +28,7 @@
            ba-panel-title="Tren Transaksi"
            ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
         <div class="row">
-          <div class="row">
+          <!-- <div class="row">
             <div class="col-md-2 col-md-offset-4">Tampilkan:</div>  
             <div class="col-md-2">
               <label class="radio-inline custom-radio nowrap">
@@ -42,9 +42,9 @@
                 <span>Nilai(Rupiah)</span>
               </label>
             </div>
-          </div>
+          </div> -->
           <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionByHistory" class="pv-chart" style="height:250px"></div>
+            <div id="mpTransactionByHistory" class="pv-chart" style="height:250px"></div>
             <!-- loading / no data handler -->
             <div class="pv-chart-medium-overlay" ng-show="loading || noData">
               <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
@@ -60,7 +60,7 @@
          ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="vmBuyerByHistory" class="pv-chart" style="height:250px"></div>
+            <div id="mpBuyerByHistory" class="pv-chart" style="height:250px"></div>
             <!-- loading / no data handler -->
             <div class="pv-chart-medium-overlay" ng-show="loading || noData">
               <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
@@ -72,23 +72,89 @@
     </div>
 
     <div class="row">
+      <!-- TOP SENTRA -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Sentra Populer"
+           ba-panel-class="pv-panel" style="height:320px;">
+        <div class="row">
+          <div>
+            <table class="table" st-table="sentraList" st-safe-src="updatedSentraList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th>Sentra</th>
+                <th>#Transaksi</th>
+                <th>Nilai(Rp)</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="sentra in sentraList">
+                <td class="table-id">{{$index+1}}</td>
+                <td>{{sentra.name}}</td>
+                <td>{{formatNumber(sentra.orders)}}</td>
+                <td>{{formatNumber(sentra.value)}}</td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td colspan="6" class="text-center">
+                  <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeSentraPage(newPage)"></div>
+                </td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- TOP PRODUCT -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Produk Populer"
+           ba-panel-class="pv-panel" style="">
+        <div class="row">
+          <div>
+            <table class="table" st-table="productList" st-safe-src="updatedProductList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th>Produk</th>
+                <th>#Order(unit)</th>
+                <th>Nilai(Rp)</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="product in productList">
+                <td class="table-id">{{$index+1}}</td>
+                <td>{{product.name}}</td>
+                <td>{{formatNumber(product.units)}}</td>
+                <td>{{formatNumber(product.value)}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-md-6"
            ba-panel
            ba-panel-title="Status Transaksi"
-           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+           ba-panel-class="pv-panel" style="">
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionStatus" class="admin-chart" style="height:200px"></div>
+            <div id="mpTransactionStatus" class="admin-chart" style="height:200px"></div>
           </div>
         </div>
       </div>
       <div class="col-md-6"
            ba-panel
-           ba-panel-title="Platform Aplikasi"
+           ba-panel-title="Metode Pembayaran"
            ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionPlatform" class="admin-chart" style="height:200px"></div>
+            <div id="mpPaymentMethod" class="admin-chart" style="height:200px"></div>
           </div>
         </div>
       </div>

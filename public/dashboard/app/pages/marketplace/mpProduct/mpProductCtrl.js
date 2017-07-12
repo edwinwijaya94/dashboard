@@ -35,7 +35,7 @@
     });
 
     $scope.getData = function(startDate, endDate) {
-      $scope.getStats(startDate, endDate);  
+      // $scope.getStats(startDate, endDate);  
       $scope.getProductList(startDate, endDate, $scope.productList.page, $scope.productList.rowsPerPage);
     };
 
@@ -128,7 +128,7 @@
     };
     
     $scope.formatNumber = function(number) {
-      return mpHelper.formatNumber(number,false,false);
+      return mpHelper.formatNumber(parseInt(number),false,false);
     };
 
     $scope.changeProductPage = function(newPage) {
@@ -167,6 +167,15 @@
           });
         });    
 
+    };
+
+    $scope.sorter = {
+      count: function(value) {
+        return parseInt(value.count);
+      },
+      avgPrice: function(value) {
+        return parseInt(value.avg_price);
+      }
     };
 
   }

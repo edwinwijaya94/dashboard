@@ -1,14 +1,21 @@
 <div ng-controller="mpCtrl">
-	<mp-filter></mp-filter>
 	
 	<div
 		class="row col-md-12"
     ba-panel
     ba-panel-class="horizontal-tabs panel-group" style="margin-bottom:75px">
 
+    <mp-filter></mp-filter>
+    
 		<uib-tabset active="active">
-		  <uib-tab heading="Transaksi">
+			<uib-tab heading="Overview">
+		  	<mp-overview></mp-overview>
+		  </uib-tab>
+		  <!-- <uib-tab heading="Transaksi">
 		  	<mp-transaction></mp-transaction>
+		  </uib-tab> -->
+		  <uib-tab heading="Sentra">
+				<mp-sentra></mp-sentra>	    
 		  </uib-tab>
 		  <uib-tab heading="Produk">
 		    <mp-product></mp-product>
@@ -16,12 +23,10 @@
 		  <!-- <uib-tab heading="Pembeli">
 		    <mp-buyer></mp-buyer>
 		  </uib-tab> -->
-		  <uib-tab heading="Sentra">
-				<mp-sentra></mp-sentra>	    
-		  </uib-tab>
-		  <uib-tab heading="Ulasan">
+		  
+		  <!-- <uib-tab heading="Ulasan">
 				<mp-feedback></mp-feedback>
-		  </uib-tab>
+		  </uib-tab> -->
 		</uib-tabset>  
 
 	</div>

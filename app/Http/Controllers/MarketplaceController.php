@@ -56,6 +56,7 @@ class MarketplaceController extends Controller
         $query['rows'] = $request->query('rows', $default['rows']);
         $query['sort'] = $request->query('sort', $default['sort']);
 
+        $query['sentraId'] = $request->query('sentra_id', 1);
         return $query;
     }
 
@@ -290,22 +291,18 @@ class MarketplaceController extends Controller
         $query = DB::connection('marketplace')
                     ->table('orderlines')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
-                    ->join('orders', 'orderlines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('products.name, count(*), round(avg(orderlines.subtotal/orderlines.quantity), 2) as avg_price'))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->select(DB::raw('products.name, sum(quantity) as units, sum(orderlines.subtotal) as value'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
-                    ->orderByRaw('count desc, products.name asc');
-
-        $totalRows = $query->get()->count();
+                    ->orderByRaw('units desc, products.name asc')
+                    ->limit(5);
 
         $product = $query
-                    // ->skip($page*$rows - $rows)
-                    // ->take($rows)
                     ->get();
 
         $data = array();
-        $data['total_rows'] = $totalRows;
+        // $data['total_rows'] = $totalRows;
         $data['product'] = $product;
         $status = $this->setStatus();
 
@@ -321,10 +318,29 @@ class MarketplaceController extends Controller
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
 
-        if($query['type'] == 'stats')
-            return $this->getSentraStats($query);
+        if($query['type'] == 'list')
+            return $this->getSentraList();
+        else if($query['type'] == 'data')
+            return $this->getSentraData($query);
         else if($query['type'] == 'toplist')
             return $this->getSentraTopList($query);
+    }
+
+    public function getSentraList()
+    {
+        DB::enableQueryLog();
+        // execute
+        $data = DB::connection('marketplace')
+                    ->table('sentra')
+                    ->select(DB::raw('id, name'))
+                    ->get();
+
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);      
     }
 
     public function getSentraStats($query)
@@ -347,37 +363,241 @@ class MarketplaceController extends Controller
                 ]);      
     }
 
+    public function getSentraData($query)
+    {
+        // config
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
+
+
+        $data = array();
+        $data['granularity'] = $granularity;
+
+        DB::enableQueryLog();
+        // execute
+        // TRANSACTION DATA
+        // transaction count
+        $currentTransactionCount = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('count(*)'))
+                    ->whereIn('status', ['success'])
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->get();
+
+        $prevTransactionCount = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('count(*)'))
+                    ->whereIn('status', ['success'])
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->get();
+
+
+        // total transaction value
+        $currentTransactionValue = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('status', '=', 'success')
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->get();
+
+        $prevTransactionValue = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('status', '=', 'success')
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->get();
+
+        // transaction status
+        $transactionStatus = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('status, count(*)'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->groupBy('status')
+                    ->orderByRaw('count desc')
+                    ->get();
+
+        $transactionHistory = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw($query['aggregate'].'as value, count(*),'.$dateQuery))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('status', '=', 'success')
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder)
+                    ->get();
+
+        // TRANSACTION
+        $data['transaction'] = array();
+        $data['transaction']['count'] = array();
+        $data['transaction']['count']['current'] = $currentTransactionCount[0];
+        $data['transaction']['count']['prev'] = $prevTransactionCount[0];
+        $data['transaction']['value'] = array();
+        $data['transaction']['value']['current'] = $currentTransactionValue[0];
+        $data['transaction']['value']['prev'] = $prevTransactionValue[0];
+        $data['transaction']['history'] = $transactionHistory;
+        $data['transaction']['status'] = $transactionStatus;
+        
+        // BUYER
+        $currentBuyers = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
+
+        $prevBuyers = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->distinct('buyer_id')
+                    ->count('buyer_id');
+
+        $buyerHistory = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw($dateQuery.',count(distinct buyer_id)'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder)
+                    ->get();
+
+        $data['buyer'] = array();
+        $data['buyer']['count'] = array();
+        $data['buyer']['count']['current'] = $currentBuyers;
+        $data['buyer']['count']['prev'] = $prevBuyers;
+        $data['buyer']['history'] = $buyerHistory;
+
+
+        // PRODUCT
+        $product = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->select(DB::raw('products.name, sum(quantity) as units, sum(orderlines.subtotal) as value'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->groupBy('products.id')
+                    ->orderByRaw('units desc, products.name asc')
+                    ->limit(5)
+                    ->get();
+
+        $data['product'] = $product;
+
+        // RATING
+        $currentRating = DB::connection('marketplace')
+                    ->table('ratings')
+                    ->join('feedbacks', 'ratings.feedback_id', '=', 'feedbacks.id')
+                    ->join('orderlines', 'feedbacks.orderline_id', '=', 'orderlines.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('round(avg(value), 2) as rating'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->get();
+
+        $prevRating = DB::connection('marketplace')
+                    ->table('ratings')
+                    ->join('feedbacks', 'ratings.feedback_id', '=', 'feedbacks.id')
+                    ->join('orderlines', 'feedbacks.orderline_id', '=', 'orderlines.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('round(avg(value), 2) as rating'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->get();
+
+        $ratingTrend = DB::connection('marketplace')
+                    ->table('ratings')
+                    ->join('feedbacks', 'ratings.feedback_id', '=', 'feedbacks.id')
+                    ->join('orderlines', 'feedbacks.orderline_id', '=', 'orderlines.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('round(avg(value), 2) as rating,'.$dateQuery))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder)
+                    ->get();
+
+        $data['rating'] = array();
+        $data['rating']['average']['current'] = $currentRating[0]->rating;
+        $data['rating']['average']['prev'] = $prevRating[0]->rating;
+        $data['rating']['trend'] = $ratingTrend;
+
+
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);      
+    }
+
     public function getSentraTopList($query)
     {
         // $rows = (int)$query['rows'];
         // $page = (int)$query['page'];
-        if($query['sort'] == 'highest')
-            $ratingOrder = 'orders desc';
-        else if ($query['sort'] == 'lowest')
-            $ratingOrder = 'orders asc';
-        $ratingOrder .= ', name asc';
+        // if($query['sort'] == 'highest')
+        //     $ratingOrder = 'orders desc';
+        // else if ($query['sort'] == 'lowest')
+        //     $ratingOrder = 'orders asc';
+        // $ratingOrder .= ', name asc';
 
         DB::enableQueryLog();
         // execute
         $query = DB::connection('marketplace')
                     ->table('orderlines')
-                    ->join('store_products', 'store_products.product_id', '=', 'orderlines.product_id')
-                    ->join('stores', 'stores.id', '=', 'store_products.store_id')
-                    ->join('sentra', 'sentra.id', '=', 'stores.sentra_id')
-                    ->select(DB::raw('sentra.name as name, count(*), sum(subtotal) as value'))
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
+                    ->select(DB::raw('sentra.name as name, count(*) as orders, sum(subtotal) as value'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('orderlines.status', '=', 'success')
                     ->groupBy('sentra.name')
-                    ->orderByRaw($ratingOrder);
+                    ->orderByRaw('orders desc')
+                    ->limit(5);
 
-        $totalRows = $query->get()->count();
+        // $totalRows = $query->get()->count();
 
         $sentra = $query
                     ->get();
 
         $data = array();
-        $data['total_rows'] = $totalRows;
+        // $data['total_rows'] = $totalRows;
         $data['sentra'] = $sentra;
         $status = $this->setStatus();
 
@@ -399,6 +619,8 @@ class MarketplaceController extends Controller
 
     public function getFeedbackStats($query)
     {
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
         if($granularity == 'month') {
             $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM\') as date';
@@ -412,17 +634,28 @@ class MarketplaceController extends Controller
 
         DB::enableQueryLog();
         // execute
-        $rating = DB::connection('marketplace')
+        $currentRating = DB::connection('marketplace')
                     ->table('ratings')
-                    ->join('orderlines', 'ratings.orderline_id', '=', 'orderlines.id')
+                    ->join('feedbacks', 'ratings.feedback_id', '=', 'feedbacks.id')
+                    ->join('orderlines', 'feedbacks.orderline_id', '=', 'orderlines.id')
                     ->select(DB::raw('round(avg(value), 2) as rating'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->get();
 
+        $prevRating = DB::connection('marketplace')
+                    ->table('ratings')
+                    ->join('feedbacks', 'ratings.feedback_id', '=', 'feedbacks.id')
+                    ->join('orderlines', 'feedbacks.orderline_id', '=', 'orderlines.id')
+                    ->select(DB::raw('round(avg(value), 2) as rating'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->get();
+
         $ratingTrend = DB::connection('marketplace')
                     ->table('ratings')
-                    ->join('orderlines', 'ratings.orderline_id', '=', 'orderlines.id')
+                    ->join('feedbacks', 'ratings.feedback_id', '=', 'feedbacks.id')
+                    ->join('orderlines', 'feedbacks.orderline_id', '=', 'orderlines.id')
                     ->select(DB::raw('round(avg(value), 2) as rating,'.$dateQuery))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
@@ -431,7 +664,8 @@ class MarketplaceController extends Controller
                     ->get();
 
         $data = array();
-        $data['rating'] = $rating[0];
+        $data['rating']['current'] = $currentRating[0]->rating;
+        $data['rating']['prev'] = $prevRating[0]->rating;
         $data['rating_trend'] = array();
         $data['rating_trend']['granularity'] = $granularity;
         $data['rating_trend']['trend'] = $ratingTrend;

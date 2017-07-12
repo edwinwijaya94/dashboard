@@ -81,15 +81,9 @@ angular.module('BlurAdmin.pages.marketplace')
         return result;
       },
       getLineChartOptions: function(options) {
-        return {
-          type: 'serial',
-          theme: 'blur',
-          color: options.color,
-          marginTop: 10,
-          marginRight: 15,
-          marginBottom: 10,
-          dataProvider: options.data,
-          valueAxes: [
+        // check valueAxes
+        if(options.valueAxes == null) {
+          options.valueAxes = [
             {
               axisAlpha: 0,
               title: options.title,
@@ -100,7 +94,17 @@ angular.module('BlurAdmin.pages.marketplace')
               integersOnly: true,
               labelFunction: options.valueLabelFunction
             }
-          ],
+          ];
+        }
+        return {
+          type: 'serial',
+          theme: 'blur',
+          color: options.color,
+          marginTop: 10,
+          marginRight: 15,
+          marginBottom: 10,
+          dataProvider: options.data,
+          valueAxes: options.valueAxes,
           graphs: options.graphs,
           dataDateFormat: options.dataDateFormat,
           categoryField: options.categoryField,

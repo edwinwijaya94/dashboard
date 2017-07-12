@@ -19,7 +19,7 @@ $factory->define(App\Model\VirtualMarket\Order::class, function (Faker\Generator
         'total_price' => $faker->numberBetween($min = 5000, $max = 150000),
         'order_type' => $faker->randomElement($array = array ('mobile','sms')), // app platform
         'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),
-        'order_status' => $faker->numberBetween($min = 1, $max = 2),
+        'order_status' => $faker->numberBetween($min = 1, $max = 3),
         'customer_id' => $faker->numberBetween($min = 1, $max = 100),
         'garendong_id' => $faker->numberBetween($min = 1, $max = 100),
         'rating' => $faker->numberBetween($min = 1, $max = 5),
@@ -47,12 +47,12 @@ $factory->define(App\Model\VirtualMarket\Product::class, function (Faker\Generat
 
         'name' => $faker->word,
         'default_quantity' => $faker->numberBetween($min = 1, $max = 10),
-        'default_unit_id' => $faker->numberBetween($min = 1, $max = 10),
+        'default_unit_id' => $faker->numberBetween($min = 1, $max = 3),
         'price_min' => $faker->numberBetween($min = 5000, $max = 10000),
         'price_max' => $faker->numberBetween($min = 10001, $max = 25000),
         'product_img' => $faker->url,
         'is_available' => $faker->boolean($chanceOfGettingTrue = 80),
-        'category_id' => $faker->numberBetween($min = 1, $max = 10),
+        'category_id' => $faker->numberBetween($min = 1, $max = 3),
     ];
 });
 

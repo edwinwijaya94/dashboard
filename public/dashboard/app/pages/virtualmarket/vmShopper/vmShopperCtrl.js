@@ -18,15 +18,24 @@
     
     // INIT DATA
     $scope.stats = {
-      // shopper: {
-      //   description: 'Jumlah Garendong',
-      //   value: 0
-      // },
-      rating: {
-        description: 'Rating',
-        transactions: 0,
-        value: 0
-      }
+      shopperCount: {
+        description: 'Jumlah Garendong',
+        info: '',
+        value: 0,
+        percent: 0,
+        change: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+      },
+      avgRating: {
+        description: 'Rata-Rata Rating',
+        info: '',
+        value: 0,
+        percent: 0,
+        change: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+      },
     };
 
     
@@ -76,7 +85,7 @@
     $scope.getData = function(startDate, endDate) {
       // $scope.getShopperStats(startDate, endDate);
       $scope.getShopperList(startDate, endDate, $scope.shopperList.page, $scope.shopperList.pageSize, $scope.shopperListOptions.selected.value);
-      $scope.getFeedbackStats(startDate, endDate);
+      // $scope.getFeedbackStats(startDate, endDate);
     };
 
     // SHOPPER STATS
@@ -99,21 +108,49 @@
     // SHOPPER TOPLIST
     $scope.getShopperList = function(startDate, endDate, page, rows, sort) {
       // $scope.loading = true;
-      $http.get('/api/virtualmarket/shopper?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows+'&sort='+sort)
+      $http.get('/api/virtualmarket/shopper?type=list&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows+'&sort='+sort)
         .then(function(res) {
           $scope.shopperData = res.data.data;
-          $scope.showShopperList($scope.shopperData, $scope.shopperListOptions.selected.value);
+          $scope.showShopperData($scope.shopperData, $scope.shopperListOptions.selected.value);
         })
         .finally(function() {
           // $scope.loading= false;
         });    
     };
 
-    $scope.showShopperList = function(data, sortBy) {
-      $scope.shopperList.totalRows = data.total_rows;
-      $scope.shopperList.avgRating = $scope.formatRating(data.avg_rating);
-      // $scope.shopperList.shopper = data.shopper;
+    $scope.showShopperData = function(data, sortBy) {
+      //stats
+      $scope.stats.shopperCount.value = data.shopper_count.current;
+      var countChange = (data.shopper_count.current-data.shopper_count.prev);
+      countChange = isFinite(countChange)? countChange:0;
+      if(countChange>=0) {
+        $scope.stats.shopperCount.icon = 'ion-arrow-up-b';
+        $scope.stats.shopperCount.iconColor = $scope.colors.green;
+      } else {
+        countChange *= -1;
+        $scope.stats.shopperCount.icon = 'ion-arrow-down-b';
+        $scope.stats.shopperCount.iconColor = $scope.colors.red;
+      }
+      $scope.stats.shopperCount.change = countChange;
 
+      $scope.stats.avgRating.value = $scope.formatRating(data.avg_rating.current);
+      var ratingChange = (data.avg_rating.current-data.avg_rating.prev);
+      ratingChange = isFinite(ratingChange)? ratingChange:0;
+      if(ratingChange>=0) {
+        $scope.stats.avgRating.icon = 'ion-arrow-up-b';
+        $scope.stats.avgRating.iconColor = $scope.colors.green;
+      } else {
+        ratingChange *= -1;
+        $scope.stats.avgRating.icon = 'ion-arrow-down-b';
+        $scope.stats.avgRating.iconColor = $scope.colors.red;
+      }
+      $scope.stats.avgRating.change = $scope.formatRating(parseFloat(ratingChange.toFixed(2)));
+
+      // $scope.stats.totalRows = data.total_rows;
+      // $scope.stats.avgRating = $scope.formatRating(data.avg_rating);
+      
+      // shopper list
+      // $scope.shopperList.shopper = data.shopper;
       $scope.updatedShopperList = data.shopper;
       // copy references
       $scope.shopperList.shopper = [].concat($scope.updatedShopperList);
@@ -131,11 +168,7 @@
     };
 
     $scope.changeShopperPage = function(newPage) {
-      // $scope.getShopperList($scope.startDate, $scope.endDate, $scope.shopperList.page, $scope.shopperList.pageSize, $scope.shopperListOptions.selected.value);
-      // console.log(newPage);
       $scope.shopperPageIndex = newPage;
-      // console.log($scope.shopperList.pageIndex);
-      // console.log($scope.shopperList.pageSize);
     };
 
     // FEEDBACK STATS
@@ -226,5 +259,20 @@
     $scope.formatRating = function(rating) {
       return vmHelper.formatNumber(rating,false,false);
     };
+
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    }
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    }
+
   }
 })();

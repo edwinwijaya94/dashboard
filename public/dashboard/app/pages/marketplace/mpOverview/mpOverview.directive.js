@@ -6,14 +6,14 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.marketplace')
-      .directive('mpTransaction', mpTransaction);
+      .directive('mpOverview', mpOverview);
 
   /** @ngInject */
-  function mpTransaction() {
+  function mpOverview() {
     return {
       restrict: 'E',
-      // controller: 'mpTransactionCtrl',
-      templateUrl: 'app/pages/marketplace/mpTransaction/mpTransaction.html'
+      // controller: 'mpOverviewCtrl',
+      templateUrl: 'app/pages/marketplace/mpOverview/mpOverview.html'
     };
   }
 })();

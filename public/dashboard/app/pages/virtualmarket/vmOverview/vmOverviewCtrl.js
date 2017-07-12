@@ -3,10 +3,10 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.virtualmarket')
-      .controller('vmTransactionCtrl', vmTransactionCtrl);
+      .controller('vmOverviewCtrl', vmOverviewCtrl);
 
   /** @ngInject */
-  function vmTransactionCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
+  function vmOverviewCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
     var layoutColors = baConfig.colors;
     // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     
@@ -33,10 +33,11 @@
         iconColor: $scope.colors.green,
         colSize: 3,
       },
-      unique_buyers: {
-        description: 'Jumlah Pembeli',
-        info: 'Persentase perbandingan dihitung dengan periode sebelumnya',
-        value: 0,
+      transaction_value: {
+        color: pieColor,
+        description: 'Nilai Transaksi',
+        info: '',
+        value: vmHelper.formatNumber(0,true,false),
         percent: 0,
         showPie: false,
         showChange: true,
@@ -46,11 +47,10 @@
         iconColor: $scope.colors.green,
         colSize: 3,
       },
-      transaction_value: {
-        color: pieColor,
-        description: 'Nilai Transaksi',
-        info: '',
-        value: vmHelper.formatNumber(0,true,false),
+      unique_buyers: {
+        description: 'Jumlah Pembeli',
+        info: 'Persentase perbandingan dihitung dengan periode sebelumnya',
+        value: 0,
         percent: 0,
         showPie: false,
         showChange: true,
@@ -97,6 +97,9 @@
     $scope.getData = function(startDate, endDate) {
       $scope.getStats(startDate, endDate);
       $scope.getHistory(startDate, endDate);
+      $scope.getProductList(startDate, endDate);
+      $scope.getShopperList(startDate, endDate, 1, 1, 'highest');
+      $scope.getFeedback(startDate, endDate);
     }
 
     // TRANSACTION STATS AND PLATFORM
@@ -161,25 +164,6 @@
       $scope.chart = AmCharts.makeChart('vmTransactionStatus',$scope.getBarChartOptions(data, $scope.colors, 'status'));
     }
 
-    // $scope.showPlatform = function(data) {
-    //   var platforms = data;
-    //   var total = 0;
-    //   for(var i=0; i<platforms.length; i++) {
-    //     total += parseInt(platforms[i].count);
-    //   }
-    //   for(var i=0; i<platforms.length; i++) {
-    //     platforms[i].percentage = (parseInt(platforms[i].count) / total * 100).toFixed(2);
-    //     platforms[i].color = $scope.chartColors[i];
-    //   }
-
-    //   $scope.platforms = platforms;
-    // };
-
-    // $scope.formatPlatform = function(platform) {
-    //   return platform.name + '(' + Math.round(platform.percentage) + ' %)';
-    // };
-
-
     // chart options
     $scope.getBarChartOptions = function(data, colors, categoryField) { 
       
@@ -224,29 +208,8 @@
     };
 
     $scope.drawPlatformChart = function(data) {
-      // var chart = AmCharts.makeChart( "vmTransactionPlatform", {
-      //   "type": "pie",
-      //   "theme": "light",
-      //   "dataProvider": data,
-      //   "valueField": "count",
-      //   "titleField": "name",
-      //    "balloon":{
-      //    "fixedPosition":true
-      //   },
-      //   "export": {
-      //     "enabled": true
-      //   },
-      //   "colors": $scope.chartColors,
-      //   "radius": 60,
-      //   "marginTop": 0,
-      //   "marginBottom": 0,
-      //   "marginLeft": 20,
-      //   "marginRight": 20,
-      //   "pullOutRadius": 0,
-      //   "startDuration": 0,
-      // } );
       for(var i=0; i<data.length; i++){
-        data[i].fillColor = $scope.chartColors[i%4];
+        data[i].fillColor = $scope.colors.yellow;
       }
       $scope.chart = AmCharts.makeChart('vmTransactionPlatform',$scope.getBarChartOptions(data, $scope.colors, 'name'));
     };
@@ -460,45 +423,92 @@
       else if(data.granularity == 'day')
         dateFormat = 'YYYY-MM-DD';
 
+      var valueLabelFunction = function(y) {
+        return vmHelper.formatNumber(y,false,true);
+      };
+
       var options = {
         color: layoutColors.defaultText,
         data: data.transaction,
         title: title,
         gridColor: layoutColors.border,
-        valueLabelFunction: function(y) {
-          return vmHelper.formatNumber(y,false,true);
-        }, 
+        // valueLabelFunction: function(y) {
+        //   return vmHelper.formatNumber(y,false,true);
+        // }, 
         graphs: [
           {
             id: 'g1',
-            balloonFunction: function(item, graph) {
-              var value = item.values.value;
-              var hoverInfo = '';
-              if(metric == 'count')
-                hoverInfo += 'Jumlah Transaksi:<br> <b>'+value+'</b>';
-              else if(metric == 'value')
-                hoverInfo += 'Nilai Transaksi:<br> <b>'+vmHelper.formatNumber(value,true,false)+'</b>';
-              return hoverInfo;
-            },
+            valueAxis: 'v1',
+            title: 'Jumlah Transaksi',
+            balloonText: '',
             bullet: 'round',
             bulletSize: 8,
-            lineColor: colors.green,
+            lineColor: layoutColors.warning,
             lineThickness: 2,
             type: 'line',
-            valueField: metric
+            valueField: 'count'
+          },
+          {
+            id: 'g2',
+            valueAxis: 'v2',
+            title: 'Nilai Transaksi',
+            balloonText: 'Jumlah: <b>[[count]]</b><br>Nilai: <b>Rp [[value]]</b>',
+            // balloonFunction: function(item, graph) {
+            //   var value = item.values.value;
+            //   var hoverInfo = '';
+            //   hoverInfo += 'Jumlah: <b>'+'[[count]]'+'</b><br> ';
+            //   hoverInfo += 'Nilai: <b>'+vmHelper.formatNumber(value,true,false)+'</b>';
+            //   return hoverInfo;
+            // },
+            bullet: 'round',
+            bulletSize: 8,
+            lineColor: layoutColors.success,
+            lineThickness: 2,
+            type: 'line',
+            valueField: 'value'
           }
         ],
         dataDateFormat: dateFormat,
         categoryField: 'date',
+        categoryAxis: {
+             gridThickness: 0
+        },
         categoryLabelFunction: function(valueText, date, categoryAxis) {
           if(data.granularity == 'month')
             return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
           else if(data.granularity == 'day')
             return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
-        }
+        },
+        valueAxes: [{
+          id:'v1',
+          axisColor: layoutColors.warning,
+          axisThickness: 2,
+          axisAlpha: 1,
+          position: 'left',
+          labelFunction: valueLabelFunction,
+          minimum: 0,
+          integersOnly: true,
+        }, {
+          id:'v2',
+          axisColor: layoutColors.success,
+          axisThickness: 2,
+          axisAlpha: 1,
+          position: 'right',
+          labelFunction: valueLabelFunction,
+          minimum: 0,
+          integersOnly: true,
+        },],
       };
       
-      return vmHelper.getLineChartOptions(options);
+      var chartOptions = vmHelper.getLineChartOptions(options);
+      chartOptions.legend = {
+        useGraphSettings: true,
+        valueFunction: function(graphDataItem, valueText) {
+          return '';
+        },
+        valueWidth:0
+      };
+      return chartOptions;
     };
 
     $scope.drawTransactionTrend =  function(data, metric, colors) {
@@ -522,6 +532,162 @@
 
     $scope.changeMetric = function() {
       $scope.drawTransactionTrend($scope.transactionTrend, $scope.transactionHistory.metric, $scope.colors);
+    };
+
+    // PRODUCT
+    $scope.initProductList = function() {
+      $scope.productPageIndex = 1;
+      $scope.productPageSize = 5;
+      $scope.productList = {
+        totalRows: 0,
+        // page: 1,
+        // rowsPerPage: 5,
+        displayedPages: 1,
+        product:[]
+      };
+    }
+    $scope.initProductList();
+
+    $scope.getProductList = function(startDate, endDate, page, rows) {
+      $scope.loading = true;
+      $http.get('/api/virtualmarket/product?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
+        .then(function(res) {
+          var data = res.data.data;
+          $scope.showProducts(data);
+        })
+        .finally(function() {
+          $scope.loading= false;
+        });    
+    };
+
+    $scope.showProducts = function(data) {
+      $scope.productList.totalRows = data.total_rows;
+      // $scope.productList.product = data.product;
+
+      $scope.updatedProductList = data.product;
+      // copy references
+      $scope.productList.product = [].concat($scope.updatedProductList);
+    };
+
+    $scope.formatNumber = function(number) {
+      return vmHelper.formatNumber(number,false,false);
+    };
+
+    $scope.changeProductPage = function(newPage) {
+      // $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
+      $scope.productPageIndex = newPage;
+    };
+
+    // GARENDONG
+    $scope.initShopperList = function() {
+      $scope.shopperPageIndex = 1;
+      $scope.shopperPageSize = 5;
+      $scope.shopperList = {
+        totalRows: 0,
+        avgRating: 0 + ' / 5',
+        // pageIndex: 1,
+        // pageSize: 5,
+        displayedPages: 1,
+        shopper:[]
+      };
+    };
+    $scope.initShopperList();
+
+    $scope.shopperListOptions = {
+      selected: {
+        label: 'Rating Tertinggi',
+        value: 'highest',
+        color: $scope.colors.green
+      },
+      options: [
+        {
+          label: 'Rating Tertinggi',
+          value: 'highest',
+          color: $scope.colors.green
+        },
+        {
+          label: 'Rating Terendah',
+          value: 'lowest',
+          color: $scope.colors.red
+        }
+      ]
+    };
+
+    $scope.getShopperList = function(startDate, endDate, page, rows, sort) {
+      // $scope.loading = true;
+      $http.get('/api/virtualmarket/shopper?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows+'&sort='+sort)
+        .then(function(res) {
+          $scope.shopperData = res.data.data;
+          $scope.showShopperData($scope.shopperData, '');
+        })
+        .finally(function() {
+          // $scope.loading= false;
+        });    
+    };
+
+    $scope.showShopperData = function(data, sortBy) {
+      //stats
+      // $scope.stats.shopperCount.value = data.shopper_count.current;
+      // var countChange = (data.shopper_count.current-data.shopper_count.prev);
+      // countChange = isFinite(countChange)? countChange:0;
+      // if(countChange>=0) {
+      //   $scope.stats.shopperCount.icon = 'ion-arrow-up-b';
+      //   $scope.stats.shopperCount.iconColor = $scope.colors.green;
+      // } else {
+      //   countChange *= -1;
+      //   $scope.stats.shopperCount.icon = 'ion-arrow-down-b';
+      //   $scope.stats.shopperCount.iconColor = $scope.colors.red;
+      // }
+      // $scope.stats.shopperCount.change = countChange;
+
+      // $scope.stats.avgRating.value = $scope.formatRating(data.avg_rating.current);
+      // var ratingChange = (data.avg_rating.current-data.avg_rating.prev);
+      // ratingChange = isFinite(ratingChange)? ratingChange:0;
+      // if(ratingChange>=0) {
+      //   $scope.stats.avgRating.icon = 'ion-arrow-up-b';
+      //   $scope.stats.avgRating.iconColor = $scope.colors.green;
+      // } else {
+      //   ratingChange *= -1;
+      //   $scope.stats.avgRating.icon = 'ion-arrow-down-b';
+      //   $scope.stats.avgRating.iconColor = $scope.colors.red;
+      // }
+      // $scope.stats.avgRating.change = $scope.formatRating(parseFloat(ratingChange.toFixed(2)));
+
+      // shopper list
+      $scope.updatedShopperList = data.shopper;
+      // copy references
+      $scope.shopperList.shopper = [].concat($scope.updatedShopperList);
+    };
+
+    $scope.getFeedback = function(startDate, endDate) {
+      $http.get('/api/virtualmarket/feedback?type=stats&start_date='+startDate+'&end_date='+endDate)
+        .then(function(res) {
+          var data = res.data.data;
+          $scope.showFeedbackReason(data.feedback);
+        })
+        .finally(function() {
+          // $scope.loading= false;
+        });          
+    };
+
+    $scope.showFeedbackReason = function(data) {
+      if($scope.chart != undefined) {
+        $('#vmFeedbackReason').empty();
+      }
+
+      if(data.length == 0) {
+        $scope.noData = true;
+      } else {
+        for(var i=0; i<data.length; i++){
+          data[i].fillColor = $scope.colors.yellow;
+        }
+        $scope.chart = AmCharts.makeChart('vmFeedbackReason',$scope.getBarChartOptions(data, $scope.colors, 'reason'));
+        $scope.noData = false;
+      }
+    }
+
+    $scope.formatRating = function(rating) {
+      return vmHelper.formatNumber(rating,false,false);
     };
 
   }

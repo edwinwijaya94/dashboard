@@ -249,10 +249,12 @@ class VirtualMarketController extends Controller
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
 
-        if($query['type'] == 'toplist')
-            return $this->getProductTopList($query);
-        else if($query['type'] == 'stats')
+        if($query['type'] == 'stats')
             return $this->getProductStats($query);
+        else if($query['type'] == 'toplist')
+            return $this->getProductTopList($query);
+        else if($query['type'] == 'list')
+            return $this->getProductList($query);
         else if($query['type'] == 'prediction')
             return $this->getProductPrediction($query);
     }
@@ -301,11 +303,52 @@ class VirtualMarketController extends Controller
         $dbQuery = DB::connection('virtual_market')
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('categories', 'products.category_id', '=', 'categories.id')
                     ->join('orders', 'order_lines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('products.id, products.name, count(*), round(avg(order_lines.price/order_lines.quantity), 2) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
+                    ->join('units', 'products.default_unit_id', 'units.id')
+                    ->select(DB::raw('products.id, products.name, categories.name as category, count(*), sum(quantity) as sums, units.unit, round(avg(order_lines.price/order_lines.quantity), 0) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
+                    ->groupBy('categories.name')
+                    ->groupBy('units.unit')
+                    ->orderByRaw('count desc, products.name asc')
+                    ->limit(5);
+
+
+        $product = $dbQuery
+                    ->get();
+
+        $data = array();
+        $data['product'] = $product;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
+    public function getProductList($query)
+    {
+        // $rows = (int)$query['rows'];
+        // $page = (int)$query['page'];
+        DB::enableQueryLog();
+        // execute
+        // success / failed transaction
+        $dbQuery = DB::connection('virtual_market')
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('categories', 'products.category_id', '=', 'categories.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->join('units', 'products.default_unit_id', 'units.id')
+                    // ->select('*')
+                    ->select(DB::raw('products.id, products.name, categories.name as category, count(*), sum(quantity) as sums, units.unit, round(avg(order_lines.price/order_lines.quantity), 0) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->groupBy('products.id')
+                    ->groupBy('categories.name')
+                    ->groupBy('units.unit')
                     ->orderByRaw('count desc, products.name asc');
 
         $totalRows = $dbQuery->get()->count();
@@ -344,26 +387,23 @@ class VirtualMarketController extends Controller
         $dateOrder = 'date asc';
 
         DB::enableQueryLog();
-        
-        
-
         // execute
         $dbQuery = DB::connection('virtual_market')
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
                     ->join('orders', 'order_lines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('count(*),'.$dateQuery))
+                    ->select(DB::raw('sum(quantity) as count,'.$dateQuery))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('order_lines.product_id', '=', $query['productId'])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder);
 
-        $productName = DB::connection('virtual_market')
-                    ->table('products')
-                    ->select(DB::raw('name'))
-                    ->where('id', '=', $query['productId'])
-                    ->get();
+        // $productName = DB::connection('virtual_market')
+        //             ->table('products')
+        //             ->select(DB::raw('name'))
+        //             ->where('id', '=', $query['productId'])
+        //             ->get();
 
         $product = $dbQuery
                     ->get()
@@ -429,7 +469,7 @@ class VirtualMarketController extends Controller
         $trendData = array_merge($trendData, $predictions);
 
         $data = array();
-        $data['product_name'] = $productName;
+        // $data['product_name'] = $productName;
         $data['trend'] = $trendData;
         // $data['prediction'] = $prediction;
 
@@ -451,6 +491,8 @@ class VirtualMarketController extends Controller
             return $this->getShopperStats($query);
         else if($query['type'] == 'toplist')
             return $this->getShopperTopList($query);
+        else if($query['type'] == 'list')
+            return $this->getShopperList($query);
     }
 
     public function getShopperStats($query)
@@ -475,8 +517,8 @@ class VirtualMarketController extends Controller
 
     public function getShopperTopList($query)
     {
-        $rows = (int)$query['rows'];
-        $page = (int)$query['page'];
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
         if($query['sort'] == 'highest')
             $ratingOrder = 'rating desc';
         else if ($query['sort'] == 'lowest')
@@ -485,30 +527,101 @@ class VirtualMarketController extends Controller
 
         DB::enableQueryLog();
         // execute
-        $dbQuery = DB::connection('virtual_market')
+        $shopper = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('garendongs', 'garendongs.id', '=', 'orders.garendong_id')
-                    ->select(DB::raw('garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
+                    ->select(DB::raw('garendongs.id, garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->whereNotNull('orders.rating')
-                    ->groupBy('garendongs.user_id')
-                    ->orderByRaw($ratingOrder);
-
-        $totalRows = $dbQuery->get()->count();
-
-        $avgRating = round($dbQuery->get()->avg('rating'), 2);
-        // dd($avgRating);
-
-        $shopper = $dbQuery
-                    // ->skip($page*$rows - $rows)
-                    // ->take($rows)
+                    ->groupBy('garendongs.id')
+                    ->orderByRaw($ratingOrder)
+                    ->limit(5)
                     ->get();
 
         $data = array();
-        $data['total_rows'] = $totalRows;
-        $data['avg_rating'] = $avgRating;
         $data['shopper'] = $shopper;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);      
+    }
+
+    public function getShopperList($query)
+    {
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
+        // $rows = (int)$query['rows'];
+        // $page = (int)$query['page'];
+        if($query['sort'] == 'highest')
+            $ratingOrder = 'rating desc';
+        else if ($query['sort'] == 'lowest')
+            $ratingOrder = 'rating asc';
+        $ratingOrder .= ', name asc';
+
+        DB::enableQueryLog();
+        // execute
+        $currentShopperData = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('garendongs', 'garendongs.id', '=', 'orders.garendong_id')
+                    ->select(DB::raw('garendongs.id, garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->whereNotNull('orders.rating')
+                    // ->groupBy('garendongs.user_id')
+                    ->groupBy('garendongs.id')
+                    ->orderByRaw($ratingOrder);
+        $currentShopperCount = $currentShopperData->get()->count();
+        $currentAvgRating = round($currentShopperData->get()->avg('rating'), 2);
+        $shoppers = $currentShopperData->get();
+
+        $shopperChanges = array();
+        foreach ($shoppers as $shopper) {
+            $result = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('garendongs', 'garendongs.id', '=', 'orders.garendong_id')
+                    ->select(DB::raw('count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('garendongs.id', '=', $shopper->id)
+                    ->whereNotNull('orders.rating')
+                    ->groupBy('garendongs.id')
+                    // ->orderByRaw($ratingOrder);
+                    ->get();
+                array_push($shopperChanges, $result);
+        }
+        for($i=0; $i<count($shoppers); $i++){
+            $prevOrder = count($shopperChanges[$i]) > 0 ? $shopperChanges[$i][0]->orders : $shoppers[$i]->orders;
+            $prevRating = count($shopperChanges[$i]) > 0 ? $shopperChanges[$i][0]->rating : $shoppers[$i]->rating;
+            $shoppers[$i]->orders_change = $shoppers[$i]->orders - $prevOrder;
+            $shoppers[$i]->rating_change = $shoppers[$i]->rating - $prevRating;
+        }
+
+        $prevShopperData = DB::connection('virtual_market')
+                    ->table('orders')
+                    ->join('garendongs', 'garendongs.id', '=', 'orders.garendong_id')
+                    ->select(DB::raw('garendongs.id, garendongs.user_id as name, count(orders.rating) as orders, round(avg(orders.rating), 2) as rating'))
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->whereNotNull('orders.rating')
+                    ->groupBy('garendongs.id');
+        $prevShopperCount = $prevShopperData->get()->count();
+        $prevAvgRating = round($prevShopperData->get()->avg('rating'), 2);           
+
+
+        $data = array();
+        $data['shopper_count'] = array();
+        $data['shopper_count']['current'] = $currentShopperCount;
+        $data['shopper_count']['prev'] = $prevShopperCount;
+        // $data['total_rows'] = $totalRows;
+        $data['avg_rating'] = array();
+        $data['avg_rating']['current'] = $currentAvgRating;
+        $data['avg_rating']['prev'] = $prevAvgRating;
+        // $data['avg_rating'] = $avgRating;
+        $data['shopper'] = $shoppers;
+        // $data['shopper_changes'] = $shopperChanges;
         $status = $this->setStatus();
 
         return response()->json([
@@ -581,15 +694,19 @@ class VirtualMarketController extends Controller
         $uniqueBuyers = array();
         $uniqueBuyers['current_period'] = DB::connection('virtual_market')
                                         ->table('orders')
+                                        ->join('order_statuses', 'orders.order_status', 'order_statuses.id')
                                         ->where('orders.created_at', '>=', $query['startDate'])
                                         ->where('orders.created_at', '<=', $query['endDate'])
+                                        ->where('order_statuses.status', '=', 'success' )
                                         ->distinct('customer_id')
                                         ->count('customer_id');
 
         $uniqueBuyers['prev_period'] = DB::connection('virtual_market')
                                         ->table('orders')
+                                        ->join('order_statuses', 'orders.order_status', 'order_statuses.id')
                                         ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                                         ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                                        ->where('order_statuses.status', '=', 'success' )
                                         ->distinct('customer_id')
                                         ->count('customer_id');
 

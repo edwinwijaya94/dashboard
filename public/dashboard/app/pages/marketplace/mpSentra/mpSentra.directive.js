@@ -5,15 +5,15 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.virtualmarket')
-      .directive('vmShopper', vmShopper);
+  angular.module('BlurAdmin.pages.marketplace')
+      .directive('mpSentra', mpSentra);
 
   /** @ngInject */
-  function vmShopper() {
+  function mpSentra() {
     return {
       restrict: 'E',
-      // controller: 'vmShopperCtrl',
-      templateUrl: 'app/pages/virtualmarket/vmShopper/vmShopper.html'
+      // controller: 'mpSentraCtrl',
+      templateUrl: 'app/pages/marketplace/mpSentra/mpSentra.html'
     };
   }
 })();

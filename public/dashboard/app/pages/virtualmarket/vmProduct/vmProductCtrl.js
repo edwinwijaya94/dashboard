@@ -101,10 +101,10 @@
     }
 
 
-    // PRODUCT TOPLIST
+    // PRODUCT LIST
     $scope.getProductList = function(startDate, endDate, page, rows) {
       $scope.loading = true;
-      $http.get('/api/virtualmarket/product?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
+      $http.get('/api/virtualmarket/product?type=list&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
         .then(function(res) {
           var data = res.data.data;
           $scope.showProducts(data);
@@ -141,6 +141,7 @@
       var startDate = $scope.startDate;
       var endDate = $scope.endDate;
 
+      $scope.selectedProduct = product;
       $http.get('/api/virtualmarket/product?type=prediction&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
         .then(function(res) {
           var data = res.data.data;
@@ -167,6 +168,18 @@
           });
         });    
 
+    };
+
+    $scope.sorter = {
+      count: function(value) {
+        return parseInt(value.count);
+      },
+      avgPrice: function(value) {
+        return parseInt(value.avg_price);
+      },
+      availability: function(value) {
+        return parseFloat(value.availability);
+      }
     };
 
   }

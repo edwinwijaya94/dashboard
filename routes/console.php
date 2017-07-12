@@ -26,13 +26,14 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             // order_status
             DB::connection('virtual_market')->table('order_statuses')->insert([
                 ['status' => 'success'],
-                ['status' => 'failed'],
+                ['status' => 'produk habis'],
+                ['status' => 'tidak ada garendong'],
             ]);
             // reasons
             DB::connection('virtual_market')->table('reasons')->insert([
-                ['reason' => 'pelayanan baik'],
-                ['reason' => 'pelayanan biasa saja'],
-                ['reason' => 'pelayanan buruk'],
+                ['reason' => 'pesanan tidak sesuai'],
+                ['reason' => 'kualitas pesanan buruk'],
+                ['reason' => 'pengantaran lama'],
             ]);
             // units
             DB::connection('virtual_market')->table('units')->insert([
@@ -62,6 +63,15 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
 	} else if($system == 'mp') {
 
         if($init == 'yes') {
+            // sentra
+            DB::connection('marketplace')->table('sentra')->insert([
+                ['name' => 'Rendang', 'phone_number' => '08123456789', 'image' => 'a', 'description' => 'a' ],
+                ['name' => 'Coklat', 'phone_number' => '08123456789', 'image' => 'a', 'description' => 'a' ],
+                ['name' => 'Kerajinan', 'phone_number' => '08123456789', 'image' => 'a', 'description' => 'a' ],
+                ['name' => 'Batik', 'phone_number' => '08123456789', 'image' => 'a', 'description' => 'a' ],
+                ['name' => 'Keripik', 'phone_number' => '08123456789', 'image' => 'a', 'description' => 'a' ],
+            ]);
+
             // payment method
             DB::connection('marketplace')->table('payment_method_types')->insert([
                 ['name' => 'transfer', 'type' => 'a', 'image' => 'a', 'description' => 'a' ],
@@ -70,7 +80,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             ]);
         }
         factory(App\Model\Marketplace\Buyer::class, $num)->create();
-        factory(App\Model\Marketplace\Sentra::class, $num)->create();
+        // factory(App\Model\Marketplace\Sentra::class, $num)->create();
         factory(App\Model\Marketplace\Store::class, $num)->create();
         factory(App\Model\Marketplace\Category::class, $num)->create();
         factory(App\Model\Marketplace\Product::class, $num)->create();
@@ -78,6 +88,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
         // factory(App\Model\Marketplace\StoreProduct::class, $num)->create();
         factory(App\Model\Marketplace\Order::class, $num)->create();
         factory(App\Model\Marketplace\OrderLine::class, $num*3)->create();
+        factory(App\Model\Marketplace\Feedback::class, $num)->create();
         factory(App\Model\Marketplace\Rating::class, $num)->create();
 	}
 })->describe('Seed db with specific number of records');

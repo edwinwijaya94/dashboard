@@ -6,14 +6,14 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.virtualmarket')
-      .directive('vmTransaction', vmTransaction);
+      .directive('vmOverview', vmOverview);
 
   /** @ngInject */
-  function vmTransaction() {
+  function vmOverview() {
     return {
       restrict: 'E',
-      // controller: 'vmTransactionCtrl',
-      templateUrl: 'app/pages/virtualmarket/vmTransaction/vmTransaction.html'
+      // controller: 'vmOverviewCtrl',
+      templateUrl: 'app/pages/virtualmarket/vmOverview/vmOverview.html'
     };
   }
 })();

@@ -3,10 +3,11 @@ angular.module('BlurAdmin.pages.virtualmarket')
   .factory("vmHelper", function() {                                                                                                                                                   
     return {
       colors: {
-        primary: { // Google colour
-          blue: '#4285f4',
+        primary: {
+          // blue: '#4285f4',
+          blue: '#2dacd1',
           green: '#34a853',
-          yellow: '#fbbc05',
+          yellow: '#dfb81c',
           red: '#ea4335',
         }
       },
@@ -81,15 +82,9 @@ angular.module('BlurAdmin.pages.virtualmarket')
         return result;
       },
       getLineChartOptions: function(options) {
-        return {
-          type: 'serial',
-          theme: 'blur',
-          color: options.color,
-          marginTop: 10,
-          marginRight: 15,
-          marginBottom: 10,
-          dataProvider: options.data,
-          valueAxes: [
+        // check valueAxes
+        if(options.valueAxes == null) {
+          options.valueAxes = [
             {
               axisAlpha: 0,
               title: options.title,
@@ -100,14 +95,26 @@ angular.module('BlurAdmin.pages.virtualmarket')
               integersOnly: true,
               labelFunction: options.valueLabelFunction
             }
-          ],
+          ];
+        }
+
+        return {
+          type: 'serial',
+          theme: 'blur',
+          color: options.color,
+          marginTop: 10,
+          marginRight: 15,
+          marginBottom: 10,
+          dataProvider: options.data,
+          valueAxes: options.valueAxes,
           graphs: options.graphs,
           dataDateFormat: options.dataDateFormat,
           categoryField: options.categoryField,
           categoryAxis: {
             parseDates: true,
             equalSpacing: true,
-            labelFunction: options.categoryLabelFunction
+            labelFunction: options.categoryLabelFunction,
+            gridThickness: 0
           },
           chartCursor: {
            categoryBalloonEnabled: false,
@@ -139,6 +146,9 @@ angular.module('BlurAdmin.pages.virtualmarket')
           graphs: options.graphs,
           rotate: options.rotate,
           categoryField: options.categoryField,
+          categoryAxis: {
+            gridThickness: 0
+          },
           creditsPosition: 'bottom-right'
         };
       }

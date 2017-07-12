@@ -30,3 +30,6 @@ Route::get('/marketplace/product', 'MarketplaceController@getProduct');
 Route::get('/marketplace/sentra', 'MarketplaceController@getSentra');
 Route::get('/marketplace/feedback', 'MarketplaceController@getFeedback');
 Route::get('/marketplace/buyer', 'MarketplaceController@getBuyer');
+
+// operational
+Route::get('/operational/overview', 'OperationalController@getOverview');

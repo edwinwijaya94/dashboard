@@ -353,6 +353,17 @@
 <script src="{{asset('dashboard/app/pages/marketplace/mpFeedback/mpFeedback.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/marketplace/mpFeedback/mpFeedbackCtrl.js')}}"></script>
 
+<!-- operational dashboard -->
+<script src="{{asset('dashboard/app/pages/operational/operational.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/operational/opHelper.service.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/operational/opCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/operational/opFilter/opFilter.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/operational/opFilter/opFilterCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/operational/opOverview/opOverview.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/operational/opOverview/opOverviewCtrl.js')}}"></script>
+
+
 <!-- product manager for virtual market -->
 <script src="{{asset('dashboard/app/pages/productManager/productManager.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/pmHelper.service.js')}}"></script>

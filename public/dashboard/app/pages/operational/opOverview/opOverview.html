@@ -1,0 +1,162 @@
+<div class="row" ng-controller="opOverviewCtrl">
+  <div class="row col-md-12" ba-panel ba-panel-title="" ba-panel-class="panel-group">
+
+    <!-- STATS -->
+    <div class="row" style="height:200px">
+      <!-- stats -->
+      <div class="pie-charts col-md-6">
+        <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
+          <div class="">
+            <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
+            <div class="description">
+              <div>{{ ::stat.description }}</div><br>
+              <div class="description-stats" ng-bind="stat.value"></div><br>
+              <div ng-show="stat.showChange">
+                  <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
+                  <span>{{stat.change}}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- STATUS TRANSAKSI -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Status Transaksi"
+           ba-panel-class="pv-panel" style="height:150px; ">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="opTransactionStatus" class="admin-chart" style="height:140px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="row">
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Tren Transaksi"
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="opTransactionByHistory" class="pv-chart" style="height:250px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6"
+         ba-panel
+         ba-panel-title="Tren Pembeli"
+         ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="opBuyerByHistory" class="pv-chart" style="height:250px"></div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+    <div class="row">
+      <!-- TIDAK TERSEDIA -->
+      <div class="col-md-3"
+           ba-panel
+           ba-panel-title="Tidak Tersedia"
+           ba-panel-class="pv-panel" style="">
+        <div class="row">
+          <div>
+            <table class="table" st-table="unavailableList.product" st-safe-src="updatedUnavailableList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th st-sort="name">Nama</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="product in unavailableList.product">
+                <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+                <td>{{product.name}}</td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td colspan="6" class="text-center">
+                  <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
+                </td>
+              </tr>
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+      </div>
+      <!-- PRODUK -->
+      <div class="col-md-9"
+           ba-panel
+           ba-panel-title="Produk"
+           ba-panel-class="pv-panel" style="">
+        <div class="row">
+          <div>
+            <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th st-sort="name">Produk</th>
+                <th st-sort="category">Kategori</th>
+                <th st-sort="sorter.count" st-sort-default="reverse">#Transaksi</th>
+                <th >#Permintaan</th>
+                <th st-sort="sorter.avgPrice">Harga(Rp)</th>
+                <th st-sort="sorter.availability">Ketersediaan(%)</th>
+                <th >Tren</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th>
+                  <input st-search="name" placeholder="Cari" class="input-sm form-control search-input" type="search"/>
+                </th>
+                <th>
+                  <input st-search="category" placeholder="Cari" class="input-sm form-control search-input" type="search"/>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="product in productList.product">
+                <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+                <td>{{product.name}}</td>
+                <td>{{product.category}}</td>
+                <td>{{product.count}}</td>
+                <td>{{product.sums}} {{product.unit}}</td>
+                <td>{{formatNumber(product.avg_price)}}</td>
+                <td>{{formatNumber(product.availability)}}</td>
+                <td>
+                  <div class="buttons">
+                    <button class="btn btn-primary editable-table-button btn-xs" ng-click="viewTrend(product)">Lihat</button>
+                  </div>
+                </td> 
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td colspan="6" class="text-center">
+                  <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
+                </td>
+              </tr>
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+      </div>
+      
+    </div>
+      
+  </div>
+
+</div>

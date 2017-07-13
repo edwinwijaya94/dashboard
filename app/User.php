@@ -26,6 +26,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    protected $connection = 'marketplace';
+    
+    protected $connection = 'user';
+    protected $table = 'users';
 }

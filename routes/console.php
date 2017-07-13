@@ -51,7 +51,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             DB::connection('virtual_market')->table('categories')->insert([
                 ['name' => 'sayuran', 'category_img' => 'a.jpg'],
                 ['name' => 'daging', 'category_img' => 'b.jpg'],
-                ['name' => 'buah-buahan', 'category_img' => 'c.jpg'],
+                ['name' => 'buah', 'category_img' => 'c.jpg'],
             ]);
         }
 	    factory(App\Model\VirtualMarket\Order::class, $num)->create();
@@ -90,5 +90,21 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
         factory(App\Model\Marketplace\OrderLine::class, $num*3)->create();
         factory(App\Model\Marketplace\Feedback::class, $num)->create();
         factory(App\Model\Marketplace\Rating::class, $num)->create();
-	}
+	} else if($system == 'user') {
+        DB::connection('user')->table('roles')->insert([
+                ['name' => 'kepala_dinas'],
+                ['name' => 'kepala_pasar'],
+            ]);
+        DB::connection('user')->table('users')->insert([
+                [   
+                    'role_id' => 1,
+                    'name' => 'Kepala Disperindag',
+                    'email' => 'disperindag@gmail.com',
+                    'password' => bcrypt('12345'),
+                    'username' => 'disperindag',
+                    'phone_number' => '08123456789',
+                    'address' => 'Kota Payakumbuh',
+                ],
+            ]);
+    }
 })->describe('Seed db with specific number of records');

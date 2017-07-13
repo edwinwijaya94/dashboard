@@ -265,14 +265,20 @@
         return 'ion-arrow-up-b';
       else
         return 'ion-arrow-down-b';
-    }
+    };
 
     $scope.getArrowColor = function(value) {
       if(value >= 0)
         return $scope.colors.green;
       else
         return $scope.colors.red;
-    }
+    };
+
+    // FOR TESTING PURPOSE ONLY
+    // var names = ['Budi', 'Anto', 'Usman', 'Denny', 'Maman', 'Ricky', 'Yanto', 'Fahmi', 'Nana', 'Jon'];
+    // $scope.getRandomName = function() {
+    //   return names[Math.floor((Math.random() * (names.length-1)))];
+    // };
 
   }
 })();

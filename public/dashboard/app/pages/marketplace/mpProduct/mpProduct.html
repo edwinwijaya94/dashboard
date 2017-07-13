@@ -33,10 +33,12 @@
             <thead>
             <tr class="sortable ">
               <th class="table-id">#</th>
-              <th st-sort="name">Nama Produk</th>
-              <th st-sort="sorter.count" st-sort-default="reverse">Penjualan</th>
-              <th st-sort="sorter.avgPrice">Harga Rata-Rata(Rp)</th>
-              <!-- <th st-sort="availability">Ketersediaan(%)</th> -->
+              <th st-sort="name">Produk</th>
+              <th st-sort="sentra">Sentra</th>
+              <th st-sort="sorter.count" st-sort-default="reverse">#Transaksi</th>
+              <th st-sort="sorter.sums">#Order(unit)</th>
+              <th st-sort="sorter.avgPrice">Harga(Rp)</th>
+              <!-- <th st-sort="sorter.availability">Ketersediaan(%)</th> -->
               <th >Tren</th>
             </tr>
             <tr>
@@ -44,6 +46,10 @@
               <th>
                 <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/>
               </th>
+              <th>
+                <input st-search="sentra" placeholder="Cari Sentra" class="input-sm form-control search-input" type="search"/>
+              </th>
+              <th></th>
               <th></th>
               <th></th>
               <!-- <th></th> -->
@@ -54,7 +60,9 @@
             <tr ng-repeat="product in productList.product">
               <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
               <td>{{product.name}}</td>
+              <td>{{product.sentra}}</td>
               <td>{{product.count}}</td>
+              <td>{{product.sums}}</td>
               <td>{{formatNumber(product.avg_price)}}</td>
               <!-- <td>{{formatNumber(product.availability)}}</td> -->
               <td>

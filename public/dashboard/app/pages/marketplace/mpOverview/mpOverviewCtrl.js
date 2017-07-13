@@ -33,7 +33,7 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-        colSize: 3,
+        colSize: 4,
       },
       transaction_value: {
         color: pieColor,
@@ -50,7 +50,7 @@
         colSize: 3,
       },
       unique_buyers: {
-        description: 'Jumlah Pembeli',
+        description: 'Pembeli',
         info: 'Persentase perbandingan dihitung dengan periode sebelumnya',
         value: 0,
         percent: 0,
@@ -88,7 +88,7 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-        colSize: 3,
+        colSize: 2,
       }
     };
 
@@ -309,7 +309,7 @@
       }
       stat.colSize = $scope.stats.transaction_value.colSize;
       // format numbers
-      stat.value = mpHelper.formatNumber(stat.value,true,false);
+      stat.value = mpHelper.formatNumber(stat.value,true,true,2);
       stat.change = mpHelper.formatNumber(stat.change,false,false)+'%';
       $scope.stats.transaction_value = stat;
     }

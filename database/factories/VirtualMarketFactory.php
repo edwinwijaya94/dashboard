@@ -18,7 +18,7 @@ $factory->define(App\Model\VirtualMarket\Order::class, function (Faker\Generator
         'total_product' => $faker->numberBetween($min = 1, $max = 10),
         'total_price' => $faker->numberBetween($min = 5000, $max = 150000),
         'order_type' => $faker->randomElement($array = array ('mobile','sms')), // app platform
-        'created_at' => $faker->dateTimeBetween($startDate = '-6 hour', $endDate = '+1 hour', $timezone = 'Asia/Jakarta'),
+        'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = '+1 day', $timezone = 'Asia/Jakarta'),
         'order_status' => $faker->numberBetween($min = 1, $max = 3),
         'customer_id' => $faker->numberBetween($min = 1, $max = 100),
         'garendong_id' => $faker->numberBetween($min = 1, $max = 100),

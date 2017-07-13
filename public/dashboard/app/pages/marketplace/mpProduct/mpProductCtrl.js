@@ -104,7 +104,7 @@
     // PRODUCT TOPLIST
     $scope.getProductList = function(startDate, endDate, page, rows) {
       $scope.loading = true;
-      $http.get('/api/marketplace/product?type=toplist&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
+      $http.get('/api/marketplace/product?type=list&start_date='+startDate+'&end_date='+endDate+'&page='+page+'&rows='+rows)
         .then(function(res) {
           var data = res.data.data;
           $scope.showProducts(data);
@@ -115,7 +115,7 @@
     };
 
     $scope.showProducts = function(data) {
-      $scope.productList.totalRows = data.total_rows;
+      // $scope.productList.totalRows = data.total_rows;
       // $scope.productList.product = data.product;
 
       $scope.updatedProductList = data.product;
@@ -172,6 +172,9 @@
     $scope.sorter = {
       count: function(value) {
         return parseInt(value.count);
+      },
+      sums: function(value) {
+        return parseInt(value.sums);
       },
       avgPrice: function(value) {
         return parseInt(value.avg_price);

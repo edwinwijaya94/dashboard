@@ -3,8 +3,8 @@
 
     <!-- STATS -->
     <div class="row" style="height:150px">
-      <!-- transaction success rate -->
-      <div class="pie-charts col-md-12">
+      <!-- STATS -->
+      <div class="pie-charts col-md-8">
         <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
           <div class="">
             <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
@@ -19,6 +19,19 @@
           </div>
         </div>
       </div>
+      <!-- STATUS TRANSAKSI -->
+      <div class="pie-charts col-md-4">
+        <div class="col-md-12">
+          <div class="description" style="width:300px">
+            <div>Status Transaksi</div><br>
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                <div id="mpTransactionStatus" class="admin-chart" style="height:150px"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="row">
@@ -26,23 +39,8 @@
       <div class="col-md-6"
            ba-panel
            ba-panel-title="Tren Transaksi"
-           ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
         <div class="row">
-          <!-- <div class="row">
-            <div class="col-md-2 col-md-offset-4">Tampilkan:</div>  
-            <div class="col-md-2">
-              <label class="radio-inline custom-radio nowrap">
-                <input type="radio" name="transactionCount" value="count" ng-model="transactionHistory.metric" ng-change="changeMetric()">
-                <span>Jumlah</span>
-              </label>
-            </div>
-            <div class="col-md-2">
-              <label class="radio-inline custom-radio nowrap">
-                <input type="radio" name="transactionValue" value="value" ng-model="transactionHistory.metric" ng-change="changeMetric()">
-                <span>Nilai(Rupiah)</span>
-              </label>
-            </div>
-          </div> -->
           <div class="col-lg-12 col-md-12">
             <div id="mpTransactionByHistory" class="pv-chart" style="height:250px"></div>
             <!-- loading / no data handler -->
@@ -57,10 +55,10 @@
       <div class="col-md-6"
          ba-panel
          ba-panel-title="Tren Pembeli"
-         ba-panel-class="pv-panel" style="height:300px; margin-bottom:25px">
+         ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="mpBuyerByHistory" class="pv-chart" style="height:250px"></div>
+            <div id="mpBuyerByHistory" class="pv-chart" style="height:200px"></div>
             <!-- loading / no data handler -->
             <div class="pv-chart-medium-overlay" ng-show="loading || noData">
               <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
@@ -73,7 +71,7 @@
 
     <div class="row">
       <!-- TOP SENTRA -->
-      <div class="col-md-6"
+      <div class="col-md-4"
            ba-panel
            ba-panel-title="Sentra Populer"
            ba-panel-class="pv-panel" style="height:320px;">
@@ -108,7 +106,7 @@
         </div>
       </div>
       <!-- TOP PRODUCT -->
-      <div class="col-md-6"
+      <div class="col-md-4"
            ba-panel
            ba-panel-title="Produk Populer"
            ba-panel-class="pv-panel" style="">
@@ -135,29 +133,22 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="row">
-      <div class="col-md-6"
-           ba-panel
-           ba-panel-title="Status Transaksi"
-           ba-panel-class="pv-panel" style="">
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div id="mpTransactionStatus" class="admin-chart" style="height:200px"></div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6"
+      <!-- PAYMENT METHOD -->
+      <div class="col-md-4"
            ba-panel
            ba-panel-title="Metode Pembayaran"
            ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="mpPaymentMethod" class="admin-chart" style="height:200px"></div>
+            <div id="mpPaymentMethod" class="admin-chart" style="height:250px"></div>
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="row">
+      
+      
     </div>
 
   <!-- </div> -->

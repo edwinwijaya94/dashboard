@@ -24,16 +24,18 @@ angular.module('BlurAdmin.pages.marketplace')
     		var monthName = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
     		return monthName[index];
   	  },
-  	  formatNumber: function(value, isCurrency, isSimplified) {
+  	  formatNumber: function(value, isCurrency, isSimplified, decimals) {
+        if(decimals == undefined)
+          decimals = 0;
         // max 2 decimal places
         var formatted = '';
         if(isSimplified) {
           if(value>=1000000000)
-            formatted = (value/1000000000).toString() + ' mi';
+            formatted = (value/1000000000).toFixed(decimals) + ' mi';
           else if(value>=1000000)
-            formatted = (value/1000000).toString() + ' jt';
+            formatted = (value/1000000).toFixed(decimals) + ' jt';
           else if (value>=1000)
-            formatted = (value/1000).toString() + ' rb';
+            formatted = (value/1000).toFixed(decimals) + ' rb';
           else 
             formatted = value.toString();
         } else {

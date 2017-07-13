@@ -245,6 +245,8 @@ class MarketplaceController extends Controller
             return $this->getProductTopList($query);
         else if($query['type'] == 'stats')
             return $this->getProductStats($query);
+        else if($query['type'] == 'list')
+            return $this->getProductList($query);
     }
     
     public function getProductStats($query)
@@ -297,6 +299,40 @@ class MarketplaceController extends Controller
                     ->groupBy('products.id')
                     ->orderByRaw('units desc, products.name asc')
                     ->limit(5);
+
+        $product = $query
+                    ->get();
+
+        $data = array();
+        // $data['total_rows'] = $totalRows;
+        $data['product'] = $product;
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
+    public function getProductList($query)
+    {
+        $rows = (int)$query['rows'];
+        $page = (int)$query['page'];
+        DB::enableQueryLog();
+        // execute
+        // success / failed transaction
+        $query = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
+                    ->select(DB::raw('products.name, sentra.name as sentra, count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->groupBy('products.id')
+                    ->groupBy('sentra.id')
+                    ->orderByRaw('sums desc, products.name asc');
+                    // ->limit(5);
 
         $product = $query
                     ->get();

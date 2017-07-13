@@ -20,5 +20,18 @@ Route::get('assets/{name}', function($name) {
 
 // main routes
 Route::get('/', function () {
-    return view('dashboard.index');
+	if(Auth::check()){
+		return view('dashboard.index');
+	} else {
+		return redirect('login');
+	}
+
+    // return view('dashboard.index');
 });
+
+// Auth
+Route::get('/login', function(){
+   return view('dashboard.auth');
+});
+Route::post('/login', 'Auth\LoginController@authenticate');
+Route::get('/logout', 'Auth\LoginController@logout');

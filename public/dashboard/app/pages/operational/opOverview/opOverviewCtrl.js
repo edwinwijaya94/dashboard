@@ -210,7 +210,7 @@
     };
 
     $scope.formatNumber = function(number) {
-      return opHelper.formatNumber(parseInt(number),false,false);
+      return opHelper.formatNumber(parseFloat(number),false,false);
     };
 
     $scope.changeProductPage = function(newPage) {

@@ -1,0 +1,51 @@
+<div class="row" ng-controller="userListCtrl">
+  <div ba-panel ba-panel-title="Daftar Pengguna" ba-panel-class="panel-group">
+    <!-- user list -->
+    <div class="horizontal-scroll">
+      <div class="form-group select-page-size-wrap ">
+        <label>Data per halaman
+          <select class="form-control show-tick" title="Rows on page" selectpicker
+                  ng-model="userList.pageSize" ng-options="i for i in [10,25,50]">
+          </select>
+        </label>
+      </div>
+      <table class="table" st-table="userList.data" st-safe-src="updatedUserList">
+        <thead>
+        <tr class="sortable ">
+          <th class="table-id" st-sort="id" st-sort-default="true">#</th>
+          <th st-sort="name">Nama</th>
+          <th st-sort="name">Email</th>
+          <th>Kelola</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th>
+            <!-- <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/> -->
+          </th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="user in userList.data">
+          <td class="table-id">{{$index+1}}</td>
+          <td>{{user.name}}</td>
+          <td>{{user.email}}</td>
+          <td>
+            <div class="buttons">
+              <button class="btn btn-primary editable-table-button btn-xs" ng-click="editUser(user)">Ubah</button>
+              <button class="btn btn-danger editable-table-button btn-xs" ng-click="confirmDelete(user)">Hapus</button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="6" class="text-center">
+            <div st-pagination="" st-items-by-page="userList.pageSize" st-displayed-pages="5"></div>
+          </td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

@@ -33,5 +33,12 @@ Route::get('/', function () {
 Route::get('/login', function(){
    return view('dashboard.auth');
 });
-Route::post('/login', 'Auth\LoginController@authenticate');
-Route::get('/logout', 'Auth\LoginController@logout');
+Route::post('/login', 'UserController@login');
+Route::get('/logout', 'UserController@logout');
+
+Route::get('/user/all', 'UserController@getUsers');
+Route::get('/user/{id}', 'UserController@getUser')->where('id', '[0-9]+');
+Route::get('/user/roles', 'UserController@getRoles');
+Route::post('/user/add', 'UserController@addUser');
+Route::post('/user/edit', 'UserController@editUser');
+Route::post('/user/delete/{id}', 'UserController@deleteUser')->where('id', '[0-9]+');

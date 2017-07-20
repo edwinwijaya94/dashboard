@@ -92,8 +92,8 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
         factory(App\Model\Marketplace\Rating::class, $num)->create();
 	} else if($system == 'user') {
         DB::connection('user')->table('roles')->insert([
-                ['name' => 'kepala_dinas'],
-                ['name' => 'kepala_pasar'],
+                ['name' => 'staf_disperindag'],
+                ['name' => 'staf_pasar'],
             ]);
         DB::connection('user')->table('users')->insert([
                 [   

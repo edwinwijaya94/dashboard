@@ -363,6 +363,14 @@
 <script src="{{asset('dashboard/app/pages/operational/opOverview/opOverview.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/operational/opOverview/opOverviewCtrl.js')}}"></script>
 
+<!-- user manager for dashboard -->
+<script src="{{asset('dashboard/app/pages/userManager/userManager.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/userManager/userManagerCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/userManager/userForm/userForm.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/userManager/userForm/userFormCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/userManager/userList/userList.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/userManager/userList/userListCtrl.js')}}"></script>
 
 <!-- product manager for virtual market -->
 <script src="{{asset('dashboard/app/pages/productManager/productManager.module.js')}}"></script>

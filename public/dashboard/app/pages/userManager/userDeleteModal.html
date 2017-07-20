@@ -1,0 +1,10 @@
+<div class="modal-content">
+  <div class="modal-header bg-danger">
+    <i class="ion-flame modal-icon"></i><span> Hapus Pengguna</span>
+  </div>
+  <div class="modal-body text-center">Anda yakin akan menghapus pengguna: {{userDelete.email}} ?</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" ng-click="deleteUser()">Hapus</button>
+    <button type="button" class="btn btn-info" ng-click="$dismiss()">Batal</button>
+  </div>
+</div>

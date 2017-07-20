@@ -45,7 +45,7 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-        colSize: 3,
+        colSize: 4,
       },
       unique_buyers: {
         description: 'Pembeli',
@@ -58,7 +58,7 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-        colSize: 3,
+        colSize: 2,
       },
       // transaction_avg: {
       //   color: pieColor,
@@ -249,7 +249,7 @@
         stat.iconColor = $scope.colors.red;
       }
       stat.colSize = $scope.stats.transaction_count.colSize;
-      stat.change = vmHelper.formatNumber(stat.change,false,false);
+      stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
       $scope.stats.transaction_count = stat;
 
       // transaction average value
@@ -297,7 +297,7 @@
       stat.colSize = $scope.stats.transaction_value.colSize;
       // format numbers
       stat.value = vmHelper.formatNumber(parseInt(stat.value),true,true, 2);
-      stat.change = vmHelper.formatNumber(stat.change,false,false);
+      stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
       $scope.stats.transaction_value = stat;
     }
 
@@ -322,7 +322,7 @@
           stat.iconColor = $scope.colors.red;
         }
         stat.colSize = $scope.stats.unique_buyers.colSize;
-        stat.change = vmHelper.formatNumber(stat.change,false,false);
+        stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
         $scope.stats.unique_buyers = stat;
       
     }

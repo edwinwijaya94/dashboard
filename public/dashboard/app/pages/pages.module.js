@@ -12,6 +12,7 @@
     'BlurAdmin.pages.virtualmarket',
     'BlurAdmin.pages.marketplace',
     'BlurAdmin.pages.operational',
+    'BlurAdmin.pages.userManager',
     'BlurAdmin.pages.productManager',
     // 'BlurAdmin.pages.ui',
     // 'BlurAdmin.pages.components',

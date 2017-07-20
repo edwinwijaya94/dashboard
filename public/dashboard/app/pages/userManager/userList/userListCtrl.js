@@ -112,13 +112,6 @@
         });
     };    
 
-    $scope.formatUnitType = function(type) {
-      if(type == 'common')
-        return 'Massa';
-      else if (type == 'uncommon')
-        return 'Lainnya';
-    };
-
     $scope.showMessage = function(status, message) {
       if(status == 'success')
         toastr.success(message);

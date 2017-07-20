@@ -396,7 +396,12 @@
 <script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitList.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitListCtrl.js')}}"></script>
 
+<!-- user manager for dashboard -->
+<script src="{{asset('dashboard/app/pages/smsManager/smsManager.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/smsManager/smsManagerCtrl.js')}}"></script>
 
+<script src="{{asset('dashboard/app/pages/smsManager/smsList/smsList.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/smsManager/smsList/smsListCtrl.js')}}"></script>
 
 <!-- endinject -->
 

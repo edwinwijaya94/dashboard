@@ -14,6 +14,7 @@
     'BlurAdmin.pages.operational',
     'BlurAdmin.pages.userManager',
     'BlurAdmin.pages.productManager',
+    'BlurAdmin.pages.smsManager',
     // 'BlurAdmin.pages.ui',
     // 'BlurAdmin.pages.components',
     // 'BlurAdmin.pages.form',

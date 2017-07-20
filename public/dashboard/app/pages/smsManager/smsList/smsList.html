@@ -1,0 +1,49 @@
+<div class="row" ng-controller="smsListCtrl">
+  <div ba-panel ba-panel-title="Daftar Singkatan SMS" ba-panel-class="panel-group">
+    <!-- sms list -->
+    <div class="horizontal-scroll">
+      <div class="form-group select-page-size-wrap ">
+        <label>Data per halaman
+          <select class="form-control show-tick" title="Rows on page" selectpicker
+                  ng-model="smsList.pageSize" ng-options="i for i in [10,25,50]">
+          </select>
+        </label>
+      </div>
+      <table class="table" st-table="smsList.data" st-safe-src="updatedSmsList">
+        <thead>
+        <tr class="sortable ">
+          <th class="table-id" st-sort="id" st-sort-default="true">#</th>
+          <th >Singkatan</th>
+          <th >Arti</th>
+        </tr>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="sms in smsList.data">
+          <td class="table-id">{{$index+1}}</td>
+          <td>{{sms.abbreviation}}</td>
+          <td>
+            <form class="row form-inline">
+              <div class="form-group col-sm-3 col-xs-6">
+                <input type="text" class="form-control" id="meaning" ng-model="sms.meaning" ng-required="1">
+              </div>
+              <button type="submit" class="btn btn-primary" ng-click="submit(sms)">Ok</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <td colspan="6" class="text-center">
+            <div st-pagination="" st-items-by-page="smsList.pageSize" st-displayed-pages="5"></div>
+          </td>
+        </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

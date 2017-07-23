@@ -234,8 +234,8 @@
       }
       stat.colSize = $scope.stats.transaction_value.colSize;
       // format numbers
-      stat.value = mpHelper.formatNumber(stat.value,true,false);
-      stat.change = mpHelper.formatNumber(stat.change,false,false);
+      stat.value = mpHelper.formatNumber(stat.value,true,true, 2);
+      stat.change = mpHelper.formatNumber(stat.change,false,false)+'%';
       $scope.stats.transaction_value = stat;
 
       // transaction trend

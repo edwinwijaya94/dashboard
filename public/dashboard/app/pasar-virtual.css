@@ -60,6 +60,11 @@
   text-align: center;
 }
 
+.pv-stats {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .pv-datepicker {
   background: #fff; 
   cursor: pointer; 

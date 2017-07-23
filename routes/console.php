@@ -53,13 +53,18 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
                 ['name' => 'daging', 'category_img' => 'b.jpg'],
                 ['name' => 'buah', 'category_img' => 'c.jpg'],
             ]);
+            // pays
+            DB::connection('virtual_market')->table('pays')->insert([
+                ['parameter' => 'tarif_dasar', 'constant' => 1],
+                ['parameter' => 'tarif_jarak', 'constant' => 2],
+            ]);
         }
 	    factory(App\Model\VirtualMarket\Order::class, $num)->create();
 	    factory(App\Model\VirtualMarket\OrderLine::class, $num*3)->create();
 	    factory(App\Model\VirtualMarket\Product::class, $num)->create();
 	    factory(App\Model\VirtualMarket\UserFeedback::class, $num)->create();
 	    factory(App\Model\VirtualMarket\Garendong::class, $num)->create();
-        factory(App\Model\VirtualMarket\Address::class, $num)->create();
+        // factory(App\Model\VirtualMarket\Address::class, $num)->create();
 	} else if($system == 'mp') {
 
         if($init == 'yes') {
@@ -94,6 +99,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
         DB::connection('user')->table('roles')->insert([
                 ['name' => 'staf_disperindag'],
                 ['name' => 'staf_pasar'],
+                ['name' => 'garendong'],
             ]);
         DB::connection('user')->table('users')->insert([
                 [   
@@ -106,5 +112,6 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
                     'address' => 'Kota Payakumbuh',
                 ],
             ]);
+        factory(App\User::class, 9)->create();
     }
 })->describe('Seed db with specific number of records');

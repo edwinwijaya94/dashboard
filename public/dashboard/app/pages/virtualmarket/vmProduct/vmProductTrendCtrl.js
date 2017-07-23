@@ -118,7 +118,6 @@
       //   $scope.chart = AmCharts.makeChart('vmProductTrend',$scope.getChartOptions(data));
       //   $scope.noData = false;
       // }
-      console.log($scope.getChartOptions($scope.productTrendData, $scope.colors));
       $scope.chart = AmCharts.makeChart('vmProductTrend',$scope.getChartOptions($scope.productTrendData, $scope.colors));
     };
 

@@ -4,10 +4,9 @@
     <!-- STATS -->
     <div class="row" style="height:150px">
       <!-- STATS -->
-      <div class="pie-charts col-md-8">
+      <!-- <div class="pie-charts col-md-8">
         <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
           <div class="">
-            <div easypiechart class="chart" options="options" percent="stat.percent" ng-show="stat.showPie"> <span class="percent" ng-bind="stat.percent" ></span> </div>
             <div class="description">
               <div>{{ ::stat.description }}</div><br>
               <div class="description-stats" ng-bind="stat.value"></div><br>
@@ -18,11 +17,67 @@
             </div>
           </div>
         </div>
+      </div> -->
+      <!-- TRANSAKSI -->
+      <div class="col-md-7 pv-stats">
+        <div class="pie-charts col-md-7 pv-stats">
+          <div class="col-md-6 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_count.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_count.value"></div><br>
+                <div >
+                    <i class="{{stats.transaction_count.icon}}" style="color:{{stats.transaction_count.iconColor}}"></i>
+                    <span>{{stats.transaction_count.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_value.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_value.value"></div><br>
+                <div>
+                    <i class="{{stats.transaction_value.icon}}" style="color:{{stats.transaction_value.iconColor}}"></i>
+                    <span>{{stats.transaction_value.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- PEMBELI DAN RATING -->
+        <div class="pie-charts col-md-5 pv-stats">
+          <div class="col-md-6 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.unique_buyers.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.unique_buyers.value"></div><br>
+                <div >
+                    <i class="{{stats.unique_buyers.icon}}" style="color:{{stats.unique_buyers.iconColor}}"></i>
+                    <span>{{stats.unique_buyers.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.avg_rating.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.avg_rating.value"></div><br>
+                <div>
+                    <i class="{{stats.avg_rating.icon}}" style="color:{{stats.avg_rating.iconColor}}"></i>
+                    <span>{{stats.avg_rating.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <!-- STATUS TRANSAKSI -->
-      <div class="pie-charts col-md-4">
-        <div class="col-md-12">
-          <div class="description" style="width:300px">
+      <div class="pie-charts col-md-5 pv-stats">
+        <div class="col-md-12 pv-stats">
+          <div class="description col-md-12">
             <div>Status Transaksi</div><br>
             <div class="row">
               <div class="col-lg-12 col-md-12">

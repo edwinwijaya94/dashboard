@@ -225,7 +225,6 @@
       for(var i=0; i<data.length; i++){
         data[i].fillColor = $scope.colors.yellow;
       }
-      console.log('platform chart');
       $scope.chart = AmCharts.makeChart('vmTransactionPlatform',$scope.getBarChartOptions(data, $scope.colors, 'name'));
     };
 
@@ -249,6 +248,8 @@
         stat.iconColor = $scope.colors.red;
       }
       stat.colSize = $scope.stats.transaction_count.colSize;
+      // format number
+      stat.value = vmHelper.formatNumber(parseInt(stat.value),false,false);
       stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
       $scope.stats.transaction_count = stat;
 

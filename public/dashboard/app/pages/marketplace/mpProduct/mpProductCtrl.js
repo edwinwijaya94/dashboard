@@ -140,7 +140,8 @@
     $scope.viewTrend = function(product) {
       var startDate = $scope.startDate;
       var endDate = $scope.endDate;
-
+      
+      $scope.selectedProduct = product;
       $http.get('/api/marketplace/product?type=prediction&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
         .then(function(res) {
           var data = res.data.data;

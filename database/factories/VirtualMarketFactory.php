@@ -71,7 +71,7 @@ $factory->define(App\Model\VirtualMarket\Garendong::class, function (Faker\Gener
 
     return [
 
-        'user_id' => $faker->numberBetween($min = 1, $max = 100),
+        'user_id' => $faker->numberBetween($min = 2, $max = 10),
         'number_of_allocation' => $faker->numberBetween($min = 1, $max = 10),
         'status' => $faker->numberBetween($min = 1, $max = 3),
         'rating' => $faker->numberBetween($min = 1, $max = 25),

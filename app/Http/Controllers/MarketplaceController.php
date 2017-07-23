@@ -9,6 +9,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
+use Phpml\Regression\LeastSquares;
+
 class MarketplaceController extends Controller
 {
     
@@ -30,6 +32,7 @@ class MarketplaceController extends Controller
         $default['page'] = 1;
         $default['rows'] = 5;
         $default['sort'] = 'highest';
+        $default['productId'] = 1;
         return $default;
     }
 
@@ -57,6 +60,7 @@ class MarketplaceController extends Controller
         $query['sort'] = $request->query('sort', $default['sort']);
 
         $query['sentraId'] = $request->query('sentra_id', 1);
+        $query['productId'] = $request->query('product_id', $default['productId']);
         return $query;
     }
 
@@ -247,6 +251,8 @@ class MarketplaceController extends Controller
             return $this->getProductStats($query);
         else if($query['type'] == 'list')
             return $this->getProductList($query);
+        else if($query['type'] == 'prediction')
+            return $this->getProductPrediction($query);
     }
     
     public function getProductStats($query)
@@ -326,7 +332,7 @@ class MarketplaceController extends Controller
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
-                    ->select(DB::raw('products.name, sentra.name as sentra, count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
+                    ->select(DB::raw('products.id, products.name, sentra.name as sentra, count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
@@ -360,6 +366,110 @@ class MarketplaceController extends Controller
             return $this->getSentraData($query);
         else if($query['type'] == 'toplist')
             return $this->getSentraTopList($query);
+    }
+
+    public function getProductPrediction($query)
+    {
+        // $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        // if($granularity == 'month') {
+        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+        //     $dateGroupBy = array('date');
+        //     $dateOrder = 'date asc';
+        // } else if($granularity == 'day') {
+        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+        //     $dateGroupBy = array('date');
+        //     $dateOrder = 'date asc';
+        // }
+
+        $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+        $dateGroupBy = array('date');
+        $dateOrder = 'date asc';
+
+        DB::enableQueryLog();
+        // execute
+        $dbQuery = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('orders', 'orderlines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('sum(quantity) as count,'.$dateQuery))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('orderlines.product_id', '=', $query['productId'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder);
+
+        $product = $dbQuery
+                    ->get()
+                    ->toArray();
+        
+        //fix null values
+        $trendData = [];
+        $prevTime = NULL;
+        for($i=0; $i<count($product); $i++) {
+          $item = $product[$i];
+          
+          $currentTime = Carbon::createFromFormat('Y-m-d', $item->date);
+          if ($prevTime != NULL) {
+            for ($time=$prevTime->addDay(); $time->lt($currentTime); $time->addDay()) {
+
+              $x = array();
+              $x['date'] = $time->toDateString();
+              $x['count'] = 0;
+              
+              array_push($trendData, (object)$x);
+            }
+          }
+          array_push($trendData, $item);
+          $prevTime = $currentTime;
+        }
+        //check null values on endDate
+        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
+        $lastTime = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date);
+        for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
+          $x = array();
+          $x['date'] = $time->toDateString();
+          $x['count'] = 0;
+          
+          array_push($trendData, (object)$x);
+        }
+            
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
+        $now = Carbon::now('Asia/Jakarta');
+        if($end->diffInDays($now) < 1) {
+            // predict using regression
+            $samples = [];
+            $targets = [];
+            for($i=0; $i<count($trendData); $i++) {
+                array_push($samples, [$i+1]);
+                array_push($targets, $trendData[$i]->count);
+            }
+
+            $regression = new LeastSquares();
+            $regression->train($samples, $targets);
+
+            // predict for number of days
+            $predictions = [];
+            for($i=1; $i<=3; $i++) {
+                $x = [];
+                $x['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDays($i)->toDateString();
+                $predictedValue = $regression->predict([count($trendData)+$i]);
+                if($predictedValue < 0)
+                    $predictedValue = 0;
+                $x['count'] = round($predictedValue, 0);
+                array_push($predictions, (object)$x);
+            }
+            $trendData = array_merge($trendData, $predictions);
+        }
+
+        $data = array();
+        $data['trend'] = $trendData;
+
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
     }
 
     public function getSentraList()

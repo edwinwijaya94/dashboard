@@ -361,7 +361,7 @@
         stat.iconColor = $scope.colors.red;
       }
       stat.colSize = $scope.stats.avg_rating.colSize;
-      stat.value = mpHelper.formatNumber(stat.value,false,false);
+      stat.value = isFinite(stat.value)? mpHelper.formatNumber(stat.value,false,false): '-';
       stat.change = mpHelper.formatNumber(stat.change,false,false);
       $scope.stats.avg_rating = stat;
     }

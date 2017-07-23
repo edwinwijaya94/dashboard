@@ -257,6 +257,8 @@
     };
 
     $scope.formatRating = function(rating) {
+      if(rating < 0)
+        rating *= -1;
       return vmHelper.formatNumber(rating,false,false);
     };
 

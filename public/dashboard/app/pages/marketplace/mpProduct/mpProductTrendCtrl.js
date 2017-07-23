@@ -30,11 +30,12 @@
         var date = moment(data.trend[i+1].date, 'YYYY-MM-DD');
         if(date.isAfter(moment(),'day')) {
           var date = new Date(data.trend[i].date);
-          startPoint = date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
+          startPoint = date;
+          break;
         }
       }
       var date = new Date(data.trend[data.trend.length-1].date);
-      endPoint = date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
+      endPoint = date;
 
       dateFormat = 'YYYY-MM-DD';
       var options = {
@@ -85,23 +86,23 @@
           //   return date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
           return date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
         },
-        categoryAxis: {
-          guides: [{
-            category: '3 Jul',
-            toCategory: '4 Jul',
-            lineColor: "#CC0000",
-            lineAlpha: 1,
-            fillAlpha: 0.2,
-            fillColor: "#CC0000",
-            dashLength: 2,
-            inside: true,
-            labelRotation: 0,
-            label: "Prediksi"
-          }]
-        }
       };
       
-      return mpHelper.getLineChartOptions(options);
+      var chartOptions = mpHelper.getLineChartOptions(options);
+      chartOptions.categoryAxis.guides = [{
+        date: startPoint,
+        toDate: endPoint,
+        lineColor: layoutColors.warning,
+        lineAlpha: 1,
+        fillAlpha: 0.2,
+        fillColor: layoutColors.warning,
+        dashLength: 2,
+        inside: true,
+        labelRotation: 0,
+        label: 'Prediksi',
+        position: 'top'
+      }];
+      return chartOptions;
     };
 
     $scope.drawTrendChart =  function() {

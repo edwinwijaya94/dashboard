@@ -24,41 +24,14 @@
     // MODELS
     $scope.smsList = {
       pageSize: 25,
-      data: [
-        // {
-        //   abbreviation: 'dgng'
-        // },
-        // {
-        //   abbreviation: 'bym'
-        // },
-        // {
-        //   abbreviation: 'kntg'
-        // },
-      ]
+      data: []
     };
-
-    $scope.updatedSmsList = [
-      {
-        id: 1,
-        abbreviation: 'dgng'
-      },
-      {
-        id: 2,
-        abbreviation: 'bym'
-      },
-      {
-        id: 3,
-        abbreviation: 'kntg'
-      },
-    ];
-
-    
 
     //SMS LIST
     $scope.getSmsList = function() {
-      $http.get(hostname+'/api/sms')
+      $http.get(hostname+'/api/virtualmarket/undefine/word')
         .then(function(res) {
-          $scope.updatedSmsList = res.data.sms;
+          $scope.updatedSmsList = res.data.undefine;
         })
         .finally(function() {
           
@@ -67,18 +40,20 @@
         $scope.smsList.data = [].concat($scope.updatedSmsList);
     };
 
-    // get user list
+    // get undefine word list
     $scope.getSmsList();
 
     $scope.submit = function(sms) {
+      console.log(sms);
       var data = {}
-      data.id = sms.id;
-      data.meaning = sms.meaning;
-      $http.post(hostname+'/api/sms', data)
+      data.abbreviation = sms.undefine_word;
+      data.word = sms.word;
+      $http.post(hostname+'/api/virtualmarket/dictionary/add', data)
         .then(function(res) {
-          $scope.updatedSmsList = res.data.sms;
+
         })
         .finally(function() {
+          $scope.showMessage('success', 'Singkatan berhasil dimasukkan');
           $scope.getSmsList();
         });
     }

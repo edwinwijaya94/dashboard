@@ -433,7 +433,7 @@ class MarketplaceController extends Controller
           array_push($trendData, (object)$x);
         }
             
-        $end = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate'], 'Asia/Jakarta');
         $now = Carbon::now('Asia/Jakarta');
         if($end->diffInDays($now) < 1) {
             // predict using regression

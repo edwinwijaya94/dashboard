@@ -19,7 +19,7 @@
     // INIT DATA
     $scope.stats = {
       shopperCount: {
-        description: 'Jumlah Garendong',
+        description: 'Garendong Aktif',
         info: '',
         value: 0,
         percent: 0,
@@ -36,6 +36,15 @@
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
       },
+      transactionPerShopper: {
+        description: 'Jumlah Transaksi per Garendong',
+        info: '',
+        value: 0,
+        percent: 0,
+        change: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+      }
     };
 
     
@@ -120,6 +129,7 @@
 
     $scope.showShopperData = function(data, sortBy) {
       //stats
+      // shopper count
       $scope.stats.shopperCount.value = data.shopper_count.current;
       var countChange = (data.shopper_count.current-data.shopper_count.prev);
       countChange = isFinite(countChange)? countChange:0;
@@ -133,9 +143,10 @@
       }
       $scope.stats.shopperCount.change = countChange;
 
+      // avg rating
       $scope.stats.avgRating.value = $scope.formatRating(data.avg_rating.current);
       var ratingChange = (data.avg_rating.current-data.avg_rating.prev);
-      ratingChange = isFinite(ratingChange)? ratingChange:0;
+      ratingChange = data.avg_rating.prev!=null? ratingChange:0;
       if(ratingChange>=0) {
         $scope.stats.avgRating.icon = 'ion-arrow-up-b';
         $scope.stats.avgRating.iconColor = $scope.colors.green;
@@ -146,14 +157,94 @@
       }
       $scope.stats.avgRating.change = $scope.formatRating(parseFloat(ratingChange.toFixed(2)));
 
-      // $scope.stats.totalRows = data.total_rows;
-      // $scope.stats.avgRating = $scope.formatRating(data.avg_rating);
+      // transaction per shopper
+      var currentTransactionPerShopper = (parseFloat(data.transaction_count.current)/parseFloat(data.shopper_count.current)).toFixed(2);
+      var prevTransactionPerShopper = (parseFloat(data.transaction_count.prev)/parseFloat(data.shopper_count.prev)).toFixed(2);
+      var transactionChange = (currentTransactionPerShopper - prevTransactionPerShopper).toFixed(2);
+      transactionChange = isFinite(transactionChange)? transactionChange:0;
+      if(transactionChange>=0) {
+        $scope.stats.transactionPerShopper.icon = 'ion-arrow-up-b';
+        $scope.stats.transactionPerShopper.iconColor = $scope.colors.green;
+      } else {
+        transactionChange *= -1;
+        $scope.stats.transactionPerShopper.icon = 'ion-arrow-down-b';
+        $scope.stats.transactionPerShopper.iconColor = $scope.colors.red;
+      }
+      $scope.stats.transactionPerShopper.value = vmHelper.formatNumber(parseFloat(currentTransactionPerShopper), false, false);
+      $scope.stats.transactionPerShopper.change = vmHelper.formatNumber(parseFloat(transactionChange), false, false);
+
+      // RATING TRENDS
+      if($scope.chart != undefined) {
+        $('#vmShopperRating').empty();
+      }
+      
+      if(data.avg_rating.trend.trend.length == 0) {
+        $scope.noData = true;
+      } else {
+        $scope.chart = AmCharts.makeChart('vmShopperRating',$scope.getRatingChartOptions(data.avg_rating.trend, $scope.colors));
+        $scope.noData = false;
+      }
       
       // shopper list
-      // $scope.shopperList.shopper = data.shopper;
       $scope.updatedShopperList = data.shopper;
       // copy references
       $scope.shopperList.shopper = [].concat($scope.updatedShopperList);
+    };
+
+    $scope.getRatingChartOptions = function(data, colors) { 
+      var dateFormat;
+      if(data.granularity == 'month')
+        dateFormat = 'YYYY-MM';
+      else if(data.granularity == 'day')
+        dateFormat = 'YYYY-MM-DD';
+
+      var options = {
+        color: layoutColors.defaultText,
+        data: data.trend,
+        title: 'Rating',
+        gridColor: layoutColors.border,
+        valueLabelFunction: function(y) {
+          return y;
+        }, 
+        graphs: [
+          {
+            id: 'g1',
+            balloonFunction: function(item, graph) {
+              var date = new Date(item.category);
+              var formattedDate;
+              if(data.granularity == 'month')
+                formattedDate = vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+              else if(data.granularity == 'day')
+                formattedDate =  date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+
+              var value = item.values.value;
+              var hoverInfo = formattedDate+'<br> Rating:<br> <b>'+value+'</b>';
+              return hoverInfo;
+            },
+            bullet: 'round',
+            bulletSize: 8,
+            lineColor: colors.blue,
+            lineThickness: 2,
+            type: 'line',
+            valueField: 'rating'
+          }
+        ],
+        dataDateFormat: dateFormat,
+        categoryField: 'date',
+        categoryLabelFunction: function(valueText, date, categoryAxis) {
+          if(data.granularity == 'month')
+            return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+          else if(data.granularity == 'day')
+            return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+        }
+      };
+      
+      var chartOptions = vmHelper.getLineChartOptions(options);
+      chartOptions.valueAxes = [{
+        maximum: 5
+      }];
+
+      return chartOptions;
     };
 
     $scope.sortList = function(item, model) {

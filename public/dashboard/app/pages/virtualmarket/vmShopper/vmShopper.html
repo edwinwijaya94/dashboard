@@ -5,11 +5,10 @@
     <!-- <div class="col-lg-12 col-md-12 col-sm-12"
          ba-panel
          ba-panel-class="pv-panel" style="height:150px"> -->
-      <div class="row">
-        
-        <div class="pie-charts col-md-3">
+      <div class="row" style="height:150px">
+        <div class="pie-charts row">
           <!-- Shopper Rating -->
-          <div class="row" style="margin-bottom:50px">
+          <div class="col-md-3" >
             <div>
               <div class="description">
                 <div>
@@ -27,8 +26,24 @@
             </div>
           </div>
 
+          <!-- Transaction per Shopper -->
+          <div class="col-md-5">
+            <div>
+              <div class="description">
+                <div>
+                  <span>{{stats.transactionPerShopper.description}}</span>
+                </div><br>
+                <div class="description-stats" ng-bind="stats.transactionPerShopper.value"></div><br>
+                <div>
+                  <i class="{{stats.transactionPerShopper.icon}}" style="color:{{stats.transactionPerShopper.iconColor}}"></i>
+                  <span>{{stats.transactionPerShopper.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>  
+
           <!-- Total Shopper -->
-          <div class="row">
+          <div class="col-md-4">
             <div>
               <div class="description">
                 <div>
@@ -43,8 +58,26 @@
             </div>
           </div>  
         </div>
-
-        <div class="col-md-9">
+      </div>
+      
+      <div class="row">
+        <!-- Rating Trend -->
+        <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Tren Rating"
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <div id="vmShopperRating" class="pv-chart" style="height:300px"></div>
+              <!-- loading / no data handler -->
+              <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+                <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+                <div class="pv-chart-loading" ng-show="loading"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
           <!-- Top Shopper -->
           <div class="row"
              ba-panel
@@ -100,9 +133,8 @@
             </div>
           </div>
         </div>
-        
-
       </div>
+      
     <!-- </div> -->
 
     

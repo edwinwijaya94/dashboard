@@ -1,0 +1,129 @@
+<div class="row" ng-controller="vmTransactionCtrl">
+  <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group"> -->
+
+    <!-- STATS -->
+    <div class="row" style="height:150px">
+      <!-- TRANSAKSI -->
+      <div class="col-md-12 pv-stats">
+        <div class="pie-charts pv-stats">
+          <div class="col-md-3 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_count.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_count.value"></div><br>
+                <div >
+                  <i class="{{stats.transaction_count.icon}}" style="color:{{stats.transaction_count.iconColor}}"></i>
+                  <span>{{stats.transaction_count.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.unique_buyers.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.unique_buyers.value"></div><br>
+                <div >
+                  <i class="{{stats.unique_buyers.icon}}" style="color:{{stats.unique_buyers.iconColor}}"></i>
+                  <span>{{stats.unique_buyers.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_value.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_value.value"></div><br>
+                <div>
+                  <i class="{{stats.transaction_value.icon}}" style="color:{{stats.transaction_value.iconColor}}"></i>
+                  <span>{{stats.transaction_value.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_avg.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_avg.value"></div><br>
+                <div >
+                  <i class="{{stats.transaction_avg.icon}}" style="color:{{stats.transaction_avg.iconColor}}"></i>
+                  <span>{{stats.transaction_avg.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- TRANSACTION HISTORY -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Tren Transaksi"
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmTransactionByHistory" class="pv-chart" style="height:250px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- BUYER TREND -->
+      <div class="col-md-6"
+         ba-panel
+         ba-panel-title="Tren Pembeli"
+         ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmBuyerByHistory" class="pv-chart" style="height:200px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- STATUS TRANSAKSI -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Status Transaksi"
+           ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmTransactionStatus" class="pv-chart" style="height:250px"></div>
+            <!-- loading / no data handler -->
+            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
+              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+              <div class="pv-chart-loading" ng-show="loading"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- APP PLATFORM -->
+      <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Platform Aplikasi"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="vmTransactionPlatform" class="admin-chart" style="height:250px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+    </div>
+
+  <!-- </div> -->
+</div>

@@ -25,11 +25,11 @@
         <tbody>
         <tr ng-repeat="sms in smsList.data">
           <td class="table-id">{{$index+1}}</td>
-          <td>{{sms.abbreviation}}</td>
+          <td>{{sms.undefine_word}}</td>
           <td>
             <form class="row form-inline">
               <div class="form-group col-sm-3 col-xs-6">
-                <input type="text" class="form-control" id="meaning" ng-model="sms.meaning" ng-required="1">
+                <input type="text" class="form-control" id="word" ng-model="sms.word" ng-required="1">
               </div>
               <button type="submit" class="btn btn-primary" ng-click="submit(sms)">Ok</button>
             </form>

@@ -36,10 +36,11 @@
         // },
         ranges: {
           'Hari ini': [moment(), moment()],
-          'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          // 'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
           '7 Hari': [moment().subtract(6, 'days'), moment()],
           '30 Hari': [moment().subtract(29, 'days'), moment()],
-          '1 Tahun': [moment().subtract(364, 'days'), moment()],
+          '3 Bulan': [moment().subtract(3, 'months'), moment()],
+          '1 Tahun': [moment().subtract(1, 'years'), moment()],
           'Tahun Ini': [moment().startOf('year'), moment()]
         },
         maxDate: $scope.endDate,

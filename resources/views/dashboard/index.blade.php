@@ -311,8 +311,8 @@
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmOverview/vmOverview.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmOverview/vmOverviewCtrl.js')}}"></script>
 
-<!-- <script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
-<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script> -->
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransaction.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/virtualmarket/vmTransaction/vmTransactionCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProduct.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/virtualmarket/vmProduct/vmProductCtrl.js')}}"></script>
@@ -396,12 +396,19 @@
 <script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitList.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/productManager/unit/unitList/unitListCtrl.js')}}"></script>
 
-<!-- user manager for dashboard -->
+<!-- sms manager -->
 <script src="{{asset('dashboard/app/pages/smsManager/smsManager.module.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/smsManager/smsManagerCtrl.js')}}"></script>
 
 <script src="{{asset('dashboard/app/pages/smsManager/smsList/smsList.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/smsManager/smsList/smsListCtrl.js')}}"></script>
+
+<!-- fare manager -->
+<script src="{{asset('dashboard/app/pages/fareManager/fareManager.module.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/fareManager/fareManagerCtrl.js')}}"></script>
+
+<script src="{{asset('dashboard/app/pages/fareManager/fareList/fareList.directive.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/fareManager/fareList/fareListCtrl.js')}}"></script>
 
 <!-- endinject -->
 

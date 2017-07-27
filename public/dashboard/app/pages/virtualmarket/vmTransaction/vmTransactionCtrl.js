@@ -3,10 +3,10 @@
   'use strict';
 
   angular.module('BlurAdmin.pages.virtualmarket')
-      .controller('vmOverviewCtrl', vmOverviewCtrl);
+      .controller('vmTransactionCtrl', vmTransactionCtrl);
 
   /** @ngInject */
-  function vmOverviewCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
+  function vmTransactionCtrl($scope, $timeout, $http, baConfig, baUtil, vmHelper) {
     var layoutColors = baConfig.colors;
     // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     
@@ -60,11 +60,25 @@
         iconColor: $scope.colors.green,
         colSize: 2,
       },
-      // transaction_avg: {
+      transaction_avg: {
+        color: pieColor,
+        description: 'Rata-Rata Transaksi',
+        info: '',
+        value: vmHelper.formatNumber(0,true,false),
+        percent: 0,
+        showPie: false,
+        showChange: true,
+        change: 0,
+        prevValue: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 3,
+      },
+      // avg_rating: {
       //   color: pieColor,
-      //   description: 'Rata Rata',
+      //   description: 'Rating',
       //   info: '',
-      //   value: vmHelper.formatNumber(0,true,false),
+      //   value: vmHelper.formatNumber(0,false,false),
       //   percent: 0,
       //   showPie: false,
       //   showChange: true,
@@ -72,36 +86,8 @@
       //   prevValue: 0,
       //   icon:'ion-arrow-up-b',
       //   iconColor: $scope.colors.green,
-      //   colSize: 3,
+      //   colSize: 2,
       // },
-      availability: {
-        color: pieColor,
-        description: 'Ketersediaan Produk',
-        info: '',
-        value: vmHelper.formatNumber(0,false,false),
-        percent: 0,
-        showPie: false,
-        showChange: true,
-        change: 0,
-        prevValue: 0,
-        icon:'ion-arrow-up-b',
-        iconColor: $scope.colors.green,
-        colSize: 2,
-      },
-      avg_rating: {
-        color: pieColor,
-        description: 'Rating Garendong',
-        info: '',
-        value: vmHelper.formatNumber(0,false,false),
-        percent: 0,
-        showPie: false,
-        showChange: true,
-        change: 0,
-        prevValue: 0,
-        icon:'ion-arrow-up-b',
-        iconColor: $scope.colors.green,
-        colSize: 2,
-      },
     };
 
     $scope.options = {
@@ -126,7 +112,6 @@
       $scope.getStats(startDate, endDate);
       $scope.getHistory(startDate, endDate);
       $scope.getProductList(startDate, endDate);
-      $scope.getShopperList(startDate, endDate, 1, 1, 'highest');
       $scope.getFeedback(startDate, endDate);
     }
 
@@ -152,55 +137,17 @@
         })
         .finally(function() {
           // $scope.loading= false;
-        });  
-
-      // product stats
-      $http.get('/api/virtualmarket/product?type=stats&start_date='+startDate+'&end_date='+endDate)
-        .then(function(res) {
-          var data = res.data.data;
-          $scope.showProductStats(data.availability);
-        })
-        .finally(function() {
-          // $scope.loading= false;
-        });  
-
+        });        
     }
 
     $scope.showSuccessRate = function(data) {
-      // var success = {
-      //   status: 'success',
-      //   count: 0,
-      //   sum: 0
-      // };
-      // var failed = {
-      //   status: 'failed',
-      //   count: 0,
-      //   sum: 0
-      // };
-
-      // for(var i=0; i<data.length; i++ ) {
-      //   if(data[i].status == 'success') {
-      //     success = data[i];
-      //     success.count = parseInt(success.count);
-      //   }
-      //   else if (data[i].status == 'failed') {
-      //     failed = data[i]; 
-      //     failed.count = parseInt(failed.count);
-      //   }
-      // }
-
-      // var percentage = (success.count + failed.count)>0 ? Math.round(success.count / (success.count + failed.count) * 100) : 0;
-
-      // // update chart
-      // $scope.stats.transaction_status.value = success.count+'/'+(success.count+failed.count);
-      // $scope.stats.transaction_status.percent = percentage;
       for(var i=0; i<data.length; i++){
         if(data[i].status == 'success')
           data[i].fillColor = $scope.colors.green;
         else
           data[i].fillColor = '#d1cfcf';
       }
-      $scope.chart = AmCharts.makeChart('vmOverviewTransactionStatus',$scope.getBarChartOptions(data, $scope.colors, 'status'));
+      $scope.chart = AmCharts.makeChart('vmTransactionStatus',$scope.getBarChartOptions(data, $scope.colors, 'status'));
     }
 
     // chart options
@@ -279,28 +226,28 @@
       $scope.stats.transaction_count = stat;
 
       // transaction average value
-      // var stat = {};
-      // stat.description = $scope.stats.transaction_avg.description;
-      // stat.info = $scope.stats.transaction_avg.info;
-      // stat.showPie = $scope.stats.transaction_avg.showPie;
-      // stat.showChange = $scope.stats.transaction_avg.showChange;
-      // stat.value = parseInt(data.value.current.average);
-      // stat.prevValue = parseInt(data.value.prev.average);
-      // var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
-      // stat.change = isFinite(change)? change:0;
-      // if(stat.change>=0) {
-      //   stat.icon = 'ion-arrow-up-b';
-      //   stat.iconColor = $scope.colors.green;
-      // } else {
-      //   stat.change *= -1;
-      //   stat.icon = 'ion-arrow-down-b';
-      //   stat.iconColor = $scope.colors.red;
-      // }
-      // stat.colSize = $scope.stats.transaction_avg.colSize;
-      // // format currency
-      // stat.value = vmHelper.formatNumber(stat.value,true,false);
-      // stat.change = vmHelper.formatNumber(stat.change,false,false);
-      // $scope.stats.transaction_avg = stat;
+      var stat = {};
+      stat.description = $scope.stats.transaction_avg.description;
+      stat.info = $scope.stats.transaction_avg.info;
+      stat.showPie = $scope.stats.transaction_avg.showPie;
+      stat.showChange = $scope.stats.transaction_avg.showChange;
+      stat.value = parseInt(data.value.current.average);
+      stat.prevValue = parseInt(data.value.prev.average);
+      var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
+      stat.change = isFinite(change)? change:0;
+      if(stat.change>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.green;
+      } else {
+        stat.change *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.red;
+      }
+      stat.colSize = $scope.stats.transaction_avg.colSize;
+      // format currency
+      stat.value = vmHelper.formatNumber(stat.value,true,false);
+      stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
+      $scope.stats.transaction_avg = stat;
 
       // transaction value
       stat = {};
@@ -329,54 +276,30 @@
 
     $scope.showBuyerStats = function(data) {
       
-      //buyer count
-      var stat = {};
-      stat.description = $scope.stats.unique_buyers.description;
-      stat.info = $scope.stats.unique_buyers.info;
-      stat.showPie = $scope.stats.unique_buyers.showPie;
-      stat.showChange = $scope.stats.unique_buyers.showChange;
-      stat.value = parseInt(data.current_period);
-      stat.prevValue = parseInt(data.prev_period);
-      var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
-      stat.change = isFinite(change)? change:0;
-      if(stat.change>=0) {
-        stat.icon = 'ion-arrow-up-b';
-        stat.iconColor = $scope.colors.green;
-      } else {
-        stat.change *= -1;
-        stat.icon = 'ion-arrow-down-b';
-        stat.iconColor = $scope.colors.red;
-      }
-      stat.colSize = $scope.stats.unique_buyers.colSize;
-      stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
-      $scope.stats.unique_buyers = stat;
+        //transaction count
+        var stat = {};
+        stat.description = $scope.stats.unique_buyers.description;
+        stat.info = $scope.stats.unique_buyers.info;
+        stat.showPie = $scope.stats.unique_buyers.showPie;
+        stat.showChange = $scope.stats.unique_buyers.showChange;
+        stat.value = parseInt(data.current_period);
+        stat.prevValue = parseInt(data.prev_period);
+        var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
+        stat.change = isFinite(change)? change:0;
+        if(stat.change>=0) {
+          stat.icon = 'ion-arrow-up-b';
+          stat.iconColor = $scope.colors.green;
+        } else {
+          stat.change *= -1;
+          stat.icon = 'ion-arrow-down-b';
+          stat.iconColor = $scope.colors.red;
+        }
+        stat.colSize = $scope.stats.unique_buyers.colSize;
+        stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
+        $scope.stats.unique_buyers = stat;
       
     }
 
-    $scope.showProductStats = function(data) {
-      //product availability
-      var stat = {};
-      stat.description = $scope.stats.availability.description;
-      stat.info = $scope.stats.availability.info;
-      stat.showPie = $scope.stats.availability.showPie;
-      stat.showChange = $scope.stats.availability.showChange;
-      stat.value = parseFloat(data.current);
-      stat.prevValue = parseFloat(data.prev);
-      var change = (stat.value-stat.prevValue).toFixed(2);
-      stat.change = isFinite(change)? change:0;
-      if(stat.change>=0) {
-        stat.icon = 'ion-arrow-up-b';
-        stat.iconColor = $scope.colors.green;
-      } else {
-        stat.change *= -1;
-        stat.icon = 'ion-arrow-down-b';
-        stat.iconColor = $scope.colors.red;
-      }
-      stat.colSize = $scope.stats.availability.colSize;
-      stat.value = vmHelper.formatNumber(stat.value,false,false)+'%';
-      stat.change = vmHelper.formatNumber(stat.change,false,false);
-      $scope.stats.availability = stat;
-    }
 
     // TRANSACTION HISTORY
     $scope.getHistory = function(startDate, endDate) {
@@ -691,19 +614,6 @@
     };
 
     $scope.showShopperData = function(data, sortBy) {
-      //stats
-      // $scope.stats.shopperCount.value = data.shopper_count.current;
-      // var countChange = (data.shopper_count.current-data.shopper_count.prev);
-      // countChange = isFinite(countChange)? countChange:0;
-      // if(countChange>=0) {
-      //   $scope.stats.shopperCount.icon = 'ion-arrow-up-b';
-      //   $scope.stats.shopperCount.iconColor = $scope.colors.green;
-      // } else {
-      //   countChange *= -1;
-      //   $scope.stats.shopperCount.icon = 'ion-arrow-down-b';
-      //   $scope.stats.shopperCount.iconColor = $scope.colors.red;
-      // }
-      // $scope.stats.shopperCount.change = countChange;
 
       $scope.stats.avg_rating.value = $scope.formatRating(data.avg_rating.current);
       var ratingChange = (data.avg_rating.current-data.avg_rating.prev);

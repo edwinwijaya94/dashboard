@@ -8,12 +8,29 @@
   /** @ngInject */
   function vmProductCtrl($scope, $timeout, $http, $rootScope, $uibModal, baConfig, baUtil, vmHelper) {
     // COLORS
+    var layoutColors = baConfig.colors;
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
     var pieColor = vmHelper.colors.primary.green;
 
     $scope.colors = vmHelper.colors.primary;
 
     // INIT DATA
+     $scope.stats = {
+      availability: {
+        color: pieColor,
+        description: 'Tingkat Ketersediaan',
+        info: '',
+        value: 0,
+        percent: 0,
+        showPie: false,
+        showChange: true,
+        change: 0,
+        prevValue: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 4,
+      },
+    }
     $scope.initProductList = function() {
       $scope.productPageIndex = 1;
       $scope.productPageSize = 5;
@@ -35,7 +52,7 @@
     });
 
     $scope.getData = function(startDate, endDate) {
-      $scope.getStats(startDate, endDate);  
+      // $scope.getStats(startDate, endDate);  
       $scope.getProductList(startDate, endDate, $scope.productList.page, $scope.productList.rowsPerPage);
     };
 
@@ -64,37 +81,98 @@
     };
     
     $scope.showAvailability = function(data) {
-      
-      var available = {
-        is_available: true,
-        count: 0
-      };
-      var unavailable = {
-        is_available: false,
-        count: 0
-      };
 
-      for(var i=0; i<data.length; i++ ) {
-        if(data[i].is_available == true) {
-          available = data[i];
-          available.count = parseInt(available.count);
-        }
-        else if(data[i].is_available == false) {
-          unavailable = data[i];
-          unavailable.count = parseInt(unavailable.count);
-        }
+      var stat = {};
+      stat.description = $scope.stats.availability.description;
+      stat.info = $scope.stats.availability.info;
+      stat.showPie = $scope.stats.availability.showPie;
+      stat.showChange = $scope.stats.availability.showChange;
+      stat.value = parseFloat(data.current);
+      stat.prevValue = parseFloat(data.prev);
+      var change = (stat.value-stat.prevValue).toFixed(2);
+      stat.change = isFinite(change)? change:0;
+      if(stat.change>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.green;
+      } else {
+        stat.change *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.red;
       }
+      stat.colSize = $scope.stats.availability.colSize;
+      // format number
+      stat.value = vmHelper.formatNumber(parseFloat(stat.value),false,false)+'%';
+      stat.change = vmHelper.formatNumber(stat.change,false,false);
+      $scope.stats.availability = stat;
 
-      var percentage = Math.round(available.count / (available.count + unavailable.count) * 100);
+      // AVAILABILITY TRENDS
+      if($scope.chart != undefined) {
+        $('#vmProductAvailability').empty();
+      }
+      
+      if(data.trend.trend.length == 0) {
+        $scope.noData = true;
+      } else {
+        $scope.chart = AmCharts.makeChart('vmProductAvailability',$scope.getAvailabilityChartOptions(data.trend, $scope.colors));
+        $scope.noData = false;
+      }
+    }
 
-      $scope.charts = [{
-        color: pieColor,
-        description: 'Ketersediaan',
-        stats: available.count+'/'+(available.count+unavailable.count),
+    $scope.getAvailabilityChartOptions = function(data, colors) { 
+      var dateFormat;
+      if(data.granularity == 'month')
+        dateFormat = 'YYYY-MM';
+      else if(data.granularity == 'day')
+        dateFormat = 'YYYY-MM-DD';
+
+      var options = {
+        color: layoutColors.defaultText,
+        data: data.trend,
+        title: 'Ketersediaan (%)',
+        gridColor: layoutColors.border,
+        valueLabelFunction: function(y) {
+          return y;
+        }, 
+        graphs: [
+          {
+            id: 'g1',
+            balloonFunction: function(item, graph) {
+              var date = new Date(item.category);
+              var formattedDate;
+              if(data.granularity == 'month')
+                formattedDate = vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+              else if(data.granularity == 'day')
+                formattedDate =  date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+
+              var value = item.values.value;
+              var hoverInfo = formattedDate+'<br> Ketersediaan:<br> <b>'+value+' %</b>';
+              return hoverInfo;
+            },
+            bullet: 'round',
+            bulletSize: 8,
+            lineColor: colors.blue,
+            lineThickness: 2,
+            type: 'line',
+            valueField: 'availability'
+          }
+        ],
+        dataDateFormat: dateFormat,
+        categoryField: 'date',
+        categoryLabelFunction: function(valueText, date, categoryAxis) {
+          if(data.granularity == 'month')
+            return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+          else if(data.granularity == 'day')
+            return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+        }
+      };
+      
+      var chartOptions = vmHelper.getLineChartOptions(options);
+      chartOptions.valueAxes = [{
+        maximum: 100
       }];
 
-      $scope.percent = percentage; 
-    }
+      return chartOptions;
+    };
 
     $scope.showUnavailableProducts = function(data) {
       $scope.unavailableProducts = data;
@@ -108,6 +186,7 @@
         .then(function(res) {
           var data = res.data.data;
           $scope.showProducts(data);
+          $scope.showAvailability(data.availability);
         })
         .finally(function() {
           $scope.loading= false;

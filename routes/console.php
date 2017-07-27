@@ -27,7 +27,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             DB::connection('virtual_market')->table('order_statuses')->insert([
                 ['status' => 'success'],
                 ['status' => 'produk habis'],
-                ['status' => 'tidak ada garendong'],
+                ['status' => 'pembeli tidak di rumah'],
             ]);
             // reasons
             DB::connection('virtual_market')->table('reasons')->insert([
@@ -57,6 +57,11 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             DB::connection('virtual_market')->table('pays')->insert([
                 ['parameter' => 'tarif_dasar', 'constant' => 1],
                 ['parameter' => 'tarif_jarak', 'constant' => 2],
+            ]);
+            DB::connection('virtual_market')->table('undefine_words')->insert([
+                ['undefine_word' => 'dgng', 'word' => ''],
+                ['undefine_word' => 'jmb', 'word' => ''],
+                ['undefine_word' => 'knkg', 'word' => ''],
             ]);
         }
 	    factory(App\Model\VirtualMarket\Order::class, $num)->create();

@@ -18,7 +18,7 @@ $factory->define(App\Model\VirtualMarket\Order::class, function (Faker\Generator
         'total_product' => $faker->numberBetween($min = 1, $max = 10),
         'total_price' => $faker->numberBetween($min = 5000, $max = 150000),
         'order_type' => $faker->randomElement($array = array ('mobile','sms')), // app platform
-        'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = '+1 day', $timezone = 'Asia/Jakarta'),
+        'created_at' => $faker->dateTimeBetween($startDate = '-3 month', $endDate = '+1 day', $timezone = 'Asia/Jakarta'),
         'order_status' => $faker->numberBetween($min = 1, $max = 3),
         'customer_id' => $faker->numberBetween($min = 1, $max = 100),
         'garendong_id' => $faker->numberBetween($min = 1, $max = 100),
@@ -45,7 +45,8 @@ $factory->define(App\Model\VirtualMarket\Product::class, function (Faker\Generat
 
     return [
 
-        'name' => $faker->word,
+        // 'name' => $faker->word,
+        'name' => $faker->randomElement($array = array ('ayam','sapi','apel','jeruk','pisang','wortel','kangkung','bayam','cabai','bawang','pala','mangga','semangka','melon','belimbing')),
         'default_quantity' => $faker->numberBetween($min = 1, $max = 10),
         'default_unit_id' => $faker->numberBetween($min = 1, $max = 3),
         'price_min' => $faker->numberBetween($min = 5000, $max = 10000),

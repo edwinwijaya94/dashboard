@@ -132,6 +132,7 @@ angular.module('BlurAdmin.pages.virtualmarket')
           marginTop: 10,
           marginRight: 15,
           marginBottom: 10,
+          marginLeft: 10,
           dataProvider: options.data,
           valueAxes: [
             {
@@ -149,7 +150,9 @@ angular.module('BlurAdmin.pages.virtualmarket')
           rotate: options.rotate,
           categoryField: options.categoryField,
           categoryAxis: {
-            gridThickness: 0
+            gridThickness: 0,
+            inside: true,
+            color: '#000000',
           },
           creditsPosition: 'bottom-right'
         };

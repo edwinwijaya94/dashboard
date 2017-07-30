@@ -6,7 +6,7 @@
       .controller('opOverviewCtrl', opOverviewCtrl);
 
   /** @ngInject */
-  function opOverviewCtrl($scope, $timeout, $http, baConfig, baUtil, opHelper) {
+  function opOverviewCtrl($scope, $timeout, $http, $rootScope, $uibModal, baConfig, baUtil, opHelper) {
     var layoutColors = baConfig.colors;
     // $scope.colors = [layoutColors.primary, layoutColors.warning, layoutColors.danger, layoutColors.info, layoutColors.success, layoutColors.primaryDark];
     
@@ -64,6 +64,8 @@
 
     // EVENTS
     $scope.$on('updateOp', function(event, startDate, endDate) {
+      $scope.startDate = startDate;
+      $scope.endDate = endDate;
       $scope.getData(startDate, endDate);  
     });
 
@@ -207,6 +209,47 @@
       };
 
       return opHelper.getBarChartOptions(options);
+    };
+
+    // PRODUCT TREND
+    $scope.viewTrend = function(product) {
+      var startDate = $scope.startDate;
+      var endDate = $scope.endDate;
+
+      $scope.selectedProduct = product;
+      $http.get('/api/operational/product?type=trend&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
+        .then(function(res) {
+          var data = res.data.data;
+          if(data.trend.granularity=='day') {
+            for(var i=0; i<data.trend.length-1; i++) {
+              var date = moment(data.trend[i+1].date, 'YYYY-MM-DD');
+              if(date.isAfter(moment(),'day'))
+                data.trend[i].dashLength = 2;  
+              else
+                data.trend[i].dashLength = 0;  
+            }
+          } else {
+            for(var i=0; i<data.trend.length-1; i++) {
+              data.trend[i].dashLength = 0;  
+            }
+          }
+          $scope.productTrendData = data;
+        })
+        .finally(function() {
+          // $scope.loading= false;
+          // open edit modal
+          console.log('finally');
+          var page = 'app/pages/operational/opOverview/productTrendModal.html';
+          var size = 'lg';
+          $rootScope.productTrendModalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: page,
+            size: size,
+            scope: $scope,
+            windowClass: 'pv-product-trend-modal'
+          });
+        });    
+
     };
 
     $scope.formatNumber = function(number) {

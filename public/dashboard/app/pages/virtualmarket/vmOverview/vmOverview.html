@@ -21,7 +21,7 @@
       <!-- TRANSAKSI -->
       <div class="col-md-12 pv-stats">
         <div class="pie-charts">
-          <div class="col-md-3 pv-stats">
+          <div class="col-md-2 pv-stats">
             <div class="">
               <div class="description">
                 <div>{{ ::stats.transaction_count.description }}</div><br>
@@ -45,7 +45,7 @@
               </div>
             </div>
           </div> -->
-          <div class="col-md-3 pv-stats">
+          <div class="col-md-2 pv-stats">
             <div class="">
               <div class="description">
                 <div>{{ ::stats.unique_buyers.description }}</div><br>
@@ -57,14 +57,28 @@
               </div>
             </div>
           </div>
-          <div class="col-md-3 pv-stats">
-            <div class="">
-              <div class="description">
-                <div>{{ ::stats.availability.description }}</div><br>
-                <div class="description-stats" ng-bind="stats.availability.value"></div><br>
-                <div >
-                  <i class="{{stats.availability.icon}}" style="color:{{stats.availability.iconColor}}"></i>
-                  <span>{{stats.availability.change}}</span>
+          <div class="col-md-5">
+            <div class="col-md-6 pv-stats">
+              <div class="">
+                <div class="description">
+                  <div>{{ ::stats.availability.description }}</div><br>
+                  <div class="description-stats" ng-bind="stats.availability.value"></div><br>
+                  <div >
+                    <i class="{{stats.availability.icon}}" style="color:{{stats.availability.iconColor}}"></i>
+                    <span>{{stats.availability.change}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 pv-stats">
+              <div class="">
+                <div class="description">
+                  <div>{{ ::stats.fluctuation.description }}</div><br>
+                  <div class="description-stats">
+                    <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}"></i>
+                    <span class="description-stats" ng-bind="stats.fluctuation.value"></span><br>
+                    <!-- <span>{{stats.fluctuation.change}}</span> -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -149,9 +163,9 @@
         </div>
       </div> -->
       <!-- PRODUK -->
-      <div class="col-md-4"
+      <div class="col-md-5"
            ba-panel
-           ba-panel-title="Produk"
+           ba-panel-title="Produk Populer"
            ba-panel-class="pv-panel" style="">
         <div class="row">
           <div>
@@ -160,8 +174,8 @@
               <tr class="sortable ">
                 <th class="table-id">#</th>
                 <th>Nama</th>
-                <th>#Transaksi</th>
-                <th>Harga(Rp)</th>
+                <th style="text-align:right">Ketersediaan(%)</th>
+                <th style="text-align:right">Harga(Rp)</th>
                 <!-- <th st-sort="availability">Ketersediaan(%)</th> -->
               </tr>
               <tr>
@@ -175,8 +189,18 @@
               <tr ng-repeat="product in productList.product">
                 <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
                 <td>{{product.name}}</td>
-                <td>{{formatNumber(product.count)}}</td>
-                <td>{{formatNumber(product.avg_price)}}</td>
+                <td align="right">
+                  {{formatNumber(product.availability)}}
+                  &nbsp
+                  <i class="{{getArrowIcon(product.availability_change)}}" style="color:{{getArrowColor(product.availability_change)}}" ng-show="product.availability_change != 0"></i>
+                  <!-- <span>{{formatNumber(product.availability_change)}}</span> -->
+                </td>
+                <td align="right">
+                  {{formatNumber(product.avg_price)}}
+                  &nbsp
+                  <i class="{{getArrowIcon(product.price_change)}}" style="color:{{getArrowColor(product.price_change*(-1))}}" ng-show="product.price_change != 0"></i>
+                  <!-- <span>{{formatNumber(product.price_change)}}</span> -->
+                </td>
                 <!-- <td>{{formatNumber(product.availability)}}</td> -->
               </tr>
               </tbody>
@@ -186,13 +210,13 @@
         </div>
       </div>
       <!-- Feedback Reason -->
-      <div class="col-md-4"
+      <div class="col-md-3"
          ba-panel
          ba-panel-title="Ulasan"
          ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="vmFeedbackReason" class="pv-chart" style="height:250px"></div>
+            <div id="vmOverviewFeedbackReason" class="pv-chart" style="height:250px"></div>
             <!-- loading / no data handler -->
             <div class="pv-chart-small-overlay" ng-show="loading || noData">
               <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>

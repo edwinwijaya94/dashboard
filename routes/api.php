@@ -33,3 +33,4 @@ Route::get('/marketplace/buyer', 'MarketplaceController@getBuyer');
 
 // operational
 Route::get('/operational/overview', 'OperationalController@getOverview');
+Route::get('/operational/product', 'OperationalController@getProduct');

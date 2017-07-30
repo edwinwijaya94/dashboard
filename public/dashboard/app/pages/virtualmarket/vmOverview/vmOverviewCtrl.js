@@ -88,6 +88,15 @@
         iconColor: $scope.colors.green,
         colSize: 2,
       },
+      fluctuation: {
+        description: 'Fluktuasi Harga',
+        value: vmHelper.formatNumber(0,false,false),
+        showPie: false,
+        showChange: true,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 2,
+      },
       avg_rating: {
         color: pieColor,
         description: 'Rating Garendong',
@@ -159,6 +168,7 @@
         .then(function(res) {
           var data = res.data.data;
           $scope.showProductStats(data.availability);
+          $scope.showFluctuation(data.fluctuation);
         })
         .finally(function() {
           // $scope.loading= false;
@@ -373,9 +383,28 @@
         stat.iconColor = $scope.colors.red;
       }
       stat.colSize = $scope.stats.availability.colSize;
-      stat.value = vmHelper.formatNumber(stat.value,false,false)+'%';
+      stat.value = isFinite(stat.value)? (vmHelper.formatNumber(stat.value,false,false)+'%'):'-';
       stat.change = vmHelper.formatNumber(stat.change,false,false);
       $scope.stats.availability = stat;
+    }
+
+    $scope.showFluctuation = function(data) {
+      //product fluctuation
+      var stat = {};
+      stat.description = $scope.stats.fluctuation.description;
+      stat.showPie = $scope.stats.fluctuation.showPie;
+      stat.showChange = $scope.stats.fluctuation.showChange;
+      stat.value = parseFloat(data);
+      if(stat.value>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.red;
+      } else {
+        stat.change *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.green;
+      }
+      stat.value = isFinite(stat.value)? (vmHelper.formatNumber(stat.value,false,false)+'%'):'-';
+      $scope.stats.fluctuation = stat;
     }
 
     // TRANSACTION HISTORY
@@ -638,6 +667,20 @@
       return vmHelper.formatNumber(number,false,false);
     };
 
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    };
+
     $scope.changeProductPage = function(newPage) {
       // $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
       $scope.productPageIndex = newPage;
@@ -705,7 +748,7 @@
       // }
       // $scope.stats.shopperCount.change = countChange;
 
-      $scope.stats.avg_rating.value = $scope.formatRating(data.avg_rating.current);
+      $scope.stats.avg_rating.value = parseFloat(data.avg_rating.current);
       var ratingChange = (data.avg_rating.current-data.avg_rating.prev);
       ratingChange = isFinite(ratingChange)? ratingChange:0;
       if(ratingChange>=0) {
@@ -716,6 +759,7 @@
         $scope.stats.avg_rating.icon = 'ion-arrow-down-b';
         $scope.stats.avg_rating.iconColor = $scope.colors.red;
       }
+      $scope.stats.avg_rating.value = isFinite($scope.stats.avg_rating.value)? vmHelper.formatNumber($scope.stats.avg_rating.value,false,false): '-';
       $scope.stats.avg_rating.change = $scope.formatRating(parseFloat(ratingChange.toFixed(2)));
 
       // shopper list
@@ -737,7 +781,7 @@
 
     $scope.showFeedbackReason = function(data) {
       if($scope.chart != undefined) {
-        $('#vmFeedbackReason').empty();
+        $('#vmOverviewFeedbackReason').empty();
       }
 
       if(data.length == 0) {
@@ -746,7 +790,7 @@
         for(var i=0; i<data.length; i++){
           data[i].fillColor = $scope.colors.yellow;
         }
-        $scope.chart = AmCharts.makeChart('vmFeedbackReason',$scope.getBarChartOptions(data, $scope.colors, 'reason'));
+        $scope.chart = AmCharts.makeChart('vmOverviewFeedbackReason',$scope.getBarChartOptions(data, $scope.colors, 'reason'));
         $scope.noData = false;
       }
     }

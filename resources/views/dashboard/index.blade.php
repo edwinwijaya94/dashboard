@@ -362,6 +362,7 @@
 
 <script src="{{asset('dashboard/app/pages/operational/opOverview/opOverview.directive.js')}}"></script>
 <script src="{{asset('dashboard/app/pages/operational/opOverview/opOverviewCtrl.js')}}"></script>
+<script src="{{asset('dashboard/app/pages/operational/opOverview/opProductTrendCtrl.js')}}"></script>
 
 <!-- user manager for dashboard -->
 <script src="{{asset('dashboard/app/pages/userManager/userManager.module.js')}}"></script>

@@ -252,12 +252,12 @@
 
       // transaction status
       for(var i=0; i<data.status.length; i++){
-        if(data.status[i].status == 'success')
+        if(data.status[i].name == 'success')
           data.status[i].fillColor = $scope.colors.green;
         else
           data.status[i].fillColor = '#d1cfcf';
       }
-      $scope.chart = AmCharts.makeChart('mpSentraTransactionStatus',$scope.getBarChartOptions(data.status, $scope.colors, 'status'));
+      $scope.chart = AmCharts.makeChart('mpSentraTransactionStatus',$scope.getBarChartOptions(data.status, $scope.colors, 'name'));
       
     }
 

@@ -19,6 +19,9 @@ class MarketplaceController extends Controller
     //     $this->middleware('auth');
     // }
 
+    // ATTRIBUTES
+    private $successStatus = 'success';
+
     // HELPER FUNCTIONS
     public function setDefault()
     {
@@ -123,19 +126,21 @@ class MarketplaceController extends Controller
         // transaction count
         $currentTransactionCount = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
-                    ->where('created_at', '>=', $query['startDate'])
-                    ->where('created_at', '<=', $query['endDate'])
+                    ->whereIn('orderline_statuses.name', [$this->successStatus])
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
                     // ->groupBy('status')
                     ->get();
 
         $prevTransactionCount = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
-                    ->where('created_at', '>=', $prevPeriod['startDate'])
-                    ->where('created_at', '<=', $prevPeriod['endDate'])
+                    ->whereIn('orderline_statuses.name', [$this->successStatus])
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
                     // ->groupBy('status')
                     ->get();
 
@@ -143,28 +148,31 @@ class MarketplaceController extends Controller
         // total transaction value
         $currentTransactionValue = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
-                    ->where('created_at', '>=', $query['startDate'])
-                    ->where('created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->get();
 
         $prevTransactionValue = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
-                    ->where('created_at', '>=', $prevPeriod['startDate'])
-                    ->where('created_at', '<=', $prevPeriod['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->get();
 
         // transaction status
         $transactionStatus = DB::connection('marketplace')
                     ->table('orderlines')
-                    ->select(DB::raw('status, count(*)'))
-                    // ->whereIn('status', ['success'])
-                    ->where('created_at', '>=', $query['startDate'])
-                    ->where('created_at', '<=', $query['endDate'])
-                    ->groupBy('status')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->select(DB::raw('orderline_statuses.name, count(*)'))
+                    // ->whereIn('status', [$this->successStatus])
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->groupBy('orderline_statuses.name')
                     ->orderByRaw('count desc')
                     ->get();
 
@@ -175,7 +183,7 @@ class MarketplaceController extends Controller
                     ->select(DB::raw('payment_method_types.name, count(*)'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    // ->where('status', '=', 'success')
+                    // ->where('status', '=', $this->successStatus)
                     ->groupBy('payment_method_types.name')
                     ->orderByRaw('count desc')
                     ->get();        
@@ -205,11 +213,11 @@ class MarketplaceController extends Controller
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
         if($granularity == 'month') {
-            $dateQuery = 'to_char(created_at, \'YYYY-MM\') as date';
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         } else if($granularity == 'day') {
-            $dateQuery = 'to_char(created_at, \'YYYY-MM-DD\') as date';
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM-DD\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         }
@@ -218,10 +226,11 @@ class MarketplaceController extends Controller
         // execute
         $transaction = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->select(DB::raw($query['aggregate'].'as value, count(*),'.$dateQuery))
-                    ->where('created_at', '>=', $query['startDate'])
-                    ->where('created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
                     // ->toSql();
@@ -251,8 +260,8 @@ class MarketplaceController extends Controller
             return $this->getProductStats($query);
         else if($query['type'] == 'list')
             return $this->getProductList($query);
-        else if($query['type'] == 'prediction')
-            return $this->getProductPrediction($query);
+        else if($query['type'] == 'trend')
+            return $this->getProductTrend($query);
     }
     
     public function getProductStats($query)
@@ -354,6 +363,125 @@ class MarketplaceController extends Controller
                 ]);
     }
 
+    public function getProductTrend($query)
+    {
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
+
+        DB::enableQueryLog();
+        // execute
+        $dbQuery = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('orders', 'orderlines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('sum(quantity) as count, round(avg(subtotal/quantity), 0) as price,'.$dateQuery))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('orderlines.product_id', '=', $query['productId'])
+                    ->groupBy($dateGroupBy)
+                    ->orderByRaw($dateOrder);
+
+        $product = $dbQuery
+                    ->get()
+                    ->toArray();
+
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $query['startDate'], 'Asia/Jakarta');
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate'], 'Asia/Jakarta');
+        $now = Carbon::now('Asia/Jakarta');
+        if($end->diffInDays($now) < 1 && $start->diffInDays($end) <= 30) {
+            
+            //fix null values
+            $trendData = [];
+            $prevTime = NULL;
+            for($i=0; $i<count($product); $i++) {
+              $item = $product[$i];
+              
+              $currentTime = Carbon::createFromFormat('Y-m-d', $item->date);
+              if ($prevTime != NULL) {
+                for ($time=$prevTime->addDay(); $time->lt($currentTime); $time->addDay()) {
+
+                  $x = array();
+                  $x['date'] = $time->toDateString();
+                  $x['count'] = 0;
+                  $x['price'] = $prevItem->price; // same as previous day
+
+                  array_push($trendData, (object)$x);
+                }
+              }
+              array_push($trendData, $item);
+              $prevTime = $currentTime;
+              $prevItem = $item;
+            }
+            //check null values on endDate
+            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
+            $lastTime = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date);
+            for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
+              $x = array();
+              $x['date'] = $time->toDateString();
+              $x['count'] = 0;
+              $x['price'] = $product[count($product)-1]->price; // same as last day
+              array_push($trendData, (object)$x);
+            }
+
+            // predict using regression
+            $samples = [];
+            $countTargets = [];
+            $priceTargets = [];
+            for($i=0; $i<count($trendData); $i++) {
+                array_push($samples, [$i+1]);
+                array_push($countTargets, $trendData[$i]->count);
+                array_push($priceTargets, $trendData[$i]->price);
+            }
+
+            $countRegression = new LeastSquares();
+            $countRegression->train($samples, $countTargets);
+
+            $priceRegression = new LeastSquares();
+            $priceRegression->train($samples, $priceTargets);
+
+            // predict for number of days
+            $predictions = [];
+            for($i=1; $i<=3; $i++) {
+                $x = [];
+                $x['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDays($i)->toDateString();
+                // predict product count
+                $countPredictedValue = $countRegression->predict([count($trendData)+$i]);
+                if($countPredictedValue < 0)
+                    $countPredictedValue = 0;
+                $x['count'] = (string) round($countPredictedValue, 0);
+                // predict product price
+                $pricePredictedValue = $priceRegression->predict([count($trendData)+$i]);
+                if($pricePredictedValue < 0)
+                    $pricePredictedValue = 0;
+                $x['price'] = (string) round($pricePredictedValue, 0);
+
+                array_push($predictions, (object)$x);
+            }
+            $trendData = array_merge($trendData, $predictions);
+        } else {
+            $trendData = $product;
+        }
+
+        $data = array();
+        $data['granularity'] = $granularity;
+        $data['trend'] = $trendData;
+
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
     // SENTRA
     public function getSentra(Request $request)
     {
@@ -366,110 +494,6 @@ class MarketplaceController extends Controller
             return $this->getSentraData($query);
         else if($query['type'] == 'toplist')
             return $this->getSentraTopList($query);
-    }
-
-    public function getProductPrediction($query)
-    {
-        // $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
-        // if($granularity == 'month') {
-        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
-        //     $dateGroupBy = array('date');
-        //     $dateOrder = 'date asc';
-        // } else if($granularity == 'day') {
-        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
-        //     $dateGroupBy = array('date');
-        //     $dateOrder = 'date asc';
-        // }
-
-        $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
-        $dateGroupBy = array('date');
-        $dateOrder = 'date asc';
-
-        DB::enableQueryLog();
-        // execute
-        $dbQuery = DB::connection('marketplace')
-                    ->table('orderlines')
-                    ->join('products', 'orderlines.product_id', '=', 'products.id')
-                    ->join('orders', 'orderlines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('sum(quantity) as count,'.$dateQuery))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('orderlines.product_id', '=', $query['productId'])
-                    ->groupBy($dateGroupBy)
-                    ->orderByRaw($dateOrder);
-
-        $product = $dbQuery
-                    ->get()
-                    ->toArray();
-        
-        //fix null values
-        $trendData = [];
-        $prevTime = NULL;
-        for($i=0; $i<count($product); $i++) {
-          $item = $product[$i];
-          
-          $currentTime = Carbon::createFromFormat('Y-m-d', $item->date);
-          if ($prevTime != NULL) {
-            for ($time=$prevTime->addDay(); $time->lt($currentTime); $time->addDay()) {
-
-              $x = array();
-              $x['date'] = $time->toDateString();
-              $x['count'] = 0;
-              
-              array_push($trendData, (object)$x);
-            }
-          }
-          array_push($trendData, $item);
-          $prevTime = $currentTime;
-        }
-        //check null values on endDate
-        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
-        $lastTime = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date);
-        for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
-          $x = array();
-          $x['date'] = $time->toDateString();
-          $x['count'] = 0;
-          
-          array_push($trendData, (object)$x);
-        }
-            
-        $end = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate'], 'Asia/Jakarta');
-        $now = Carbon::now('Asia/Jakarta');
-        if($end->diffInDays($now) < 1) {
-            // predict using regression
-            $samples = [];
-            $targets = [];
-            for($i=0; $i<count($trendData); $i++) {
-                array_push($samples, [$i+1]);
-                array_push($targets, $trendData[$i]->count);
-            }
-
-            $regression = new LeastSquares();
-            $regression->train($samples, $targets);
-
-            // predict for number of days
-            $predictions = [];
-            for($i=1; $i<=3; $i++) {
-                $x = [];
-                $x['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDays($i)->toDateString();
-                $predictedValue = $regression->predict([count($trendData)+$i]);
-                if($predictedValue < 0)
-                    $predictedValue = 0;
-                $x['count'] = round($predictedValue, 0);
-                array_push($predictions, (object)$x);
-            }
-            $trendData = array_merge($trendData, $predictions);
-        }
-
-        $data = array();
-        $data['trend'] = $trendData;
-
-        $status = $this->setStatus();
-
-        return response()->json([
-                    'status' => $status,
-                    'data' => $data
-                ]);
     }
 
     public function getSentraList()
@@ -535,9 +559,10 @@ class MarketplaceController extends Controller
         // transaction count
         $currentTransactionCount = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
@@ -545,9 +570,10 @@ class MarketplaceController extends Controller
 
         $prevTransactionCount = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
@@ -557,43 +583,47 @@ class MarketplaceController extends Controller
         // total transaction value
         $currentTransactionValue = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('stores.sentra_id', '=', $query['sentraId'])
                     ->get();
 
         $prevTransactionValue = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(subtotal), 0), 0) as average'))
                     ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('stores.sentra_id', '=', $query['sentraId'])
                     ->get();
 
         // transaction status
         $transactionStatus = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
-                    ->select(DB::raw('status, count(*)'))
+                    ->select(DB::raw('orderline_statuses.name, count(*)'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
-                    ->groupBy('status')
+                    ->groupBy('orderline_statuses.name')
                     ->orderByRaw('count desc')
                     ->get();
 
         $transactionHistory = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw($query['aggregate'].'as value, count(*),'.$dateQuery))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('stores.sentra_id', '=', $query['sentraId'])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
@@ -727,12 +757,13 @@ class MarketplaceController extends Controller
         // execute
         $query = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
                     ->select(DB::raw('sentra.name as name, count(*) as orders, sum(subtotal) as value'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
-                    ->where('orderlines.status', '=', 'success')
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->groupBy('sentra.name')
                     ->orderByRaw('orders desc')
                     ->limit(5);
@@ -938,7 +969,7 @@ class MarketplaceController extends Controller
                     ->select(DB::raw('addresses.user_id, addresses.latitude, addresses.longitude'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('order_statuses.status', '=', 'success')
+                    ->where('order_statuses.status', '=', $this->successStatus)
                     // ->groupBy('addresses.district')
                     ->get();
 

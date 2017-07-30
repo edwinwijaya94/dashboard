@@ -144,7 +144,7 @@
       $scope.stats.shopperCount.change = countChange;
 
       // avg rating
-      $scope.stats.avgRating.value = $scope.formatRating(data.avg_rating.current);
+      $scope.stats.avgRating.value = parseFloat(data.avg_rating.current);
       var ratingChange = (data.avg_rating.current-data.avg_rating.prev);
       ratingChange = data.avg_rating.prev!=null? ratingChange:0;
       if(ratingChange>=0) {
@@ -155,6 +155,7 @@
         $scope.stats.avgRating.icon = 'ion-arrow-down-b';
         $scope.stats.avgRating.iconColor = $scope.colors.red;
       }
+      $scope.stats.avgRating.value = isFinite($scope.stats.avgRating.value)? vmHelper.formatNumber($scope.stats.avgRating.value,false,false): '-';
       $scope.stats.avgRating.change = $scope.formatRating(parseFloat(ratingChange.toFixed(2)));
 
       // transaction per shopper
@@ -170,7 +171,7 @@
         $scope.stats.transactionPerShopper.icon = 'ion-arrow-down-b';
         $scope.stats.transactionPerShopper.iconColor = $scope.colors.red;
       }
-      $scope.stats.transactionPerShopper.value = vmHelper.formatNumber(parseFloat(currentTransactionPerShopper), false, false);
+      $scope.stats.transactionPerShopper.value = isFinite(currentTransactionPerShopper)? vmHelper.formatNumber(parseFloat(currentTransactionPerShopper), false, false):'-';
       $scope.stats.transactionPerShopper.change = vmHelper.formatNumber(parseFloat(transactionChange), false, false);
 
       // RATING TRENDS

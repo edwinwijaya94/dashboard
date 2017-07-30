@@ -48,7 +48,7 @@ $factory->define(App\Model\VirtualMarket\Product::class, function (Faker\Generat
         // 'name' => $faker->word,
         'name' => $faker->randomElement($array = array ('ayam','sapi','apel','jeruk','pisang','wortel','kangkung','bayam','cabai','bawang','pala','mangga','semangka','melon','belimbing')),
         'default_quantity' => $faker->numberBetween($min = 1, $max = 10),
-        'default_unit_id' => $faker->numberBetween($min = 1, $max = 3),
+        'default_unit_id' => $faker->numberBetween($min = 1, $max = 2),
         'price_min' => $faker->numberBetween($min = 5000, $max = 10000),
         'price_max' => $faker->numberBetween($min = 10001, $max = 25000),
         'product_img' => $faker->url,

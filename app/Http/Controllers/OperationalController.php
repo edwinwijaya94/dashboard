@@ -42,8 +42,8 @@ class OperationalController extends Controller
         $query['startDate'] = $request->query('start_date', $default['startDate']);
         $query['endDate'] = $request->query('end_date', $default['endDate']);
         // modify date to timestamp format
-        $query['startDate'] = $query['startDate'];
-        $query['endDate'] = $query['endDate'];
+        $query['startDate'] = $query['startDate'].' 00:00:00';
+        $query['endDate'] = $query['endDate'].' 23:59:59';
         
         $query['type'] = $request->query('type', $default['type']);
 
@@ -90,8 +90,8 @@ class OperationalController extends Controller
     }
 
     public function getGranularity($startDate, $endDate) {
-        $start = Carbon::createFromFormat('Y-m-d  H:i:s', $startDate);
-        $end = Carbon::createFromFormat('Y-m-d  H:i:s', $endDate);
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $startDate);
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $endDate);
         $diff = $start->diffInDays($end)+1;
 
         if($diff > 30) {
@@ -353,8 +353,8 @@ class OperationalController extends Controller
             return $this->getProductTopList($query);
         else if($query['type'] == 'list')
             return $this->getProductList($query);
-        else if($query['type'] == 'prediction')
-            return $this->getProductPrediction($query);
+        else if($query['type'] == 'trend')
+            return $this->getProductTrend($query);
     }
     
     public function getProductStats($query)
@@ -466,22 +466,22 @@ class OperationalController extends Controller
                 ]);
     }
 
-    public function getProductPrediction($query)
+    public function getProductTrend($query)
     {
-        // $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
-        // if($granularity == 'month') {
-        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
-        //     $dateGroupBy = array('date');
-        //     $dateOrder = 'date asc';
-        // } else if($granularity == 'day') {
-        //     $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
-        //     $dateGroupBy = array('date');
-        //     $dateOrder = 'date asc';
-        // }
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
 
-        $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
-        $dateGroupBy = array('date');
-        $dateOrder = 'date asc';
+        // $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+        // $dateGroupBy = array('date');
+        // $dateOrder = 'date asc';
 
         DB::enableQueryLog();
         // execute
@@ -489,86 +489,98 @@ class OperationalController extends Controller
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
                     ->join('orders', 'order_lines.order_id', '=', 'orders.id')
-                    ->select(DB::raw('sum(quantity) as count,'.$dateQuery))
+                    ->select(DB::raw('sum(quantity) as count, round(avg(price/quantity), 0) as price,'.$dateQuery))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('order_lines.product_id', '=', $query['productId'])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder);
 
-        // $productName = DB::connection('virtual_market')
-        //             ->table('products')
-        //             ->select(DB::raw('name'))
-        //             ->where('id', '=', $query['productId'])
-        //             ->get();
-
         $product = $dbQuery
                     ->get()
                     ->toArray();
-        
-        //fix null values
-        $trendData = [];
-        $prevTime = NULL;
-        for($i=0; $i<count($product); $i++) {
-          $item = $product[$i];
           
-          $currentTime = Carbon::createFromFormat('Y-m-d', $item->date);
-          if ($prevTime != NULL) {
-            for ($time=$prevTime->addDay(); $time->lt($currentTime); $time->addDay()) {
+        $start = Carbon::createFromFormat('Y-m-d H:i:s', $query['startDate'], 'Asia/Jakarta');
+        $end = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate'], 'Asia/Jakarta');
+        $now = Carbon::now('Asia/Jakarta');
 
+        if($end->diffInDays($now) < 1 && $start->diffInDays($end) <= 30) {
+            
+            //fix null values
+            $trendData = [];
+            $prevTime = NULL;
+            for($i=0; $i<count($product); $i++) {
+              $item = $product[$i];
+              
+              $currentTime = Carbon::createFromFormat('Y-m-d', $item->date);
+              if ($prevTime != NULL) {
+                for ($time=$prevTime->addDay(); $time->lt($currentTime); $time->addDay()) {
+
+                  $x = array();
+                  $x['date'] = $time->toDateString();
+                  $x['count'] = 0;
+                  $x['price'] = $prevItem->price; // same as previous day
+                  
+                  array_push($trendData, (object)$x);
+                }
+              }
+              array_push($trendData, $item);
+              $prevTime = $currentTime;
+              $prevItem = $item;
+            }
+            //check null values on endDate
+            $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
+            $lastTime = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date);
+            for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
               $x = array();
               $x['date'] = $time->toDateString();
               $x['count'] = 0;
-              
+              $x['price'] = $product[count($product)-1]->price; // same as last day
               array_push($trendData, (object)$x);
             }
-          }
-          array_push($trendData, $item);
-          $prevTime = $currentTime;
-        }
-        //check null values on endDate
-        $endTime = Carbon::createFromFormat('Y-m-d H:i:s', $query['endDate']);
-        $lastTime = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date);
-        for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
-          $x = array();
-          $x['date'] = $time->toDateString();
-          $x['count'] = 0;
-          
-          array_push($trendData, (object)$x);
-        }
-        
 
-        // predict using regression
-        $samples = [];
-        $targets = [];
-        for($i=0; $i<count($trendData); $i++) {
-            array_push($samples, [$i+1]);
-            array_push($targets, $trendData[$i]->count);
-        }
-        // print_r($samples);
-        // print_r($targets);
+            // predict using regression
+            $samples = [];
+            $countTargets = [];
+            $priceTargets = [];
+            for($i=0; $i<count($trendData); $i++) {
+                array_push($samples, [$i+1]);
+                array_push($countTargets, $trendData[$i]->count);
+                array_push($priceTargets, $trendData[$i]->price);
+            }
 
-        $regression = new LeastSquares();
-        $regression->train($samples, $targets);
+            $countRegression = new LeastSquares();
+            $countRegression->train($samples, $countTargets);
 
-        // predict for number of days
-        $predictions = [];
-        for($i=1; $i<=3; $i++) {
-            $x = [];
-            $x['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDays($i)->toDateString();
-            $predictedValue = $regression->predict([count($trendData)+$i]);
-            if($predictedValue < 0)
-                $predictedValue = 0;
-            $x['count'] = round($predictedValue, 0);
-            array_push($predictions, (object)$x);
+            $priceRegression = new LeastSquares();
+            $priceRegression->train($samples, $priceTargets);
+
+            // predict for number of days
+            $predictions = [];
+            for($i=1; $i<=3; $i++) {
+                $x = [];
+                $x['date'] = Carbon::createFromFormat('Y-m-d', $trendData[count($trendData)-1]->date)->addDays($i)->toDateString();
+                // predict product count
+                $countPredictedValue = $countRegression->predict([count($trendData)+$i]);
+                if($countPredictedValue < 0)
+                    $countPredictedValue = 0;
+                $x['count'] = (string) round($countPredictedValue, 0);
+                // predict product price
+                $pricePredictedValue = $priceRegression->predict([count($trendData)+$i]);
+                if($pricePredictedValue < 0)
+                    $pricePredictedValue = 0;
+                $x['price'] = (string) round($pricePredictedValue, 0);
+
+                array_push($predictions, (object)$x);
+            }
+            $trendData = array_merge($trendData, $predictions);
+        } else {
+            $trendData = $product;
         }
-        // array_push($trendData, $predictions);
-        $trendData = array_merge($trendData, $predictions);
 
         $data = array();
-        // $data['product_name'] = $productName;
+        $data['granularity'] = $granularity;
         $data['trend'] = $trendData;
-        // $data['prediction'] = $prediction;
 
         $status = $this->setStatus();
 

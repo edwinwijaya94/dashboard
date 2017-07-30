@@ -38,14 +38,12 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
             // units
             DB::connection('virtual_market')->table('units')->insert([
                 ['unit_type' => 'common', 'unit' => 'ons'],
-                ['unit_type' => 'common', 'unit' => 'gram'],
-                ['unit_type' => 'common', 'unit' => 'kilogram'],
+                ['unit_type' => 'common', 'unit' => 'kg'],
             ]);
             // converter
             DB::connection('virtual_market')->table('converters')->insert([
                 ['unit_id' => 1, 'in_gram' => '100'],
-                ['unit_id' => 2, 'in_gram' => '1'],
-                ['unit_id' => 3, 'in_gram' => '1000'],
+                ['unit_id' => 2, 'in_gram' => '1000'],
             ]);
             // category
             DB::connection('virtual_market')->table('categories')->insert([
@@ -88,6 +86,13 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
                 ['name' => 'kartu debit', 'type' => 'a', 'image' => 'a', 'description' => 'a' ],
                 ['name' => 'kartu kredit', 'type' => 'a', 'image' => 'a', 'description' => 'a' ],
             ]);
+
+            // orderline status
+            DB::connection('marketplace')->table('orderline_statuses')->insert([
+                ['name' => 'success'],
+                ['name' => 'produk habis'],
+                ['name' => 'barang tidak sampai pembeli'],
+            ]);            
         }
         factory(App\Model\Marketplace\Buyer::class, $num)->create();
         // factory(App\Model\Marketplace\Sentra::class, $num)->create();

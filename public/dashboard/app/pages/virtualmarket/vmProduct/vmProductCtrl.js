@@ -15,7 +15,7 @@
     $scope.colors = vmHelper.colors.primary;
 
     // INIT DATA
-     $scope.stats = {
+    $scope.stats = {
       availability: {
         color: pieColor,
         description: 'Tingkat Ketersediaan',
@@ -30,7 +30,17 @@
         iconColor: $scope.colors.green,
         colSize: 4,
       },
+      fluctuation: {
+        description: 'Fluktuasi Harga',
+        value: vmHelper.formatNumber(0,false,false),
+        showPie: false,
+        showChange: true,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 2,
+      },
     }
+
     $scope.initProductList = function() {
       $scope.productPageIndex = 1;
       $scope.productPageSize = 5;
@@ -52,7 +62,7 @@
     });
 
     $scope.getData = function(startDate, endDate) {
-      // $scope.getStats(startDate, endDate);  
+      $scope.getStats(startDate, endDate);  
       $scope.getProductList(startDate, endDate, $scope.productList.page, $scope.productList.rowsPerPage);
     };
 
@@ -62,7 +72,8 @@
       $http.get('/api/virtualmarket/product?type=stats&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
           var data = res.data.data;
-          $scope.showAvailability(data.availability);
+          // $scope.showAvailability(data.availability);
+          $scope.showFluctuation(data.fluctuation);
           // $scope.showUnavailableProducts(data.unavailable_products);
         })
         .finally(function() {
@@ -101,7 +112,7 @@
       }
       stat.colSize = $scope.stats.availability.colSize;
       // format number
-      stat.value = vmHelper.formatNumber(parseFloat(stat.value),false,false)+'%';
+      stat.value = isFinite(stat.value)? (vmHelper.formatNumber(parseFloat(stat.value),false,false)+'%'):'-';
       stat.change = vmHelper.formatNumber(stat.change,false,false);
       $scope.stats.availability = stat;
 
@@ -174,6 +185,26 @@
       return chartOptions;
     };
 
+    $scope.showFluctuation = function(data) {
+      
+      //product fluctuation
+      var stat = {};
+      stat.description = $scope.stats.fluctuation.description;
+      stat.showPie = $scope.stats.fluctuation.showPie;
+      stat.showChange = $scope.stats.fluctuation.showChange;
+      stat.value = parseFloat(data);
+      if(stat.value>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.red;
+      } else {
+        stat.change *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.green;
+      }
+      stat.value = isFinite(stat.value)? (vmHelper.formatNumber(stat.value,false,false)+'%'):'-';
+      $scope.stats.fluctuation = stat;
+    }
+
     $scope.showUnavailableProducts = function(data) {
       $scope.unavailableProducts = data;
     }
@@ -221,15 +252,21 @@
       var endDate = $scope.endDate;
 
       $scope.selectedProduct = product;
-      $http.get('/api/virtualmarket/product?type=prediction&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
+      $http.get('/api/virtualmarket/product?type=trend&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
         .then(function(res) {
           var data = res.data.data;
-          for(var i=0; i<data.trend.length-1; i++) {
-            var date = moment(data.trend[i+1].date, 'YYYY-MM-DD');
-            if(date.isAfter(moment(),'day'))
-              data.trend[i].dashLength = 2;  
-            else
+          if(data.trend.granularity=='day') {
+            for(var i=0; i<data.trend.length-1; i++) {
+              var date = moment(data.trend[i+1].date, 'YYYY-MM-DD');
+              if(date.isAfter(moment(),'day'))
+                data.trend[i].dashLength = 2;  
+              else
+                data.trend[i].dashLength = 0;  
+            }
+          } else {
+            for(var i=0; i<data.trend.length-1; i++) {
               data.trend[i].dashLength = 0;  
+            }
           }
           $scope.productTrendData = data;
         })

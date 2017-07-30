@@ -2,23 +2,22 @@
 (function () {
   'use strict';
 
-  angular.module('BlurAdmin.pages.marketplace')
-      .controller('mpProductTrendCtrl', mpProductTrendCtrl);
+  angular.module('BlurAdmin.pages.operational')
+      .controller('opProductTrendCtrl', opProductTrendCtrl);
 
   /** @ngInject */
-  function mpProductTrendCtrl($scope, $timeout, $http, baConfig, baUtil, mpHelper) {
+  function opProductTrendCtrl($scope, $timeout, $http, baConfig, baUtil, opHelper) {
     // COLORS
     var layoutColors = baConfig.colors;
     var trackColor = baUtil.hexToRGB(baConfig.colors.defaultText, 0.2);
-    var pieColor = mpHelper.colors.primary.green;
+    var pieColor = opHelper.colors.primary.green;
 
-    $scope.colors = mpHelper.colors.primary;
+    $scope.colors = opHelper.colors.primary;
 
     // INIT DATA
     
 
     // TREND AND PREDICTION
-   // TREND AND PREDICTION
     $scope.getChartOptions = function(data, colors) {
 
       var dateFormat;
@@ -41,10 +40,10 @@
       }
 
       var countValueLabelFunction =  function(y) {
-        return mpHelper.formatNumber(y,false,true);
+        return opHelper.formatNumber(y,false,true);
       } 
       var priceValueLabelFunction =  function(y) {
-        return mpHelper.formatNumber(y,true,true);
+        return opHelper.formatNumber(y,true,true);
       }
 
       var options = {
@@ -60,7 +59,7 @@
             title: 'Tren Permintaan',
             balloonFunction: function(item, graph) {
               var value = item.values.value;
-              var hoverInfo = mpHelper.formatNumber(value,false,false);
+              var hoverInfo = opHelper.formatNumber(value,false,false);
               return hoverInfo;
             },
             bullet: 'round',
@@ -78,7 +77,7 @@
             // balloonText: 'Jumlah: <b>[[count]]</b><br>Nilai: <b>Rp [[value]]</b>',
             balloonFunction: function(item, graph) {
               var value = item.values.value;
-              var hoverInfo = mpHelper.formatNumber(value,true,false);
+              var hoverInfo = opHelper.formatNumber(value,true,false);
               return hoverInfo;
             },
             bullet: 'round',
@@ -94,9 +93,9 @@
         categoryField: 'date',
         categoryLabelFunction: function(valueText, date, categoryAxis) {
           if(data.granularity == 'month')
-            return mpHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+            return opHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
           else if(data.granularity == 'day')
-            return date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
+            return date.getDate()+' '+opHelper.formatMonth(date.getMonth());
         },
         valueAxes: [{
           id:'v1',
@@ -119,7 +118,7 @@
         },],
       };
       
-      var chartOptions = mpHelper.getLineChartOptions(options);
+      var chartOptions = opHelper.getLineChartOptions(options);
       if(data.granularity == 'day') {
         chartOptions.categoryAxis.guides = [{
           date: startPoint,
@@ -145,9 +144,9 @@
       chartOptions.chartCursor.categoryBalloonEnabled = true;
       chartOptions.chartCursor.categoryBalloonFunction = function(date) {
         if(data.granularity == 'month')
-          return mpHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+          return opHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
         else if(data.granularity == 'day')
-          return date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
+          return date.getDate()+' '+opHelper.formatMonth(date.getMonth());
       };
       return chartOptions;
     };
@@ -165,9 +164,7 @@
       //   $scope.chart = AmCharts.makeChart('vmProductTrend',$scope.getChartOptions(data));
       //   $scope.noData = false;
       // }
-      console.log('MODAL');
-      console.log($scope.productTrendData);
-      $scope.chart = AmCharts.makeChart('mpProductTrend',$scope.getChartOptions($scope.productTrendData, $scope.colors));
+      $scope.chart = AmCharts.makeChart('opProductTrend',$scope.getChartOptions($scope.productTrendData, $scope.colors));
     };
 
     // draw chart

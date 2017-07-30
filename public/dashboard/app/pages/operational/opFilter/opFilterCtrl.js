@@ -16,8 +16,10 @@
     $scope.dateRange = opHelper.defDate.label;
 
     $scope.notifyCharts = function() {
-      var startDate = $scope.startDate.format('YYYY-MM-DD HH:mm:ss');
-      var endDate = $scope.endDate.format('YYYY-MM-DD HH:mm:ss');
+      // var startDate = $scope.startDate.format('YYYY-MM-DD HH:mm:ss');
+      // var endDate = $scope.endDate.format('YYYY-MM-DD HH:mm:ss');
+      var startDate = $scope.startDate.format('YYYY-MM-DD');
+      var endDate = $scope.endDate.format('YYYY-MM-DD');
       $scope.$emit('opFilter', startDate, endDate);
     }
 
@@ -32,19 +34,17 @@
       angular.element(document.getElementById('opDatePicker')).daterangepicker({
         startDate: $scope.startDate,
         endDate: $scope.endDate,
-        timePicker: true,
-        timePicker24Hour: true,
+        // timePicker: true,
+        // timePicker24Hour: true,
         // locale: {
         //   "format": "MM/DD/YYYY",
         // },
         ranges: {
-          'Hari ini': [moment().startOf('day'), moment()],
-          '1 Jam': [moment().subtract(1, 'hour'), moment()],
-          '2 Jam': [moment().subtract(2, 'hour'), moment()],
-          '4 Jam': [moment().subtract(4, 'hour'), moment()],
-          // 'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          // '7 Hari': [moment().subtract(6, 'days'), moment()],
-          // '30 Hari': [moment().subtract(29, 'days'), moment()],
+          'Minggu Ini': [moment().startOf('week'), moment()],
+          'Hari Ini': [moment().startOf('day'), moment()],
+          'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          '7 Hari': [moment().subtract(6, 'days'), moment()],
+          '30 Hari': [moment().subtract(29, 'days'), moment()],
           // '1 Tahun': [moment().subtract(364, 'days'), moment()],
           // 'Tahun Ini': [moment().startOf('year'), moment()],
           

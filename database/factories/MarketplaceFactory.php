@@ -26,6 +26,7 @@ $factory->define(App\Model\Marketplace\Store::class, function (Faker\Generator $
     return [
 
         'sentra_id' => $faker->numberBetween($min = 1, $max = 5),
+        'user_id' => $faker->numberBetween($min = 1, $max = 5),
         'name' => $faker->unique()->regexify('[A-Z]+'), 
         'description' => $faker->word,
         'image' => $faker->url,
@@ -90,7 +91,7 @@ $factory->define(App\Model\Marketplace\Order::class, function (Faker\Generator $
         'payment_method_type_id' => $faker->numberBetween($min = 1, $max = 3),
         'buyer_address' => $faker->word,
         'buyer_phone_number' => $faker->e164PhoneNumber,
-        'seller_invoice' => $faker->word,
+        'store_invoice' => $faker->word,
         'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),
     ];
 });
@@ -106,7 +107,8 @@ $factory->define(App\Model\Marketplace\OrderLine::class, function (Faker\Generat
         'store_id' => $faker->numberBetween($min = 1, $max = 100),
         'delivery_agent_id' => $faker->numberBetween($min = 1, $max = 100),
         'subtotal' => $faker->numberBetween($min = 5000, $max = 150000),
-        'status' => $faker->randomElement($array = array ('success','failed')),
+        'orderline_status_id' => $faker->numberBetween($min = 1, $max = 3),
+        // 'status' => $faker->randomElement($array = array ('success','failed')),
         'quantity' => $faker->numberBetween($min = 1, $max = 10),
         'note' => $faker->word,
         'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),

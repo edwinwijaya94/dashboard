@@ -12,9 +12,9 @@ angular.module('BlurAdmin.pages.operational')
         }
       },
       defDate: {
-      	start: moment().startOf('day'),
+      	start: moment().subtract(7, 'days'),
       	end: moment(),
-        label: 'Hari Ini'
+        label: '7 Hari'
       },
       formatDateRange: function(start, end) {
       	var monthName = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];

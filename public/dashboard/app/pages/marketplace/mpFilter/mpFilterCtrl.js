@@ -35,9 +35,7 @@
         //   "format": "MM/DD/YYYY",
         // },
         ranges: {
-          'Hari ini': [moment(), moment()],
-          // 'Kemarin': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-          '7 Hari': [moment().subtract(6, 'days'), moment()],
+          'Bulan Ini': [moment().startOf('month'), moment()],
           '30 Hari': [moment().subtract(29, 'days'), moment()],
           '3 Bulan': [moment().subtract(3, 'months'), moment()],
           '1 Tahun': [moment().subtract(1, 'years'), moment()],

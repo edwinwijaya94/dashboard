@@ -5,14 +5,28 @@
 
       <!-- availability rates -->
       <div class="row pie-charts pv-stats">
-        <div class="col-md-3 pv-stats">
-          <div class="">
-            <div class="description">
-              <div>{{ ::stats.availability.description }}</div><br>
-              <div class="description-stats" ng-bind="stats.availability.value"></div><br>
-              <div >
-                  <i class="{{stats.availability.icon}}" style="color:{{stats.availability.iconColor}}"></i>
-                  <span>{{stats.availability.change}}</span>
+        <div class="col-md-3">
+          <div class="row pv-stats" style="margin-bottom:30px">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.availability.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.availability.value"></div><br>
+                <div >
+                    <i class="{{stats.availability.icon}}" style="color:{{stats.availability.iconColor}}"></i>
+                    <span>{{stats.availability.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.fluctuation.description }}</div><br>
+                <div class="description-stats">
+                  <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}"></i>
+                  <span class="description-stats" ng-bind="stats.fluctuation.value"></span><br>
+                  <!-- <span>{{stats.fluctuation.change}}</span> -->
+                </div>
               </div>
             </div>
           </div>
@@ -74,7 +88,7 @@
               <th class="table-id">#</th>
               <th st-sort="name">Produk</th>
               <th st-sort="category">Kategori</th>
-              <th st-sort="sorter.count" st-sort-default="reverse">#Transaksi</th>
+              <!-- <th st-sort="sorter.count" st-sort-default="reverse">#Transaksi</th> -->
               <th >#Permintaan</th>
               <th st-sort="sorter.avgPrice">Harga(Rp)</th>
               <th st-sort="sorter.availability">Ketersediaan(%)</th>
@@ -88,7 +102,7 @@
               <th>
                 <input st-search="category" placeholder="Cari Kategori" class="input-sm form-control search-input" type="search"/>
               </th>
-              <th></th>
+              <!-- <th></th> -->
               <th></th>
               <th></th>
               <th></th>
@@ -100,7 +114,7 @@
               <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
               <td>{{product.name}}</td>
               <td>{{product.category}}</td>
-              <td>{{product.count}}</td>
+              <!-- <td>{{product.count}}</td> -->
               <td>{{product.sums}} {{product.unit}}</td>
               <td>{{formatNumber(product.avg_price)}}</td>
               <td>{{formatNumber(product.availability)}}</td>

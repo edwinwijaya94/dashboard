@@ -183,12 +183,12 @@
       // $scope.stats.transaction_status.value = success.count+'/'+(success.count+failed.count);
       // $scope.stats.transaction_status.percent = percentage;
       for(var i=0; i<data.length; i++){
-        if(data[i].status == 'success')
+        if(data[i].name == 'success')
           data[i].fillColor = $scope.colors.green;
         else
           data[i].fillColor = '#d1cfcf';
       }
-      $scope.chart = AmCharts.makeChart('mpTransactionStatus',$scope.getBarChartOptions(data, $scope.colors, 'status'));
+      $scope.chart = AmCharts.makeChart('mpTransactionStatus',$scope.getBarChartOptions(data, $scope.colors, 'name'));
     }
 
     // chart options

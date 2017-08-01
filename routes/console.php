@@ -98,7 +98,7 @@ Artisan::command('seed {system=vm} {init=yes} {num=100}', function ($system, $in
         // factory(App\Model\Marketplace\Sentra::class, $num)->create();
         factory(App\Model\Marketplace\Store::class, $num)->create();
         factory(App\Model\Marketplace\Category::class, $num)->create();
-        factory(App\Model\Marketplace\Product::class, $num)->create();
+        factory(App\Model\Marketplace\Product::class, 10)->create();
         factory(App\Model\Marketplace\DeliveryAgent::class, $num)->create();
         // factory(App\Model\Marketplace\StoreProduct::class, $num)->create();
         factory(App\Model\Marketplace\Order::class, $num)->create();

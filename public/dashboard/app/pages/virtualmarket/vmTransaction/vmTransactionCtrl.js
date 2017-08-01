@@ -15,7 +15,7 @@
     var pieColor = vmHelper.colors.primary.green;
 
     $scope.colors = vmHelper.colors.primary;
-    $scope.chartColors = [$scope.colors.blue, $scope.colors.yellow, $scope.colors.green, $scope.colors.red];
+    $scope.chartColors = [$scope.colors.green, $scope.colors.yellow, $scope.colors.blue, $scope.colors.red];
     
     // DEFAULT CHART SETTINGS
     $scope.stats = {
@@ -100,6 +100,13 @@
       lineCap: 'round',
     };
 
+    $scope.status = {
+      metric:'distribution'
+    };
+    $scope.platform = {
+      metric:'distribution'
+    };
+
     $scope.noData = false;
     $scope.transactionHistory = {metric : 'count'};
 
@@ -124,6 +131,24 @@
           $scope.showSuccessRate(data.transaction_status);
           $scope.showTransaction(data.transaction);
           $scope.drawPlatformChart(data.app_platform);
+          // status trends
+          var statuses = [];
+          for(var i=0; i<data.transaction_status_trend.statuses.length; i++){
+            statuses.push(data.transaction_status_trend.statuses[i].status);
+          }
+          var statusTrend = vmHelper.fixLineChartNullValues(data.transaction_status_trend.trend, data.transaction_status_trend.granularity, statuses); // add null points as zero
+          data.transaction_status_trend.trend = statusTrend;
+          $scope.showStatusTrend(data.transaction_status_trend);
+
+          // platform trends
+          var platforms = [];
+          for(var i=0; i<data.app_platform_trend.platforms.length; i++){
+            platforms.push(data.app_platform_trend.platforms[i].platform);
+          }
+          var platformTrend = vmHelper.fixLineChartNullValues(data.app_platform_trend.trend, data.app_platform_trend.granularity, platforms); // add null points as zero
+          data.app_platform_trend.trend = platformTrend;
+          $scope.showPlatformTrend(data.app_platform_trend);
+
         })
         .finally(function() {
           // $scope.loading= false;
@@ -372,8 +397,15 @@
           {
             id: 'g1',
             balloonFunction: function(item, graph) {
+              var date = new Date(item.category);
+              var formattedDate;
+              if(data.granularity == 'month')
+                formattedDate = vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+              else if(data.granularity == 'day')
+                formattedDate =  date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+
               var value = item.values.value;
-              var hoverInfo = 'Jumlah Pembeli:<br> <b>'+value+'</b>';
+              var hoverInfo = formattedDate+'<br> Jumlah:<br> <b>'+vmHelper.formatNumber(value,false,false)+'</b>';
               return hoverInfo;
             },
             bullet: 'round',
@@ -442,10 +474,16 @@
             title: 'Nilai Transaksi',
             balloonText: 'Jumlah: <b>[[count]]</b><br>Nilai: <b>Rp [[value]]</b>',
             // balloonFunction: function(item, graph) {
+            //   var date = new Date(item.category);
+            //   var formattedDate;
+            //   if(data.granularity == 'month')
+            //     formattedDate = vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+            //   else if(data.granularity == 'day')
+            //     formattedDate =  date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+
+            //   var count = item.values.count;
             //   var value = item.values.value;
-            //   var hoverInfo = '';
-            //   hoverInfo += 'Jumlah: <b>'+'[[count]]'+'</b><br> ';
-            //   hoverInfo += 'Nilai: <b>'+vmHelper.formatNumber(value,true,false)+'</b>';
+            //   var hoverInfo = formattedDate+'<br> Jumlah: <b>'+vmHelper.formatNumber(count,false,false)+'</b><br>Nilai: <b>'+vmHelper.formatNumber(count,true,false)+'</b>';
             //   return hoverInfo;
             // },
             bullet: 'round',
@@ -660,6 +698,213 @@
         $scope.noData = false;
       }
     }
+
+    $scope.showStatusTrend = function(data) {
+      if($scope.chart != undefined) {
+        $('#vmTransactionStatusTrend').empty();
+      }
+
+      if(data.trend.length == 0) {
+        $scope.noData = true;
+      } else {
+        $scope.chart = AmCharts.makeChart('vmTransactionStatusTrend',$scope.getStatusTrendChartOptions(data, $scope.chartColors));
+        $scope.noData = false;
+      }
+    }
+
+    $scope.getStatusTrendChartOptions = function(data, colors) {
+
+      var dateFormat;
+      if(data.granularity == 'month')
+        dateFormat = 'YYYY-MM';
+      else if(data.granularity == 'day')
+        dateFormat = 'YYYY-MM-DD';
+
+      var valueLabelFunction = function(y) {
+        return vmHelper.formatNumber(y,false,true);
+      };
+
+      // settings
+      var graphs = [];
+      var valueAxes = [];
+      for(var i=0; i<data.statuses.length; i++){
+        graphs.push({
+          id: 'g'+(i+1),
+          valueAxis: 'v1',
+          title: data.statuses[i].status,
+          balloonText: '[['+data.statuses[i].status+']]',
+          bullet: 'round',
+          bulletSize: 8,
+          lineColor: colors[i%colors.length],
+          lineThickness: 2,
+          type: 'line',
+          valueField: data.statuses[i].status,
+        });
+        // valueAxes.push({
+        //   id:'v'+(i+1),
+        //   axisColor: colors[i%colors.length],
+        //   axisThickness: 2,
+        //   axisAlpha: 1,
+        //   position: 'left',
+        //   labelFunction: valueLabelFunction,
+        //   minimum: 0,
+        //   integersOnly: true,
+        // });
+      }
+      
+      var options = {
+        color: layoutColors.defaultText,
+        data: data.trend,
+        title: '',
+        gridColor: layoutColors.border,
+        // valueLabelFunction: function(y) {
+        //   return vmHelper.formatNumber(y,false,true);
+        // }, 
+        graphs: graphs,
+        dataDateFormat: dateFormat,
+        categoryField: 'date',
+        categoryAxis: {
+             gridThickness: 0
+        },
+        categoryLabelFunction: function(valueText, date, categoryAxis) {
+          if(data.granularity == 'month')
+            return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+          else if(data.granularity == 'day')
+            return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+        },
+        valueAxes: [{
+          id:'v1',
+          axisColor: '#000000',
+          axisThickness: 2,
+          axisAlpha: 1,
+          position: 'left',
+          labelFunction: valueLabelFunction,
+          minimum: 0,
+          integersOnly: true,
+        }],
+      };
+      
+      var chartOptions = vmHelper.getLineChartOptions(options);
+      chartOptions.legend = {
+        useGraphSettings: true,
+        valueFunction: function(graphDataItem, valueText) {
+          return '';
+        },
+        valueWidth:0
+      };
+      chartOptions.chartCursor.categoryBalloonEnabled = true;
+      chartOptions.chartCursor.categoryBalloonFunction = function(date) {
+        if(data.granularity == 'month')
+          return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+        else if(data.granularity == 'day')
+          return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+      };
+      return chartOptions;
+    };
+
+    $scope.showPlatformTrend = function(data) {
+      if($scope.chart != undefined) {
+        $('#vmTransactionPlatformTrend').empty();
+      }
+
+      if(data.trend.length == 0) {
+        $scope.noData = true;
+      } else {
+        $scope.chart = AmCharts.makeChart('vmTransactionPlatformTrend',$scope.getPlatformTrendChartOptions(data, $scope.chartColors));
+        $scope.noData = false;
+      }
+    }
+
+    $scope.getPlatformTrendChartOptions = function(data, colors) {
+
+      var dateFormat;
+      if(data.granularity == 'month')
+        dateFormat = 'YYYY-MM';
+      else if(data.granularity == 'day')
+        dateFormat = 'YYYY-MM-DD';
+
+      var valueLabelFunction = function(y) {
+        return vmHelper.formatNumber(y,false,true);
+      };
+
+      // settings
+      var graphs = [];
+      var valueAxes = [];
+      for(var i=0; i<data.platforms.length; i++){
+        graphs.push({
+          id: 'g'+(i+1),
+          valueAxis: 'v1',
+          title: data.platforms[i].platform,
+          balloonText: '[['+data.platforms[i].platform+']]',
+          bullet: 'round',
+          bulletSize: 8,
+          lineColor: colors[i%colors.length],
+          lineThickness: 2,
+          type: 'line',
+          valueField: data.platforms[i].platform,
+        });
+        // valueAxes.push({
+        //   id:'v'+(i+1),
+        //   axisColor: colors[i%colors.length],
+        //   axisThickness: 2,
+        //   axisAlpha: 1,
+        //   position: 'left',
+        //   labelFunction: valueLabelFunction,
+        //   minimum: 0,
+        //   integersOnly: true,
+        // });
+      }
+      
+      var options = {
+        color: layoutColors.defaultText,
+        data: data.trend,
+        title: '',
+        gridColor: layoutColors.border,
+        // valueLabelFunction: function(y) {
+        //   return vmHelper.formatNumber(y,false,true);
+        // }, 
+        graphs: graphs,
+        dataDateFormat: dateFormat,
+        categoryField: 'date',
+        categoryAxis: {
+             gridThickness: 0
+        },
+        categoryLabelFunction: function(valueText, date, categoryAxis) {
+          if(data.granularity == 'month')
+            return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+          else if(data.granularity == 'day')
+            return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+        },
+        valueAxes: [{
+          id:'v1',
+          axisColor: '#000000',
+          axisThickness: 2,
+          axisAlpha: 1,
+          position: 'left',
+          labelFunction: valueLabelFunction,
+          minimum: 0,
+          integersOnly: true,
+        }],
+      };
+      
+      var chartOptions = vmHelper.getLineChartOptions(options);
+      chartOptions.legend = {
+        useGraphSettings: true,
+        valueFunction: function(graphDataItem, valueText) {
+          return '';
+        },
+        valueWidth:0
+      };
+      chartOptions.chartCursor.categoryBalloonEnabled = true;
+      chartOptions.chartCursor.categoryBalloonFunction = function(date) {
+        if(data.granularity == 'month')
+          return vmHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+        else if(data.granularity == 'day')
+          return date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
+      };
+      return chartOptions;
+    };
+
 
     $scope.formatRating = function(rating) {
       return vmHelper.formatNumber(rating,false,false);

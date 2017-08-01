@@ -26,8 +26,8 @@
     $scope.updateDateRange = function(start, end, selectedRange) {
       $scope.startDate = start;
       $scope.endDate = end;
-      // $scope.dateRange = opHelper.formatDateRange(start, end);
-      $scope.dateRange = selectedRange;
+      $scope.dateRange = opHelper.formatDateRange(start, end);
+      // $scope.dateRange = selectedRange;
       $scope.notifyCharts();
     }
     $timeout(function() {
@@ -51,8 +51,8 @@
         },
         maxDate: $scope.endDate,
         showDropdowns: true,
-        // alwaysShowCalendars: true,
-        showCustomRangeLabel: false,
+        alwaysShowCalendars: true,
+        showCustomRangeLabel: true,
       }, $scope.updateDateRange);
     }, 1000);
     

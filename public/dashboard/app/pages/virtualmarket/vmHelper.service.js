@@ -129,10 +129,11 @@ angular.module('BlurAdmin.pages.virtualmarket')
           type: 'serial',
           theme: 'blur',
           color: options.color,
-          marginTop: 10,
-          marginRight: 15,
-          marginBottom: 10,
-          marginLeft: 10,
+          autoMarginOffset: 15,
+          // marginTop: 10,
+          // marginRight: 15,
+          // marginBottom: 10,
+          // marginLeft: 10,
           dataProvider: options.data,
           valueAxes: [
             {

@@ -156,7 +156,7 @@
                 formattedDate =  date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
 
               var value = item.values.value;
-              var hoverInfo = formattedDate+'<br> Ketersediaan:<br> <b>'+value+' %</b>';
+              var hoverInfo = formattedDate+'<br> Ketersediaan:<br> <b>'+vmHelper.formatNumber(value,false,false)+' %</b>';
               return hoverInfo;
             },
             bullet: 'round',
@@ -197,7 +197,7 @@
         stat.icon = 'ion-arrow-up-b';
         stat.iconColor = $scope.colors.red;
       } else {
-        stat.change *= -1;
+        stat.value *= -1;
         stat.icon = 'ion-arrow-down-b';
         stat.iconColor = $scope.colors.green;
       }
@@ -286,6 +286,20 @@
 
     };
 
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    };
+    
     $scope.sorter = {
       count: function(value) {
         return parseInt(value.count);

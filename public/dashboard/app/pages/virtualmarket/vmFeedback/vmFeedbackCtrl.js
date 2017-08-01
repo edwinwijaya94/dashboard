@@ -33,7 +33,9 @@
         colSize: 4,
       },
     }
-
+    $scope.feedback = {
+      metric:'distribution'
+    };
     $scope.noData = false;
 
     // EVENTS
@@ -269,5 +271,6 @@
     $scope.formatRating = function(rating) {
       return vmHelper.formatNumber(rating,false,false);
     };
+
   }
 })();

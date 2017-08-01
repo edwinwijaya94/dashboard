@@ -23,7 +23,7 @@
               <div class="description">
                 <div>{{ ::stats.fluctuation.description }}</div><br>
                 <div class="description-stats">
-                  <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}"></i>
+                  <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}" ng-show="stats.fluctuation.value != '0%'"></i>
                   <span class="description-stats" ng-bind="stats.fluctuation.value"></span><br>
                   <!-- <span>{{stats.fluctuation.change}}</span> -->
                 </div>
@@ -50,90 +50,77 @@
       </div>
 
       <div class="row">
-        <!-- top commodities -->
         <div class="col-md-12"
-           ba-panel
-           ba-panel-title="Daftar Produk"
-           ba-panel-class="pv-panel table-panel" style="height:400px">
-          <div>
-            <!-- <table class="table table-hover">
-              <thead>
-                <tr style="background-color:{{colors.green}}">
-                  <th class="align-left" style="color:white">#</th>
-                  <th class="align-left" style="color:white">Nama Produk</th>
-                  <th class="align-left" style="color:white">#Penjualan</th>
-                  <th class="align-left" style="color:white">Harga Rata-Rata(Rp)</th>
-                  <th class="align-left" style="color:white">Ketersediaan(%)</th>
+             ba-panel
+             ba-panel-title="Produk"
+             ba-panel-class="pv-panel" style="">
+          <div class="row">
+            <div>
+              <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
+                <thead>
+                <tr class="sortable ">
+                  <th class="table-id">#</th>
+                  <th st-sort="name">Produk</th>
+                  <th st-sort="category">Kategori</th>
+                  <!-- <th st-sort="sorter.count" st-sort-default="reverse" style="text-align:right">#Transaksi</th> -->
+                  <th style="text-align:right">#Permintaan</th>
+                  <th st-sort="sorter.avgPrice" style="text-align:right">Harga(Rp)</th>
+                  <th st-sort="sorter.availability" style="text-align:right">Ketersediaan(%)</th>
+                  <th >Tren</th>
                 </tr>
-              </thead>
-              <tbody>
-                <tr ng-repeat="product in productList.product" class="no-top-border">
-                  <td class="align-right">{{getRank($index)}}</td>
-                  <td ng-class="nowrap">{{product.name}}</td>
-                  <td ng-class="nowrap">{{product.count}}</td>
-                  <td ng-class="nowrap">{{formatNumber(product.avg_price)}}</td>
-                  <td ng-class="nowrap">{{formatNumber(product.availability)}}</td>
+                <tr>
+                  <th></th>
+                  <th>
+                    <input st-search="name" placeholder="Cari" class="input-sm form-control search-input" type="search"/>
+                  </th>
+                  <th>
+                    <input st-search="category" placeholder="Cari" class="input-sm form-control search-input" type="search"/>
+                  </th>
+                  <!-- <th></th> -->
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
                 </tr>
-              </tbody>
-            </table> -->
-            <!-- pagination -->
-            <!-- <div class="row" style="text-align:center" ng-show="productList.totalRows>0">
-              <ul uib-pagination total-items="productList.totalRows" items-per-page="productList.rowsPerPage" max-size="productList.displayedPages" previous-text="<" next-text=">" ng-model="productList.page" ng-change="changeProductPage()"></ul>
-            </div> -->
+                </thead>
+                <tbody>
+                <tr ng-repeat="product in productList.product">
+                  <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+                  <td>{{product.name}}</td>
+                  <td>{{product.category}}</td>
+                  <!-- <td style="text-align:right">{{product.count}}</td> -->
+                  <td style="text-align:right">
+                    {{product.sums}} {{product.unit}}
+                    &nbsp
+                    <i class="{{getArrowIcon(product.sum_change)}}" style="color:{{getArrowColor(product.sum_change)}}" ng-show="product.sum_change != 0"></i>
+                  </td>
+                  <td style="text-align:right">
+                    {{formatNumber(product.avg_price)}}
+                    &nbsp
+                    <i class="{{getArrowIcon(product.price_change)}}" style="color:{{getArrowColor(product.price_change*(-1))}}" ng-show="product.price_change != 0"></i>
+                  </td>
+                  <td style="text-align:right">
+                    {{formatNumber(product.availability)}}
+                    &nbsp
+                    <i class="{{getArrowIcon(product.availability_change)}}" style="color:{{getArrowColor(product.availability_change)}}" ng-show="product.availability_change != 0"></i>
+                  </td>
+                  <td>
+                    <div class="buttons">
+                      <button class="btn btn-primary editable-table-button btn-xs" ng-click="viewTrend(product)">Lihat</button>
+                    </div>
+                  </td> 
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                  <td colspan="6" class="text-center">
+                    <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
+                  </td>
+                </tr>
+                </tfoot>
+              </table>
 
-            <!-- NEW TABLE -->
-          <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
-            <thead>
-            <tr class="sortable ">
-              <th class="table-id">#</th>
-              <th st-sort="name">Produk</th>
-              <th st-sort="category">Kategori</th>
-              <!-- <th st-sort="sorter.count" st-sort-default="reverse">#Transaksi</th> -->
-              <th >#Permintaan</th>
-              <th st-sort="sorter.avgPrice">Harga(Rp)</th>
-              <th st-sort="sorter.availability">Ketersediaan(%)</th>
-              <th >Tren</th>
-            </tr>
-            <tr>
-              <th></th>
-              <th>
-                <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/>
-              </th>
-              <th>
-                <input st-search="category" placeholder="Cari Kategori" class="input-sm form-control search-input" type="search"/>
-              </th>
-              <!-- <th></th> -->
-              <th></th>
-              <th></th>
-              <th></th>
-              <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="product in productList.product">
-              <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
-              <td>{{product.name}}</td>
-              <td>{{product.category}}</td>
-              <!-- <td>{{product.count}}</td> -->
-              <td>{{product.sums}} {{product.unit}}</td>
-              <td>{{formatNumber(product.avg_price)}}</td>
-              <td>{{formatNumber(product.availability)}}</td>
-              <td>
-                <div class="buttons">
-                  <button class="btn btn-primary editable-table-button btn-xs" ng-click="viewTrend(product)">Lihat</button>
-                </div>
-              </td> 
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-              <td colspan="6" class="text-center">
-                <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeProductPage(newPage)"></div>
-              </td>
-            </tr>
-            </tfoot>
-          </table>
-
+            </div>
           </div>
         </div>
 

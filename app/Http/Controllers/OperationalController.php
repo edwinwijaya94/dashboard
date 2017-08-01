@@ -133,7 +133,7 @@ class OperationalController extends Controller
                     ->get();
         
         // product list
-        $productList = DB::connection('virtual_market')
+        $product = DB::connection('virtual_market')
                     ->table('order_lines')
                     ->join('products', 'order_lines.product_id', '=', 'products.id')
                     ->join('categories', 'products.category_id', '=', 'categories.id')
@@ -148,10 +148,45 @@ class OperationalController extends Controller
                     ->orderByRaw('count desc, products.name asc')
                     ->get();
 
+        for($i=0; $i<count($product); $i++) {
+            $countData = DB::connection('virtual_market')
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->join('units', 'products.default_unit_id', 'units.id')
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->count();
+            if($countData) {
+                $prevData = DB::connection('virtual_market')
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->join('units', 'products.default_unit_id', 'units.id')
+                    ->select(DB::raw('count(*), sum(quantity) as sums, round(avg(order_lines.price/order_lines.quantity), 0) as avg_price, round((cast(count(case when order_lines.is_available then 1 end) as float)/count(*) *100)::numeric, 2) as availability'))
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->get();
+            } else {
+                $prevData = array();
+            }
+            if(count($prevData) != 0) {
+                $product[$i]->sum_change = (string) ($product[$i]->sums - $prevData[0]->sums);
+                $product[$i]->price_change = (string) ($product[$i]->avg_price - $prevData[0]->avg_price);
+                $product[$i]->availability_change = (string) ($product[$i]->availability - $prevData[0]->availability);
+            } else {
+                $product[$i]->sum_change = (string) 0;
+                $product[$i]->price_change = (string) 0;
+                $product[$i]->availability_change = (string) 0;
+            }
+        }
+
         $data = array();
         $data['product']['availability'] = $availability;
         $data['product']['unavailable_list'] = $unavailableProducts;
-        $data['product']['list'] = $productList;
+        $data['product']['list'] = $product;
 
         // transaction count
         $currentTransactionCount = DB::connection('virtual_market')

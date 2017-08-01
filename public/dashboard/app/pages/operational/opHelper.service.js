@@ -12,7 +12,7 @@ angular.module('BlurAdmin.pages.operational')
         }
       },
       defDate: {
-      	start: moment().subtract(7, 'days'),
+      	start: moment().subtract(6, 'days'),
       	end: moment(),
         label: '7 Hari'
       },
@@ -128,9 +128,10 @@ angular.module('BlurAdmin.pages.operational')
           type: 'serial',
           theme: 'blur',
           color: options.color,
-          marginTop: 10,
-          marginRight: 15,
-          marginBottom: 10,
+          autoMarginOffset: 15,
+          // marginTop: 10,
+          // marginRight: 15,
+          // marginBottom: 10,
           dataProvider: options.data,
           valueAxes: [
             {
@@ -148,7 +149,9 @@ angular.module('BlurAdmin.pages.operational')
           rotate: options.rotate,
           categoryField: options.categoryField,
           categoryAxis: {
-            gridThickness: 0
+            gridThickness: 0,
+            inside: true,
+            color: '#000000',
           },
           creditsPosition: 'bottom-right'
         };

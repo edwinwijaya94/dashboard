@@ -52,7 +52,8 @@ $factory->define(App\Model\Marketplace\Product::class, function (Faker\Generator
     return [
 
     	'category_id' => $faker->numberBetween($min = 1, $max = 10),
-        'name' => $faker->unique()->regexify('[A-Z]+'),
+        // 'name' => $faker->unique()->regexify('[A-Z]+'),
+        'name' => $faker->unique()->randomElement($array = array ('rendang daging','rendang telur','suir daging', 'rendang belut', 'rendang ubi', 'rendang ayam', 'rendang paru', 'rendang kambing', 'rendang kerang', 'rendang jagung')),
         'image' => $faker->url,
         'unit' => $faker->randomElement($array = array ('bungkus','ons')),
         'description' => $faker->word,
@@ -92,7 +93,7 @@ $factory->define(App\Model\Marketplace\Order::class, function (Faker\Generator $
         'buyer_address' => $faker->word,
         'buyer_phone_number' => $faker->e164PhoneNumber,
         'store_invoice' => $faker->word,
-        'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),
+        'created_at' => $faker->dateTimeBetween($startDate = '-5 month', $endDate = '+1 day', $timezone = 'Asia/Jakarta'),
     ];
 });
 
@@ -103,7 +104,7 @@ $factory->define(App\Model\Marketplace\OrderLine::class, function (Faker\Generat
 
         'order_id' => $faker->numberBetween($min = 1, $max = 100),
         'buyer_id' => $faker->numberBetween($min = 1, $max = 100),
-        'product_id' => $faker->numberBetween($min = 1, $max = 100),
+        'product_id' => $faker->numberBetween($min = 1, $max = 10),
         'store_id' => $faker->numberBetween($min = 1, $max = 100),
         'delivery_agent_id' => $faker->numberBetween($min = 1, $max = 100),
         'subtotal' => $faker->numberBetween($min = 5000, $max = 150000),
@@ -111,7 +112,7 @@ $factory->define(App\Model\Marketplace\OrderLine::class, function (Faker\Generat
         // 'status' => $faker->randomElement($array = array ('success','failed')),
         'quantity' => $faker->numberBetween($min = 1, $max = 10),
         'note' => $faker->word,
-        'created_at' => $faker->dateTimeBetween($startDate = '-1 month', $endDate = 'now', $timezone = date_default_timezone_get()),
+        'created_at' => $faker->dateTimeBetween($startDate = '-5 month', $endDate = '+1 day', $timezone = 'Asia/Jakarta'),
     ];
 });
 
@@ -142,7 +143,7 @@ $factory->define(App\Model\Marketplace\StoreProduct::class, function (Faker\Gene
     return [
 
         'store_id' => $faker->numberBetween($min = 1, $max = 100),
-        'products_id' => $faker->unique()->numberBetween($min = 1, $max = 100),
+        'products_id' => $faker->unique()->numberBetween($min = 1, $max = 10),
         'price' => $faker->numberBetween($min = 5000, $max = 20000),
         'stock' => $faker->numberBetween($min = 1, $max = 100),
     ];

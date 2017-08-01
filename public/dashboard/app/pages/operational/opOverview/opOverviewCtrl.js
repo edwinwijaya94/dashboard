@@ -88,6 +88,7 @@
     // PRODUCT
     $scope.initProductList = function() {
       $scope.productPageIndex = 1;
+      $scope.unavailablePageIndex = 1;
       $scope.productPageSize = 5;
       $scope.unavailableList = {
         totalRows: 0,
@@ -256,13 +257,33 @@
       return opHelper.formatNumber(parseFloat(number),false,false);
     };
 
+    $scope.changeUnavailablePage = function(newPage) {
+      // $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
+      $scope.unavailablePageIndex = newPage;
+    };
+
     $scope.changeProductPage = function(newPage) {
       // $scope.getProductList($scope.startDate, $scope.endDate, $scope.productList.page, $scope.productList.rowsPerPage);
       $scope.productPageIndex = newPage;
     };
 
+
     $scope.formatRating = function(rating) {
       return opHelper.formatNumber(rating,false,false);
+    };
+
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
     };
 
     $scope.sorter = {

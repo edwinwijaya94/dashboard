@@ -219,7 +219,7 @@
                 formattedDate =  date.getDate()+' '+vmHelper.formatMonth(date.getMonth());
 
               var value = item.values.value;
-              var hoverInfo = formattedDate+'<br> Rating:<br> <b>'+value+'</b>';
+              var hoverInfo = formattedDate+'<br> Rating:<br> <b>'+vmHelper.formatNumber(value,false,false)+'</b>';
               return hoverInfo;
             },
             bullet: 'round',

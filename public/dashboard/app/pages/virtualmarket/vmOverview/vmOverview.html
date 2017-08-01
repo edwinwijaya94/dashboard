@@ -2,26 +2,12 @@
   <!-- <div class="row col-md-12" ba-panel ba-panel-title="Data Transaksi" ba-panel-class="panel-group"> -->
 
     <!-- STATS -->
-    <div class="row" style="height:150px">
-      <!-- STATS -->
-      <!-- <div class="pie-charts col-md-8">
-        <div class="col-md-{{stat.colSize}}" ng-repeat="stat in stats">
-          <div class="">
-            <div class="description">
-              <div>{{ ::stat.description }}</div><br>
-              <div class="description-stats" ng-bind="stat.value"></div><br>
-              <div ng-show="stat.showChange">
-                  <i class="{{stat.icon}}" style="color:{{stat.iconColor}}"></i>
-                  <span>{{stat.change}}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
+    <div class="row" >
+      
       <!-- TRANSAKSI -->
-      <div class="col-md-12 pv-stats">
-        <div class="pie-charts">
-          <div class="col-md-2 pv-stats">
+      <div class="col-md-4 pv-stats" style="height:460px">
+        <div class="row pie-charts" style="height:150px; padding-left:10px">
+          <div class="col-md-6 pv-stats">
             <div class="">
               <div class="description">
                 <div>{{ ::stats.transaction_count.description }}</div><br>
@@ -33,19 +19,7 @@
               </div>
             </div>
           </div>
-          <!-- <div class="col-md-6 pv-stats">
-            <div class="">
-              <div class="description">
-                <div>{{ ::stats.transaction_value.description }}</div><br>
-                <div class="description-stats" ng-bind="stats.transaction_value.value"></div><br>
-                <div>
-                    <i class="{{stats.transaction_value.icon}}" style="color:{{stats.transaction_value.iconColor}}"></i>
-                    <span>{{stats.transaction_value.change}}</span>
-                </div>
-              </div>
-            </div>
-          </div> -->
-          <div class="col-md-2 pv-stats">
+          <div class="col-md-6 pv-stats">
             <div class="">
               <div class="description">
                 <div>{{ ::stats.unique_buyers.description }}</div><br>
@@ -57,33 +31,104 @@
               </div>
             </div>
           </div>
-          <div class="col-md-5">
-            <div class="col-md-6 pv-stats">
-              <div class="">
-                <div class="description">
-                  <div>{{ ::stats.availability.description }}</div><br>
-                  <div class="description-stats" ng-bind="stats.availability.value"></div><br>
-                  <div >
-                    <i class="{{stats.availability.icon}}" style="color:{{stats.availability.iconColor}}"></i>
-                    <span>{{stats.availability.change}}</span>
-                  </div>
-                </div>
+        </div>
+        <!-- STATUS TRANSAKSI -->
+        <div class="col-md-12"
+           ba-panel
+           ba-panel-title="Status Transaksi"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <div id="vmOverviewTransactionStatus" class="pv-chart" style="height:250px"></div>
+              <!-- loading / no data handler -->
+              <div class="pv-chart-small-overlay" ng-show="loading || noData">
+                <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+                <div class="pv-chart-loading" ng-show="loading"></div>
               </div>
             </div>
-            <div class="col-md-6 pv-stats">
-              <div class="">
-                <div class="description">
-                  <div>{{ ::stats.fluctuation.description }}</div><br>
-                  <div class="description-stats">
-                    <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}"></i>
-                    <span class="description-stats" ng-bind="stats.fluctuation.value"></span><br>
-                    <!-- <span>{{stats.fluctuation.change}}</span> -->
-                  </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- PRODUK -->
+      <div class="col-md-5 pv-stats" style="height:460px; border-left: 1px solid gray">
+        <div class="col-md-12 pie-charts" style="height:150px; padding-left:20px">
+          <div class="col-md-6 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.availability.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.availability.value"></div><br>
+                <div >
+                  <i class="{{stats.availability.icon}}" style="color:{{stats.availability.iconColor}}"></i>
+                  <span>{{stats.availability.change}}</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-md-3 pv-stats">
+          <div class="col-md-6 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.fluctuation.description }}</div><br>
+                <div class="description-stats">
+                  <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}" ng-show="stats.fluctuation.value != '0%'"></i>
+                  <span class="description-stats" ng-bind="stats.fluctuation.value"></span><br>
+                  <!-- <span>{{stats.fluctuation.change}}</span> -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- PRODUK POPULER-->
+        <div class="col-md-12"
+             ba-panel
+             ba-panel-title="Produk Populer"
+             ba-panel-class="pv-panel" style="">
+          <div class="row">
+            <div>
+              <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
+                <thead>
+                <tr class="sortable ">
+                  <th class="table-id">#</th>
+                  <th>Nama</th>
+                  <th style="text-align:right">Ketersediaan(%)</th>
+                  <th style="text-align:right">Harga(Rp)</th>
+                </tr>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="product in productList.product">
+                  <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
+                  <td>{{product.name}}</td>
+                  <td align="right">
+                    {{formatNumber(product.availability)}}
+                    &nbsp
+                    <i class="{{getArrowIcon(product.availability_change)}}" style="color:{{getArrowColor(product.availability_change)}}" ng-show="product.availability_change != 0"></i>
+                  </td>
+                  <td align="right">
+                    {{formatNumber(product.avg_price)}}
+                    &nbsp
+                    <i class="{{getArrowIcon(product.price_change)}}" style="color:{{getArrowColor(product.price_change*(-1))}}" ng-show="product.price_change != 0"></i>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RATING DAN FEEDBACK -->
+      <div class="col-md-3 pv-stats" style="height:460px; border-left: 1px solid gray">
+        <div class="col-md-12 pie-charts" style="height:150px; padding-left:20px">
+          <div class="col-md-12 pv-stats">
             <div class="">
               <div class="description">
                 <div>{{ ::stats.avg_rating.description }}</div><br>
@@ -96,153 +141,26 @@
             </div>
           </div>
         </div>
-      </div>
-      
-    </div>
-
-    <div class="row">
-      <!-- TRANSACTION HISTORY -->
-      <!-- <div class="col-md-6"
+        <!-- Feedback Reason -->
+        <div class="col-md-12"
            ba-panel
-           ba-panel-title="Tren Transaksi"
-           ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionByHistory" class="pv-chart" style="height:250px"></div>
-            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
-              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-              <div class="pv-chart-loading" ng-show="loading"></div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <!-- BUYER TREND -->
-      <!-- <div class="col-md-6"
-         ba-panel
-         ba-panel-title="Tren Pembeli"
-         ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div id="vmBuyerByHistory" class="pv-chart" style="height:200px"></div>
-            <div class="pv-chart-medium-overlay" ng-show="loading || noData">
-              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-              <div class="pv-chart-loading" ng-show="loading"></div>
-            </div>
-          </div>
-        </div>
-      </div> -->
-    </div>
-
-    <div class="row">
-      <!-- STATUS TRANSAKSI -->
-      <div class="col-md-4"
-         ba-panel
-         ba-panel-title="Status Transaksi"
-         ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div id="vmOverviewTransactionStatus" class="pv-chart" style="height:250px"></div>
-            <!-- loading / no data handler -->
-            <div class="pv-chart-small-overlay" ng-show="loading || noData">
-              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-              <div class="pv-chart-loading" ng-show="loading"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- <div class="pie-charts col-md-4 pv-stats">
-        <div class="col-md-12 pv-stats">
-          <div class="description col-md-12">
-            <div>Status Transaksi</div><br>
-            <div class="row">
-              <div class="col-lg-12 col-md-12">
-                <div id="vmOverviewTransactionStatus" class="admin-chart" style="height:150px"></div>
+           ba-panel-title="Ulasan"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+          <div class="row">
+            <div class="col-lg-12 col-md-12">
+              <div id="vmOverviewFeedbackReason" class="pv-chart" style="height:250px"></div>
+              <!-- loading / no data handler -->
+              <div class="pv-chart-small-overlay" ng-show="loading || noData">
+                <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+                <div class="pv-chart-loading" ng-show="loading"></div>
               </div>
             </div>
           </div>
+        
         </div>
-      </div> -->
-      <!-- PRODUK -->
-      <div class="col-md-5"
-           ba-panel
-           ba-panel-title="Produk Populer"
-           ba-panel-class="pv-panel" style="">
-        <div class="row">
-          <div>
-            <table class="table" st-table="productList.product" st-safe-src="updatedProductList">
-              <thead>
-              <tr class="sortable ">
-                <th class="table-id">#</th>
-                <th>Nama</th>
-                <th style="text-align:right">Ketersediaan(%)</th>
-                <th style="text-align:right">Harga(Rp)</th>
-                <!-- <th st-sort="availability">Ketersediaan(%)</th> -->
-              </tr>
-              <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="product in productList.product">
-                <td class="table-id">{{$index+1+(productPageIndex-1)*productPageSize}}</td>
-                <td>{{product.name}}</td>
-                <td align="right">
-                  {{formatNumber(product.availability)}}
-                  &nbsp
-                  <i class="{{getArrowIcon(product.availability_change)}}" style="color:{{getArrowColor(product.availability_change)}}" ng-show="product.availability_change != 0"></i>
-                  <!-- <span>{{formatNumber(product.availability_change)}}</span> -->
-                </td>
-                <td align="right">
-                  {{formatNumber(product.avg_price)}}
-                  &nbsp
-                  <i class="{{getArrowIcon(product.price_change)}}" style="color:{{getArrowColor(product.price_change*(-1))}}" ng-show="product.price_change != 0"></i>
-                  <!-- <span>{{formatNumber(product.price_change)}}</span> -->
-                </td>
-                <!-- <td>{{formatNumber(product.availability)}}</td> -->
-              </tr>
-              </tbody>
-            </table>
-
-          </div>
-        </div>
-      </div>
-      <!-- Feedback Reason -->
-      <div class="col-md-3"
-         ba-panel
-         ba-panel-title="Ulasan"
-         ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div id="vmOverviewFeedbackReason" class="pv-chart" style="height:250px"></div>
-            <!-- loading / no data handler -->
-            <div class="pv-chart-small-overlay" ng-show="loading || noData">
-              <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
-              <div class="pv-chart-loading" ng-show="loading"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- APP PLATFORM -->
-      <!-- <div class="col-md-4"
-           ba-panel
-           ba-panel-title="Platform Aplikasi"
-           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
-        <div class="row">
-          <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionPlatform" class="admin-chart" style="height:250px"></div>
-          </div>
-        </div>
-      </div> -->
       
-    </div>
+      </div>      
     
-    <div class="row">
-      
-    </div>
-      
     </div>
 
   <!-- </div> -->

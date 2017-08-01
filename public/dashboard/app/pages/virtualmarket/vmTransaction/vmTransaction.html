@@ -99,9 +99,25 @@
            ba-panel
            ba-panel-title="Status Transaksi"
            ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
+        <!-- <div class="row">
+          <div class="col-md-2 col-md-offset-5" style="text-align:right">Tampilkan:</div>  
+          <div class="col-md-3">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="statusDistribution" value="distribution" ng-model="status.metric">
+              <span>Perbandingan</span>
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="statusTrend" value="trend" ng-model="status.metric">
+              <span>Tren</span>
+            </label>
+          </div>
+        </div> -->
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionStatus" class="pv-chart" style="height:250px"></div>
+            <div id="vmTransactionStatus" class="pv-chart" style="height:250px" ng-show="status.metric=='distribution'"></div>
+            <div id="vmTransactionStatusTrend" class="pv-chart" style="height:250px" ng-show="status.metric=='trend'"></div>
             <!-- loading / no data handler -->
             <div class="pv-chart-medium-overlay" ng-show="loading || noData">
               <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
@@ -115,9 +131,25 @@
            ba-panel
            ba-panel-title="Platform Aplikasi"
            ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <!-- <div class="row">
+          <div class="col-md-2 col-md-offset-5" style="text-align:right">Tampilkan:</div>  
+          <div class="col-md-3">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="platformDistribution" value="distribution" ng-model="platform.metric">
+              <span>Perbandingan</span>
+            </label>
+          </div>
+          <div class="col-md-2">
+            <label class="radio-inline custom-radio nowrap">
+              <input type="radio" name="platformTrend" value="trend" ng-model="platform.metric">
+              <span>Tren</span>
+            </label>
+          </div>
+        </div> -->
         <div class="row">
           <div class="col-lg-12 col-md-12">
-            <div id="vmTransactionPlatform" class="admin-chart" style="height:250px"></div>
+            <div id="vmTransactionPlatform" class="pv-chart" style="height:250px" ng-show="platform.metric=='distribution'"></div>
+            <div id="vmTransactionPlatformTrend" class="pv-chart" style="height:250px" ng-show="platform.metric=='trend'"></div>
           </div>
         </div>
       </div>

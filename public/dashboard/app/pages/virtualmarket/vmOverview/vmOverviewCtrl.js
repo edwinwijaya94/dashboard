@@ -399,7 +399,7 @@
         stat.icon = 'ion-arrow-up-b';
         stat.iconColor = $scope.colors.red;
       } else {
-        stat.change *= -1;
+        stat.value *= -1;
         stat.icon = 'ion-arrow-down-b';
         stat.iconColor = $scope.colors.green;
       }

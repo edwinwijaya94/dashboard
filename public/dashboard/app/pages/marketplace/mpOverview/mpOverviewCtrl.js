@@ -33,7 +33,7 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-        colSize: 4,
+        colSize: 3,
       },
       transaction_value: {
         color: pieColor,
@@ -47,10 +47,10 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-        colSize: 3,
+        colSize: 2,
       },
       unique_buyers: {
-        description: 'Pembeli',
+        description: 'Jumlah Pembeli',
         info: 'Persentase perbandingan dihitung dengan periode sebelumnya',
         value: 0,
         percent: 0,
@@ -60,22 +60,22 @@
         prevValue: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
+        colSize: 2,
+      },
+      transaction_avg: {
+        color: pieColor,
+        description: 'Rata Rata Transaksi',
+        info: '',
+        value: mpHelper.formatNumber(0,true,false),
+        percent: 0,
+        showPie: false,
+        showChange: true,
+        change: 0,
+        prevValue: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
         colSize: 3,
       },
-      // transaction_avg: {
-      //   color: pieColor,
-      //   description: 'Rata Rata Transaksi',
-      //   info: '',
-      //   value: mpHelper.formatNumber(0,true,false),
-      //   percent: 0,
-      //   showPie: false,
-      //   showChange: true,
-      //   change: 0,
-      //   prevValue: 0,
-      //   icon:'ion-arrow-up-b',
-      //   iconColor: $scope.colors.green,
-      //   colSize: 3,
-      // },
       avg_rating: {
         color: pieColor,
         description: 'Rating',
@@ -266,28 +266,28 @@
       $scope.stats.transaction_count = stat;
 
       // transaction average value
-      // stat = {};
-      // stat.description = $scope.stats.transaction_avg.description;
-      // stat.info = $scope.stats.transaction_avg.info;
-      // stat.showPie = $scope.stats.transaction_avg.showPie;
-      // stat.showChange = $scope.stats.transaction_avg.showChange;
-      // stat.value = parseInt(data.value.current.average);
-      // stat.prevValue = parseInt(data.value.prev.average);
-      // var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
-      // stat.change = isFinite(change)? change:0;
-      // if(stat.change>=0) {
-      //   stat.icon = 'ion-arrow-up-b';
-      //   stat.iconColor = $scope.colors.green;
-      // } else {
-      //   stat.change *= -1;
-      //   stat.icon = 'ion-arrow-down-b';
-      //   stat.iconColor = $scope.colors.red;
-      // }
-      // stat.colSize = $scope.stats.transaction_avg.colSize;
-      // // format currency
-      // stat.value = mpHelper.formatNumber(stat.value,true,false);
-      // stat.change = mpHelper.formatNumber(stat.change,false,false);
-      // $scope.stats.transaction_avg = stat;
+      stat = {};
+      stat.description = $scope.stats.transaction_avg.description;
+      stat.info = $scope.stats.transaction_avg.info;
+      stat.showPie = $scope.stats.transaction_avg.showPie;
+      stat.showChange = $scope.stats.transaction_avg.showChange;
+      stat.value = parseInt(data.value.current.average);
+      stat.prevValue = parseInt(data.value.prev.average);
+      var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
+      stat.change = isFinite(change)? change:0;
+      if(stat.change>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.green;
+      } else {
+        stat.change *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.red;
+      }
+      stat.colSize = $scope.stats.transaction_avg.colSize;
+      // format currency
+      stat.value = mpHelper.formatNumber(stat.value,true,false);
+      stat.change = mpHelper.formatNumber(stat.change,false,false)+'%';
+      $scope.stats.transaction_avg = stat;
 
       // transaction value
       stat = {};
@@ -437,8 +437,15 @@
           {
             id: 'g1',
             balloonFunction: function(item, graph) {
+              var date = new Date(item.category);
+              var formattedDate;
+              if(data.granularity == 'month')
+                formattedDate = mpHelper.formatMonth(date.getMonth())+' \''+date.getFullYear().toString().substr(-2);
+              else if(data.granularity == 'day')
+                formattedDate =  date.getDate()+' '+mpHelper.formatMonth(date.getMonth());
+
               var value = item.values.value;
-              var hoverInfo = 'Jumlah Pembeli:<br> <b>'+value+'</b>';
+              var hoverInfo = formattedDate+'<br> Jumlah:<br> <b>'+mpHelper.formatNumber(value,false,false)+'</b>';
               return hoverInfo;
             },
             bullet: 'round',
@@ -608,7 +615,7 @@
     }
 
     $scope.formatNumber = function(value) {
-      return mpHelper.formatNumber(parseInt(value),false,false);
+      return mpHelper.formatNumber(parseInt(value),false,true,1);
     }
 
     $scope.sorter = {

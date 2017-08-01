@@ -3,10 +3,9 @@
 
     <!-- STATS -->
     <div class="row" style="height:150px">
-      <!-- STATS -->
-      <!-- TRANSAKSI -->
-      <div class="col-md-7 pv-stats">
-        <div class="pie-charts col-md-7 pv-stats">
+
+      <div class="col-md-12 pv-stats">
+        <div class="pie-charts col-md-5 pv-stats">
           <div class="col-md-6 pv-stats">
             <div class="">
               <div class="description">
@@ -22,21 +21,6 @@
           <div class="col-md-6 pv-stats">
             <div class="">
               <div class="description">
-                <div>{{ ::stats.transaction_value.description }}</div><br>
-                <div class="description-stats" ng-bind="stats.transaction_value.value"></div><br>
-                <div>
-                    <i class="{{stats.transaction_value.icon}}" style="color:{{stats.transaction_value.iconColor}}"></i>
-                    <span>{{stats.transaction_value.change}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- PEMBELI DAN RATING -->
-        <div class="pie-charts col-md-5 pv-stats">
-          <div class="col-md-6 pv-stats">
-            <div class="">
-              <div class="description">
                 <div>{{ ::stats.unique_buyers.description }}</div><br>
                 <div class="description-stats" ng-bind="stats.unique_buyers.value"></div><br>
                 <div >
@@ -46,7 +30,33 @@
               </div>
             </div>
           </div>
-          <div class="col-md-6 pv-stats">
+        </div>
+        <div class="pie-charts col-md-7 pv-stats">
+          <div class="col-md-4 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_value.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_value.value"></div><br>
+                <div>
+                    <i class="{{stats.transaction_value.icon}}" style="color:{{stats.transaction_value.iconColor}}"></i>
+                    <span>{{stats.transaction_value.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5 pv-stats">
+            <div class="">
+              <div class="description">
+                <div>{{ ::stats.transaction_avg.description }}</div><br>
+                <div class="description-stats" ng-bind="stats.transaction_avg.value"></div><br>
+                <div>
+                    <i class="{{stats.transaction_avg.icon}}" style="color:{{stats.transaction_avg.iconColor}}"></i>
+                    <span>{{stats.transaction_avg.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 pv-stats">
             <div class="">
               <div class="description">
                 <div>{{ ::stats.avg_rating.description }}</div><br>
@@ -60,19 +70,7 @@
           </div>
         </div>
       </div>
-      <!-- STATUS TRANSAKSI -->
-      <div class="pie-charts col-md-5 pv-stats">
-        <div class="col-md-12 pv-stats">
-          <div class="description col-md-12" >
-            <div>Status Transaksi</div><br>
-            <div class="row">
-              <div class="col-lg-12 col-md-12">
-                <div id="mpTransactionStatus" class="admin-chart" style="height:150px"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
 
     <div class="row">
@@ -120,19 +118,19 @@
           <div>
             <table class="table" st-table="sentraList" st-safe-src="updatedSentraList">
               <thead>
-              <tr class="sortable ">
+              <tr class="">
                 <th class="table-id">#</th>
-                <th>Sentra</th>
-                <th>#Transaksi</th>
-                <th>Nilai(Rp)</th>
+                <th style="text-align:left">Sentra</th>
+                <th style="text-align:right">#Transaksi</th>
+                <th style="text-align:right">Nilai(Rp)</th>
               </tr>
               </thead>
               <tbody>
               <tr ng-repeat="sentra in sentraList">
                 <td class="table-id">{{$index+1}}</td>
                 <td>{{sentra.name}}</td>
-                <td>{{formatNumber(sentra.orders)}}</td>
-                <td>{{formatNumber(sentra.value)}}</td>
+                <td style="text-align:right">{{formatNumber(sentra.orders)}}</td>
+                <td style="text-align:right">{{formatNumber(sentra.value)}}</td>
               </tr>
               </tbody>
               <tfoot>
@@ -155,27 +153,38 @@
           <div>
             <table class="table" st-table="productList" st-safe-src="updatedProductList">
               <thead>
-              <tr class="sortable ">
+              <tr class="">
                 <th class="table-id">#</th>
-                <th>Produk</th>
-                <th>#Order(unit)</th>
-                <th>Nilai(Rp)</th>
+                <th style="text-align:left">Produk</th>
+                <th style="text-align:right">#Order(unit)</th>
+                <th style="text-align:right">Nilai(Rp)</th>
               </tr>
               </thead>
               <tbody>
               <tr ng-repeat="product in productList">
                 <td class="table-id">{{$index+1}}</td>
                 <td>{{product.name}}</td>
-                <td>{{formatNumber(product.units)}}</td>
-                <td>{{formatNumber(product.value)}}</td>
+                <td style="text-align:right">{{formatNumber(product.units)}}</td>
+                <td style="text-align:right">{{formatNumber(product.value)}}</td>
               </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-      <!-- PAYMENT METHOD -->
+      <!-- STATUS TRANSAKSI -->
       <div class="col-md-4"
+           ba-panel
+           ba-panel-title="Status Transaksi"
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
+        <div class="row">
+          <div class="col-lg-12 col-md-12">
+            <div id="mpTransactionStatus" class="admin-chart" style="height:250px"></div>
+          </div>
+        </div>
+      </div>
+      <!-- PAYMENT METHOD -->
+      <!-- <div class="col-md-4"
            ba-panel
            ba-panel-title="Metode Pembayaran"
            ba-panel-class="pv-panel" style="height:250px; margin-bottom:25px">
@@ -184,7 +193,7 @@
             <div id="mpPaymentMethod" class="admin-chart" style="height:250px"></div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="row">

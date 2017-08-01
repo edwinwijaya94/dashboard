@@ -643,29 +643,35 @@ class MarketplaceController extends Controller
         // BUYER
         $currentBuyers = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->distinct('buyer_id')
                     ->count('buyer_id');
 
         $prevBuyers = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->distinct('buyer_id')
                     ->count('buyer_id');
 
         $buyerHistory = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw($dateQuery.',count(distinct buyer_id)'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
                     ->get();
@@ -877,16 +883,20 @@ class MarketplaceController extends Controller
         // execute
         $uniqueBuyers = array();
         $uniqueBuyers['current_period'] = DB::connection('marketplace')
-                                        ->table('orders')
-                                        ->where('orders.created_at', '>=', $query['startDate'])
-                                        ->where('orders.created_at', '<=', $query['endDate'])
+                                        ->table('orderlines')
+                                        ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                                        ->where('orderlines.created_at', '>=', $query['startDate'])
+                                        ->where('orderlines.created_at', '<=', $query['endDate'])
+                                        ->where('orderline_statuses.name', '=', $this->successStatus)
                                         ->distinct('buyer_id')
                                         ->count('buyer_id');
 
         $uniqueBuyers['prev_period'] = DB::connection('marketplace')
-                                        ->table('orders')
-                                        ->where('orders.created_at', '>=', $prevPeriod['startDate'])
-                                        ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                                        ->table('orderlines')
+                                        ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                                        ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                                        ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                                        ->where('orderline_statuses.name', '=', $this->successStatus)
                                         ->distinct('buyer_id')
                                         ->count('buyer_id');
 
@@ -926,11 +936,11 @@ class MarketplaceController extends Controller
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
         if($granularity == 'month') {
-            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         } else if($granularity == 'day') {
-            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM-DD\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         }
@@ -938,10 +948,12 @@ class MarketplaceController extends Controller
         DB::enableQueryLog();
         // execute
         $buyer = DB::connection('marketplace')
-                    ->table('orders')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->select(DB::raw($dateQuery.',count(distinct buyer_id)'))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
                     ->get();

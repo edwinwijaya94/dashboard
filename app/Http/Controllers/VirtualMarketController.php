@@ -912,7 +912,7 @@ class VirtualMarketController extends Controller
             $prevOrder = count($shopperChanges[$i]) > 0 ? $shopperChanges[$i][0]->orders : $shoppers[$i]->orders;
             $prevRating = count($shopperChanges[$i]) > 0 ? $shopperChanges[$i][0]->rating : $shoppers[$i]->rating;
             $shoppers[$i]->orders_change = $shoppers[$i]->orders - $prevOrder;
-            $shoppers[$i]->rating_change = $shoppers[$i]->rating - $prevRating;
+            $shoppers[$i]->rating_change = round((float)($shoppers[$i]->rating - $prevRating), 2);
             $shoppers[$i]->name = $names[$shoppers[$i]->user_id]->name;
         }
 

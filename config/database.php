@@ -56,11 +56,11 @@ return [
         // virtual market
         'virtual_market' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
+            'host' => env('DB_VM_HOST', '127.0.0.1'),
+            'port' => env('DB_VM_PORT', '5432'),
             'database' => env('DB_DATABASE_VIRTUAL_MARKET', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_VM_USERNAME', 'forge'),
+            'password' => env('DB_VM_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
@@ -69,11 +69,11 @@ return [
         // marketplace
         'marketplace' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
+            'host' => env('DB_MP_HOST', '127.0.0.1'),
+            'port' => env('DB_MP_PORT', '5432'),
             'database' => env('DB_DATABASE_MARKETPLACE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_MP_USERNAME', 'forge'),
+            'password' => env('DB_MP_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
@@ -82,11 +82,11 @@ return [
         // user
         'user' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
+            'host' => env('DB_USER_HOST', '127.0.0.1'),
+            'port' => env('DB_USER_PORT', '5432'),
             'database' => env('DB_DATABASE_USER', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_USER_USERNAME', 'forge'),
+            'password' => env('DB_USER_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',

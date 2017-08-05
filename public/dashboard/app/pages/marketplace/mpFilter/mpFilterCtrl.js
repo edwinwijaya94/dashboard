@@ -18,7 +18,7 @@
       var startDate = $scope.startDate.format('YYYY-MM-DD');
       var endDate = $scope.endDate.format('YYYY-MM-DD');
       $scope.$emit('mpFilter', startDate, endDate);
-      console.log("HI");
+      
     }
 
     $scope.updateDateRange = function(start, end) {

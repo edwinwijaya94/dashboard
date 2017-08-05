@@ -105,6 +105,23 @@ class VirtualMarketController extends Controller
         return $granularity;
     }
 
+    public function getConfig(Request $request) {
+        $default = $this->setDefault();
+        $query = $this->setQuery($request, $default);
+        
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
+        $data = array();
+        $data['prevPeriod'] = $prevPeriod;
+
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
     // TRANSACTION
     public function getTransaction(Request $request)
     {

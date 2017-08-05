@@ -9,15 +9,24 @@
     
 		<uib-tabset active="active">
 			<uib-tab heading="Overview">
+				<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 		  	<mp-overview></mp-overview>
 		  </uib-tab>
 		  <!-- <uib-tab heading="Transaksi">
 		  	<mp-transaction></mp-transaction>
 		  </uib-tab> -->
 		  <uib-tab heading="Sentra">
+		  	<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 				<mp-sentra></mp-sentra>	    
 		  </uib-tab>
 		  <uib-tab heading="Produk">
+		  	<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 		    <mp-product></mp-product>
 		  </uib-tab>
 		  <!-- <uib-tab heading="Pembeli">

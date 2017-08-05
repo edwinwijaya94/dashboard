@@ -12,21 +12,36 @@
 
 		<uib-tabset active="active">
 			<uib-tab heading="Overview">
+				<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 				<vm-overview></vm-overview>
 			</uib-tab>
 		  <uib-tab heading="Transaksi">
+		  	<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 		  	<vm-transaction></vm-transaction>
 		  </uib-tab>	
 		  <uib-tab heading="Produk">
+		  	<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 		    <vm-product></vm-product>
 		  </uib-tab>
 		  <!-- <uib-tab heading="Pembeli">
 		    <vm-buyer></vm-buyer>
 		  </uib-tab> -->
 		  <uib-tab heading="Garendong">
+		  	<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 				<vm-shopper></vm-shopper>	    
 		  </uib-tab>
 		  <uib-tab heading="Ulasan">
+		  	<div class="row" style="padding-bottom:20px">
+		  		<span ng-bind="periodInfo"></span> 
+		  	</div>
 				<vm-feedback></vm-feedback>
 		  </uib-tab>
 		</uib-tabset>  

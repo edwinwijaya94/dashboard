@@ -126,6 +126,8 @@
     });
 
     $scope.getData = function(startDate, endDate) {
+      if($scope.sentraList.selected.id == undefined)
+        $scope.getSentraList();    
       $scope.getSentraData(startDate, endDate, $scope.sentraList.selected.id);
     };
 

@@ -21,9 +21,9 @@
     $scope.stats = {
       product_availability: {
         color: pieColor,
-        description: 'Ketersediaan',
+        description: 'Tersedia',
         info: '',
-        value: opHelper.formatNumber(0,true,false),
+        value: opHelper.formatNumber(0,false,false),
         percent: 0,
         showPie: true,
         showChange: false,
@@ -285,6 +285,10 @@
       else
         return $scope.colors.red;
     };
+
+    $scope.reloadProductStatus = function() {
+      $scope.getOverview($scope.startDate, $scope.endDate);
+    }
 
     $scope.sorter = {
       count: function(value) {

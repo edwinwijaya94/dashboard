@@ -165,13 +165,38 @@
       //   $scope.chart = AmCharts.makeChart('vmProductTrend',$scope.getChartOptions(data));
       //   $scope.noData = false;
       // }
-      console.log('MODAL');
-      console.log($scope.productTrendData);
+      
       $scope.chart = AmCharts.makeChart('mpProductTrend',$scope.getChartOptions($scope.productTrendData, $scope.colors));
     };
 
     // draw chart
     $scope.drawTrendChart();
+
+    $scope.formatPrice = function(number) {
+      if(number < 0)
+        number *= -1;
+      return mpHelper.formatNumber(parseInt(number),true,false);
+    };
+
+    $scope.formatNumber = function(number) {
+      if(number < 0)
+        number *= -1;
+      return mpHelper.formatNumber(parseInt(number),false,false);
+    };
+
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    };
 
   }
 })();

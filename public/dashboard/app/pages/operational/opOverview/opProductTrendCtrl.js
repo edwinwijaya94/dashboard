@@ -170,5 +170,35 @@
     // draw chart
     $scope.drawTrendChart();
 
+    // $scope.getDateRange = function() {
+    //   return opHelper.formatDateRange(moment$scope.startDate, $scope.endDate);
+    // }
+
+    $scope.formatPrice = function(number) {
+      if(number < 0)
+        number *= -1;
+      return opHelper.formatNumber(parseInt(number),true,false);
+    };
+
+    $scope.formatNumber = function(number) {
+      if(number < 0)
+        number *= -1;
+      return opHelper.formatNumber(parseInt(number),false,false);
+    };
+
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    };
+
   }
 })();

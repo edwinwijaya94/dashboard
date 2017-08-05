@@ -142,7 +142,7 @@
       var endDate = $scope.endDate;
       
       $scope.selectedProduct = product;
-      $http.get('/api/marketplace/product?type=trend&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id)
+      $http.get('/api/marketplace/product?type=trend&start_date='+startDate+'&end_date='+endDate+'&product_id='+product.id+'&sentra_id='+product.sentra_id)
         .then(function(res) {
           var data = res.data.data;
           for(var i=0; i<data.trend.length-1; i++) {
@@ -168,6 +168,20 @@
           });
         });    
 
+    };
+
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
     };
 
     $scope.sorter = {

@@ -105,6 +105,23 @@ class MarketplaceController extends Controller
         return $granularity;
     }
 
+    public function getConfig(Request $request) {
+        $default = $this->setDefault();
+        $query = $this->setQuery($request, $default);
+        
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
+        $data = array();
+        $data['prevPeriod'] = $prevPeriod;
+
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+    
     // TRANSACTION
     public function getTransaction(Request $request)
     {
@@ -331,8 +348,19 @@ class MarketplaceController extends Controller
 
     public function getProductList($query)
     {
-        $rows = (int)$query['rows'];
-        $page = (int)$query['page'];
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
+        $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
+        if($granularity == 'month') {
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        } else if($granularity == 'day') {
+            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+            $dateGroupBy = array('date');
+            $dateOrder = 'date asc';
+        }
+
         DB::enableQueryLog();
         // execute
         // success / failed transaction
@@ -341,7 +369,7 @@ class MarketplaceController extends Controller
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
-                    ->select(DB::raw('products.id, products.name, sentra.name as sentra, count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
+                    ->select(DB::raw('sentra.id as sentra_id, products.id, products.name, sentra.name as sentra, count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->groupBy('products.id')
@@ -351,6 +379,41 @@ class MarketplaceController extends Controller
 
         $product = $query
                     ->get();
+
+        for($i=0; $i<count($product); $i++) {
+            $countData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->where('stores.sentra_id', '=', $product[$i]->sentra_id)
+                    ->count();
+            if($countData) {
+                $prevData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->where('stores.sentra_id', '=', $product[$i]->sentra_id)
+                    ->get();
+            } else {
+                $prevData = array();
+            }
+            if(count($prevData) != 0) {
+                $product[$i]->count_change = (string) ($product[$i]->count - $prevData[0]->count);
+                $product[$i]->sum_change = (string) ($product[$i]->sums - $prevData[0]->sums);
+                $product[$i]->price_change = (string) ($product[$i]->avg_price - $prevData[0]->avg_price);
+            } else {
+                $product[$i]->count_change = (string) 0;
+                $product[$i]->sum_change = (string) 0;
+                $product[$i]->price_change = (string) 0;
+            }
+        }
 
         $data = array();
         // $data['total_rows'] = $totalRows;
@@ -367,11 +430,11 @@ class MarketplaceController extends Controller
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
         if($granularity == 'month') {
-            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM\') as date';
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         } else if($granularity == 'day') {
-            $dateQuery = 'to_char(orders.created_at, \'YYYY-MM-DD\') as date';
+            $dateQuery = 'to_char(orderlines.created_at, \'YYYY-MM-DD\') as date';
             $dateGroupBy = array('date');
             $dateOrder = 'date asc';
         }
@@ -381,11 +444,12 @@ class MarketplaceController extends Controller
         $dbQuery = DB::connection('marketplace')
                     ->table('orderlines')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
-                    ->join('orders', 'orderlines.order_id', '=', 'orders.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw('sum(quantity) as count, round(avg(subtotal/quantity), 0) as price,'.$dateQuery))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('orderlines.product_id', '=', $query['productId'])
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder);
 
@@ -410,7 +474,7 @@ class MarketplaceController extends Controller
 
                   $x = array();
                   $x['date'] = $time->toDateString();
-                  $x['count'] = 0;
+                  $x['count'] = (string) 0;
                   $x['price'] = $prevItem->price; // same as previous day
 
                   array_push($trendData, (object)$x);
@@ -426,7 +490,7 @@ class MarketplaceController extends Controller
             for ($time=$lastTime->addDay(); $time->lt($endTime); $time->addDay()) {
               $x = array();
               $x['date'] = $time->toDateString();
-              $x['count'] = 0;
+              $x['count'] = (string) 0;
               $x['price'] = $product[count($product)-1]->price; // same as last day
               array_push($trendData, (object)$x);
             }

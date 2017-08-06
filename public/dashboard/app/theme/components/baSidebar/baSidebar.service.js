@@ -19,10 +19,15 @@
       function _factory() {
         var isMenuCollapsed = shouldMenuBeCollapsed();
 
-        this.getMenuItems = function() {
+        function isInArray(value, array) {
+          return array.indexOf(value) > -1;
+        }
+
+        this.getMenuItems = function(userRole) {
+
           var states = defineMenuItemStates();
           var menuItems = states.filter(function(item) {
-            return item.level == 0;
+            return item.level == 0 && isInArray(userRole, item.authRoles);
           });
 
           menuItems.forEach(function(item) {
@@ -77,6 +82,7 @@
                   order: meta.order,
                   icon: meta.icon,
                   stateRef: s.name,
+                  authRoles : meta.authRoles ? meta.authRoles : 'x'
                 };
               })
               .sort(function(a, b) {

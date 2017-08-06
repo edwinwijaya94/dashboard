@@ -4,11 +4,8 @@
  */
 (function () {
   'use strict';
-
-  angular.module('BlurAdmin.pages', [
+  var modules = [
     'ui.router',
-
-    // 'BlurAdmin.pages.dashboard',
     'BlurAdmin.pages.virtualmarket',
     'BlurAdmin.pages.marketplace',
     'BlurAdmin.pages.operational',
@@ -16,19 +13,28 @@
     'BlurAdmin.pages.productManager',
     'BlurAdmin.pages.smsManager',
     'BlurAdmin.pages.fareManager',
-    // 'BlurAdmin.pages.ui',
-    // 'BlurAdmin.pages.components',
-    // 'BlurAdmin.pages.form',
-    // 'BlurAdmin.pages.tables',
-    // 'BlurAdmin.pages.charts',
-    // 'BlurAdmin.pages.maps',
-    // 'BlurAdmin.pages.profile',
-  ])
+  ];
+  
+  angular.module('BlurAdmin.pages', modules)
       .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
-    $urlRouterProvider.otherwise('/virtualmarket');
+    // $urlRouterProvider.otherwise('/virtualmarket');  
+    
+    // var $http = angular.injector(["ng"]).get("$http");
+    // $http.get('/user/auth')
+    //   .then(function(res) {
+    //     var data = res.data;
+    //     var userRole = data.user.role;
+    //   })
+    //   .finally(function() {
+    //     if(userRole == 'dashboard_admin' || userRole == 'staf_dinas')
+    //       $urlRouterProvider.otherwise('/virtualmarket');    
+    //     else
+    //       $urlRouterProvider.otherwise('/operational');    
+    //   });
+    
 
     // baSidebarServiceProvider.addStaticItem({
     //   title: 'Pages',

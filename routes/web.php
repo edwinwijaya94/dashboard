@@ -42,3 +42,4 @@ Route::get('/user/roles', 'UserController@getRoles');
 Route::post('/user/add', 'UserController@addUser');
 Route::post('/user/edit', 'UserController@editUser');
 Route::post('/user/delete/{id}', 'UserController@deleteUser')->where('id', '[0-9]+');
+Route::get('/user/auth', 'UserController@getAuthUser');

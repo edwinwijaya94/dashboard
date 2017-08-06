@@ -19,6 +19,7 @@
           sidebarMeta: {
             icon: 'ion-android-home',
             order: 6,
+            authRoles: ['staf_pasar', 'dashboard_admin']
           },
         });
   }

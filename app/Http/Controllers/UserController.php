@@ -12,7 +12,7 @@ use App\User;
 class UserController extends Controller
 {
     // attributes
-    private $governmentRoles = array('staf_disperindag', 'staf_pasar');
+    private $governmentRoles = array('dashboard_admin', 'staf_dinas', 'staf_pasar');
 
     public function login(Request $request)
     {
@@ -58,6 +58,17 @@ class UserController extends Controller
         return response()->json([
                     'user' => $user[0]
                 ]);
+    }
+
+    public function getAuthUser() {
+        $userData = Auth::user();
+        $user = array();
+        $user['name'] = $userData->name;
+        $user['role'] = $userData->role->name;
+
+        return response()->json([
+                    'user' => $user,
+                ]);   
     }
 
     public function getRoles()

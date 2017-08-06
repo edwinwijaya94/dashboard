@@ -5,7 +5,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
 
     return [
 
-        'role_id' => 3,
+        'role_id' => 4,
         'name' => $faker->name,
         'email' => $faker->unique()->email,
         'password' => bcrypt('secret'),

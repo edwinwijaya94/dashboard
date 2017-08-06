@@ -19,6 +19,7 @@
           sidebarMeta: {
             icon: 'ion-compose',
             order: 3,
+            authRoles: ['staf_pasar', 'dashboard_admin']
           },
         })
         .state('productManager.product', {

@@ -239,7 +239,6 @@
         .finally(function() {
           // $scope.loading= false;
           // open edit modal
-          console.log('finally');
           var page = 'app/pages/operational/opOverview/productTrendModal.html';
           var size = 'lg';
           $rootScope.productTrendModalInstance = $uibModal.open({

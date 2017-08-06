@@ -18,6 +18,7 @@
           sidebarMeta: {
             icon: 'ion-android-home',
             order: 2,
+            authRoles: ['staf_dinas', 'dashboard_admin']
           },
         });
   }

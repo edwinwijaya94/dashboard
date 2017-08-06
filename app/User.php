@@ -29,4 +29,9 @@ class User extends Authenticatable
     
     protected $connection = 'user';
     protected $table = 'users';
+
+    public function role()
+    {
+        return $this->hasOne('App\Role', 'id', 'role_id');
+    }
 }

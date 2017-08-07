@@ -91,6 +91,7 @@ $factory->define(App\Model\Marketplace\Order::class, function (Faker\Generator $
         'buyer_id' => $faker->numberBetween($min = 1, $max = 10),
         'payment_method_type_id' => $faker->numberBetween($min = 1, $max = 3),
         'buyer_address' => $faker->word,
+        'buyer_city' => $faker->randomElement($array = array ('Payakumbuh', 'Padang', 'Medan', 'Banda Aceh', 'Bandung', 'Jakarta', 'Semarang', 'Yogyakarta', 'Surabaya', 'Pontianak', 'Palangkaraya', 'Banjarmasin', 'Manado', 'Makassar', 'Ambon', 'Denpasar', 'Jayapura')),
         'buyer_phone_number' => $faker->e164PhoneNumber,
         'store_invoice' => $faker->word,
         'created_at' => $faker->dateTimeBetween($startDate = '-5 month', $endDate = '+1 day', $timezone = 'Asia/Jakarta'),

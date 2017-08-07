@@ -25,9 +25,38 @@
               </div>
             </div>
           </div>
-
+          <!-- Feedback Count -->
+          <div class="col-md-3" >
+            <div>
+              <div class="description">
+                <div>
+                  <span>{{stats.feedback_count.description}}</span>
+                </div><br>
+                <div class="description-stats" ng-bind="stats.feedback_count.value"></div><br>
+                <div>
+                  <i class="{{stats.feedback_count.icon}}" style="color:{{stats.feedback_count.iconColor}}"></i>
+                  <span>{{stats.feedback_count.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Total Shopper -->
+          <div class="col-md-3">
+            <div>
+              <div class="description">
+                <div>
+                  <span>{{stats.shopperCount.description}}</span>
+                </div><br>
+                <div class="description-stats" ng-bind="stats.shopperCount.value"></div><br>
+                <div>
+                  <i class="{{stats.shopperCount.icon}}" style="color:{{stats.shopperCount.iconColor}}"></i>
+                  <span>{{stats.shopperCount.change}}</span>
+                </div>
+              </div>
+            </div>
+          </div>  
           <!-- Transaction per Shopper -->
-          <div class="col-md-5">
+          <div class="col-md-3">
             <div>
               <div class="description">
                 <div>
@@ -42,33 +71,18 @@
             </div>
           </div>  
 
-          <!-- Total Shopper -->
-          <div class="col-md-4">
-            <div>
-              <div class="description">
-                <div>
-                  <span>{{stats.shopperCount.description}}</span>
-                </div><br>
-                <div class="description-stats" ng-bind="stats.shopperCount.value"></div><br>
-                <div>
-                  <i class="{{stats.shopperCount.icon}}" style="color:{{stats.shopperCount.iconColor}}"></i>
-                  <span>{{stats.shopperCount.change}}</span>
-                </div>
-              </div>
-            </div>
-          </div>  
         </div>
       </div>
       
-      <div class="row">
+      <div class="row pv-stats">
         <!-- Rating Trend -->
         <div class="col-md-6"
            ba-panel
            ba-panel-title="Tren Rating"
-           ba-panel-class="pv-panel" style="height:300px; margin-bottom:10px">
+           ba-panel-class="pv-panel" style="height:250px; margin-bottom:10px">
           <div class="row">
             <div class="col-lg-12 col-md-12">
-              <div id="vmShopperRating" class="pv-chart" style="height:300px"></div>
+              <div id="vmShopperRating" class="pv-chart" style="height:200px"></div>
               <!-- loading / no data handler -->
               <div class="pv-chart-medium-overlay" ng-show="loading || noData">
                 <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
@@ -77,63 +91,107 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <!-- Top Shopper -->
-          <div class="row"
-             ba-panel
-             ba-panel-title="Petugas Garendong"
-             ba-panel-class="pv-panel table-panel" style="height:400px">
-            <div>
-              <table class="table" st-table="shopperList.shopper" st-safe-src="updatedShopperList">
-                <thead>
-                <tr class="sortable ">
-                  <th class="table-id">#</th>
-                  <th st-sort="name">Nama</th>
-                  <th st-sort="orders">Jumlah Order</th>
-                  <th st-sort="rating" st-sort-default="reverse">Rating</th>
-                </tr>
-                <tr>
-                  <th></th>
-                  <th>
-                    <input st-search="name" placeholder="Cari Garendong" class="input-sm form-control search-input" type="search"/>
-                  </th>
-                  <th></th>
-                  <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="shopper in shopperList.shopper">
-                  <td class="table-id">{{$index+1+(shopperPageIndex-1)*shopperPageSize}}</td>
-                  <td>
-                    {{shopper.name}}
-                    <!-- {{getRandomName()}} -->
-                  </td>
-                  <td class="">
-                    {{shopper.orders}}
-                    <!-- &nbsp
-                    <i class="{{getArrowIcon(shopper.orders_change)}}" style="color:{{getArrowColor(shopper.orders_change)}}"></i>
-                    <span>{{shopper.orders_change}}</span> -->
-                  </td>
-                  <td class="">
-                    {{formatRating(shopper.rating)}}
-                    &nbsp
-                    <i class="{{getArrowIcon(shopper.rating_change)}}" style="color:{{getArrowColor(shopper.rating_change)}}"></i>
-                    <span>{{formatRating(shopper.rating_change)}}</span>
-                  </td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                  <td colspan="6" class="text-center">
-                    <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeShopperPage(newPage)"></div>
-                  </td>
-                </tr>
-                </tfoot>
-              </table>
+        <!-- Feedback Reason -->
+        <div class="col-md-6"
+           ba-panel
+           ba-panel-title="Ulasan"
+           ba-panel-class="pv-panel" style="height:250px">
+          <div class="row">
+            <!-- <div class="row">
+              <div class="col-md-2 col-md-offset-6" style="text-align:right">Tampilkan:</div>  
+              <div class="col-md-2">
+                <label class="radio-inline custom-radio nowrap">
+                  <input type="radio" name="feedbackDistribution" value="distribution" ng-model="feedback.metric">
+                  <span>Perbandingan</span>
+                </label>
+              </div>
+              <div class="col-md-2">
+                <label class="radio-inline custom-radio nowrap">
+                  <input type="radio" name="feedbackTrend" value="trend" ng-model="feedback.metric">
+                  <span>Tren</span>
+                </label>
+              </div>
+            </div> -->
+            <div class="col-lg-12 col-md-12">
+              <div id="vmFeedbackReason" class="pv-chart" style="height:200px"></div>
+              <!-- <div id="vmFeedbackTrend" class="pv-chart" style="height:200px" ng-show="feedback.metric=='trend'"></div> -->
+              <!-- loading / no data handler -->
+              <div class="pv-chart-small-overlay" ng-show="loading || noData">
+                <div class="pv-chart-no-data" ng-show="noData">Tidak Ada Data</div>
+                <div class="pv-chart-loading" ng-show="loading"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="row pv-stats">
+        <!-- Top Shopper -->
+        <div class="col-md-12"
+           ba-panel
+           ba-panel-title="Petugas Garendong"
+           ba-panel-class="pv-panel table-panel" style="height:400px">
+          <div>
+            <table class="table" st-table="shopperList.shopper" st-safe-src="updatedShopperList">
+              <thead>
+              <tr class="sortable ">
+                <th class="table-id">#</th>
+                <th st-sort="name">Nama</th>
+                <th st-sort="sorter.orders" style="text-align:right">#Transaksi</th>
+                <th st-sort="sorter.rating" st-sort-default="reverse" style="text-align:right">Rating</th>
+                <th></th>
+                <th st-sort="sorter.feedbacks" style="text-align:right">#Ulasan</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th>
+                  <input st-search="name" placeholder="Cari Garendong" class="input-sm form-control search-input" type="search"/>
+                </th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr ng-repeat="shopper in shopperList.shopper">
+                <td class="table-id">{{$index+1+(shopperPageIndex-1)*shopperPageSize}}</td>
+                <td>
+                  {{shopper.name}}
+                  <!-- {{getRandomName()}} -->
+                </td>
+                <td class="" style="text-align:right">
+                  {{shopper.orders}}
+                  <!-- &nbsp
+                  <i class="{{getArrowIcon(shopper.orders_change)}}" style="color:{{getArrowColor(shopper.orders_change)}}"></i>
+                  <span>{{shopper.orders_change}}</span> -->
+                </td>
+                <td class="" style="text-align:right">
+                  {{formatRating(shopper.rating)}}
+                </td>
+                <td style="width:50px">
+                  <i class="{{getArrowIcon(shopper.rating_change)}}" style="color:{{getArrowColor(shopper.rating_change)}}" ng-show="shopper.rating_change != 0"></i>
+                  <span ng-show="shopper.rating_change != 0">{{formatRatingChange(shopper.rating_change)}}</span>
+                </td>
+                <td class="" style="text-align:right">
+                  {{shopper.feedbacks}}
+                  <!-- &nbsp
+                  <i class="{{getArrowIcon(shopper.rating_change)}}" style="color:{{getArrowColor(shopper.rating_change)}}" ng-show="shopper.rating_change != 0"></i>
+                  <span ng-show="shopper.rating_change != 0">{{formatRating(shopper.rating_change)}}</span> -->
+                </td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td colspan="6" class="text-center">
+                  <div st-pagination="" st-items-by-page="5" st-displayed-pages="5" st-page-change="changeShopperPage(newPage)"></div>
+                </td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+      
       
     <!-- </div> -->
 

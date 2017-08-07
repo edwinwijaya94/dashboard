@@ -15,6 +15,7 @@
           <th class="table-id" st-sort="id" st-sort-default="true">#</th>
           <th st-sort="name">Nama</th>
           <th st-sort="name">Email</th>
+          <th st-sort="name">Role</th>
           <th>Kelola</th>
         </tr>
         <tr>
@@ -23,6 +24,7 @@
             <!-- <input st-search="name" placeholder="Cari Produk" class="input-sm form-control search-input" type="search"/> -->
           </th>
           <th></th>
+          <th></th>
         </tr>
         </thead>
         <tbody>
@@ -30,6 +32,7 @@
           <td class="table-id">{{$index+1}}</td>
           <td>{{user.name}}</td>
           <td>{{user.email}}</td>
+          <td>{{user.role}}</td>
           <td>
             <div class="buttons">
               <button class="btn btn-primary editable-table-button btn-xs" ng-click="editUser(user)">Ubah</button>

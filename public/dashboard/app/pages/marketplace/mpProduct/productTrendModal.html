@@ -9,17 +9,21 @@
   	<div class="col-md-12" style="padding-bottom:15px">
   		<div class="col-md-6">
   			Jumlah Permintaan: {{formatNumber(selectedProduct.sums)}} unit
-  			(
-					<i class="{{getArrowIcon(selectedProduct.sum_change)}}" style="color:{{getArrowColor(selectedProduct.sum_change)}}" ng-show="selectedProduct.sum_change != 0"></i>
-					{{formatNumber(selectedProduct.sum_change)}}
-				)
+        <span ng-show="selectedProduct.sum_change != 0">
+    			(
+  					<i class="{{getArrowIcon(selectedProduct.sum_change)}}" style="color:{{getArrowColor(selectedProduct.sum_change)}}" ng-show="selectedProduct.sum_change != 0"></i>
+  					{{formatNumber(selectedProduct.sum_change)}}
+  				)
+        </span>
   		</div>
   		<div class="col-md-6">
 				Harga Rata-Rata: {{formatPrice(selectedProduct.avg_price)}}/unit
-				(
-					<i class="{{getArrowIcon(selectedProduct.price_change)}}" style="color:{{getArrowColor(selectedProduct.price_change*(-1))}}" ng-show="selectedProduct.price_change != 0"></i>
-					{{formatNumber(selectedProduct.price_change)}}
-				)
+        <span ng-show="selectedProduct.price_change != 0">
+  				(
+  					<i class="{{getArrowIcon(selectedProduct.price_change)}}" style="color:{{getArrowColor(selectedProduct.price_change*(-1))}}" ng-show="selectedProduct.price_change != 0"></i>
+  					{{formatNumber(selectedProduct.price_change)}}
+  				)
+        </span>
 			</div>
     </div>
     <div id="mpProductTrend" class="admin-chart" style="height:200px"></div>

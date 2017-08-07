@@ -115,6 +115,7 @@
       $scope.getHistory(startDate, endDate);
       $scope.getSentraToplist(startDate, endDate);
       $scope.getProductToplist(startDate, endDate);
+      $scope.getCityToplist(startDate, endDate);
     }
 
     // TRANSACTION STATS AND PAYMENT METHOD
@@ -614,10 +615,39 @@
         });        
     }
 
+    $scope.getCityToplist = function(startDate, endDate) {
+      // produk
+      $http.get('/api/marketplace/buyer?type=city&start_date='+startDate+'&end_date='+endDate)
+        .then(function(res) {
+          var data = res.data.data;
+
+          $scope.updatedCityList = data.city;
+          // copy references
+          $scope.cityList = [].concat($scope.updatedCityList);
+        })
+        .finally(function() {
+          
+        });        
+    }    
+
     $scope.formatNumber = function(value) {
       return mpHelper.formatNumber(parseInt(value),false,true,1);
     }
 
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    };
+    
     $scope.sorter = {
       orders: function(value) {
         return parseInt(value.orders);

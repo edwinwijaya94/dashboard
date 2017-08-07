@@ -317,26 +317,63 @@ class MarketplaceController extends Controller
 
     public function getProductTopList($query)
     {
-        $rows = (int)$query['rows'];
-        $page = (int)$query['page'];
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
+
         DB::enableQueryLog();
         // execute
-        // success / failed transaction
         $query = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
-                    ->select(DB::raw('products.name, sum(quantity) as units, sum(orderlines.subtotal) as value'))
+                    ->select(DB::raw('products.id, products.name, count(*), sum(quantity) as sums, sum(orderlines.subtotal) as value'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->groupBy('products.id')
-                    ->orderByRaw('units desc, products.name asc')
+                    ->orderByRaw('sums desc, products.name asc')
                     ->limit(5);
 
         $product = $query
                     ->get();
 
+        for($i=0; $i<count($product); $i++) {
+            $countData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->count();
+            if($countData) {
+                $prevData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('count(*), sum(quantity) as sums, sum(orderlines.subtotal) as value'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->get();
+            } else {
+                $prevData = array();
+            }
+            if(count($prevData) != 0) {
+                $product[$i]->count_change = (string) ($product[$i]->count - $prevData[0]->count);
+                $product[$i]->sum_change = (string) ($product[$i]->sums - $prevData[0]->sums);
+                $product[$i]->value_change = (string) ($product[$i]->value - $prevData[0]->value);
+            } else {
+                $product[$i]->count_change = (string) 0;
+                $product[$i]->sum_change = (string) 0;
+                $product[$i]->value_change = (string) 0;
+            }
+        }
+
         $data = array();
-        // $data['total_rows'] = $totalRows;
         $data['product'] = $product;
         $status = $this->setStatus();
 
@@ -366,12 +403,14 @@ class MarketplaceController extends Controller
         // success / failed transaction
         $query = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
                     ->select(DB::raw('sentra.id as sentra_id, products.id, products.name, sentra.name as sentra, count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->groupBy('products.id')
                     ->groupBy('sentra.id')
                     ->orderByRaw('sums desc, products.name asc');
@@ -383,21 +422,25 @@ class MarketplaceController extends Controller
         for($i=0; $i<count($product); $i++) {
             $countData = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('products.id', '=', $product[$i]->id)
                     ->where('stores.sentra_id', '=', $product[$i]->sentra_id)
                     ->count();
             if($countData) {
                 $prevData = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw('count(*), sum(quantity) as sums, round(avg(orderlines.subtotal/orderlines.quantity), 0) as avg_price'))
                     ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('products.id', '=', $product[$i]->id)
                     ->where('stores.sentra_id', '=', $product[$i]->sentra_id)
                     ->get();
@@ -443,11 +486,13 @@ class MarketplaceController extends Controller
         // execute
         $dbQuery = DB::connection('marketplace')
                     ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->select(DB::raw('sum(quantity) as count, round(avg(subtotal/quantity), 0) as price,'.$dateQuery))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
                     ->where('orderlines.product_id', '=', $query['productId'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
                     ->groupBy($dateGroupBy)
@@ -752,14 +797,53 @@ class MarketplaceController extends Controller
                     ->table('orderlines')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->join('products', 'orderlines.product_id', '=', 'products.id')
-                    ->select(DB::raw('products.name, sum(quantity) as units, sum(orderlines.subtotal) as value'))
+                    ->select(DB::raw('products.id, products.name, count(*), sum(quantity) as sums, sum(orderlines.subtotal) as value'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('stores.sentra_id', '=', $query['sentraId'])
                     ->groupBy('products.id')
-                    ->orderByRaw('units desc, products.name asc')
+                    ->orderByRaw('sums desc, products.name asc')
                     ->limit(5)
                     ->get();
+
+        for($i=0; $i<count($product); $i++) {
+            $countData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->count();
+            if($countData) {
+                $prevData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('products', 'orderlines.product_id', '=', 'products.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('count(*), sum(quantity) as sums, sum(orderlines.subtotal) as value'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->where('products.id', '=', $product[$i]->id)
+                    ->get();
+            } else {
+                $prevData = array();
+            }
+            if(count($prevData) != 0) {
+                $product[$i]->count_change = (string) ($product[$i]->count - $prevData[0]->count);
+                $product[$i]->sum_change = (string) ($product[$i]->sums - $prevData[0]->sums);
+                $product[$i]->value_change = (string) ($product[$i]->value - $prevData[0]->value);
+            } else {
+                $product[$i]->count_change = (string) 0;
+                $product[$i]->sum_change = (string) 0;
+                $product[$i]->value_change = (string) 0;
+            }
+        }
 
         $data['product'] = $product;
 
@@ -804,6 +888,22 @@ class MarketplaceController extends Controller
         $data['rating']['average']['prev'] = $prevRating[0]->rating;
         $data['rating']['trend'] = $ratingTrend;
 
+        $city = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orders','orderlines.order_id','orders.id')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->select(DB::raw('orders.buyer_city as name, count(*)'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('stores.sentra_id', '=', $query['sentraId'])
+                    ->groupBy('orders.buyer_city')
+                    ->orderByRaw('count desc')
+                    ->limit(5)
+                    ->get();
+
+        $data['city'] = $city;
 
         $status = $this->setStatus();
 
@@ -822,29 +922,63 @@ class MarketplaceController extends Controller
         // else if ($query['sort'] == 'lowest')
         //     $ratingOrder = 'orders asc';
         // $ratingOrder .= ', name asc';
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
 
         DB::enableQueryLog();
         // execute
-        $query = DB::connection('marketplace')
+        $dbQuery = DB::connection('marketplace')
                     ->table('orderlines')
                     ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
                     ->join('stores', 'orderlines.store_id', '=', 'stores.id')
                     ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
-                    ->select(DB::raw('sentra.name as name, count(*) as orders, sum(subtotal) as value'))
+                    ->select(DB::raw('sentra.id, sentra.name as name, count(*), sum(subtotal) as value'))
                     ->where('orderlines.created_at', '>=', $query['startDate'])
                     ->where('orderlines.created_at', '<=', $query['endDate'])
                     ->where('orderline_statuses.name', '=', $this->successStatus)
-                    ->groupBy('sentra.name')
-                    ->orderByRaw('orders desc')
+                    ->groupBy('sentra.id')
+                    ->orderByRaw('count desc')
                     ->limit(5);
 
-        // $totalRows = $query->get()->count();
-
-        $sentra = $query
+        $sentra = $dbQuery
                     ->get();
 
+        for($i=0; $i<count($sentra); $i++) {
+            $countData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('sentra.id', '=', $sentra[$i]->id)
+                    ->count();
+            if($countData) {
+                $prevData = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->join('stores', 'orderlines.store_id', '=', 'stores.id')
+                    ->join('sentra', 'stores.sentra_id', '=', 'sentra.id')
+                    ->select(DB::raw('count(*), sum(subtotal) as value'))
+                    ->where('orderlines.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orderlines.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->where('sentra.id', '=', $sentra[$i]->id)
+                    ->get();
+            } else {
+                $prevData = array();
+            }
+            if(count($prevData) != 0) {
+                $sentra[$i]->count_change = (string) ($sentra[$i]->count - $prevData[0]->count);
+                $sentra[$i]->value_change = (string) ($sentra[$i]->value - $prevData[0]->value);
+            } else {
+                $sentra[$i]->count_change = (string) 0;
+                $sentra[$i]->value_change = (string) 0;
+            }
+        }
+
+
         $data = array();
-        // $data['total_rows'] = $totalRows;
         $data['sentra'] = $sentra;
         $status = $this->setStatus();
 
@@ -937,6 +1071,8 @@ class MarketplaceController extends Controller
             return $this->getBuyerHistory($query);
         else if($query['type'] == 'map')
             return $this->getBuyerMap($query);
+        else if($query['type'] == 'city')
+            return $this->getBuyerCity($query);
     }
 
     public function getBuyerStats($query)
@@ -1049,6 +1185,35 @@ class MarketplaceController extends Controller
                     // ->groupBy('addresses.district')
                     ->get();
 
+        $status = $this->setStatus();
+
+        return response()->json([
+                    'status' => $status,
+                    'data' => $data
+                ]);
+    }
+
+    public function getBuyerCity($query) 
+    {
+        $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);   
+
+        DB::enableQueryLog();
+        // execute
+        $city = DB::connection('marketplace')
+                    ->table('orderlines')
+                    ->join('orders','orderlines.order_id','orders.id')
+                    ->join('orderline_statuses','orderlines.orderline_status_id','orderline_statuses.id')
+                    ->select(DB::raw('orders.buyer_city as name, count(*)'))
+                    ->where('orderlines.created_at', '>=', $query['startDate'])
+                    ->where('orderlines.created_at', '<=', $query['endDate'])
+                    ->where('orderline_statuses.name', '=', $this->successStatus)
+                    ->groupBy('orders.buyer_city')
+                    ->orderByRaw('count desc')
+                    ->limit(5)
+                    ->get();
+
+        $data = array();
+        $data['city'] = $city;
         $status = $this->setStatus();
 
         return response()->json([

@@ -3,10 +3,11 @@ angular.module('BlurAdmin.pages.marketplace')
   .factory("mpHelper", function() {                                                                                                                                                   
     return {
       colors: {
-        primary: { // Google colour
-          blue: '#4285f4',
+        primary: {
+          // blue: '#4285f4',
+          blue: '#2dacd1',
           green: '#34a853',
-          yellow: '#fbbc05',
+          yellow: '#dfb81c',
           red: '#ea4335',
         }
       },

@@ -127,8 +127,9 @@
 
     $scope.getData = function(startDate, endDate) {
       if($scope.sentraList.selected.id == undefined)
-        $scope.getSentraList();    
-      $scope.getSentraData(startDate, endDate, $scope.sentraList.selected.id);
+        $scope.getSentraList();
+      else 
+        $scope.getSentraData(startDate, endDate, $scope.sentraList.selected.id);
     };
 
     $scope.getSentraList = function() {
@@ -137,12 +138,13 @@
           var data = res.data.data;
           $scope.sentraList.sentras = data;
           $scope.sentraList.selected = data[0];
+          $scope.getSentraData($scope.startDate, $scope.endDate, $scope.sentraList.selected.id);
         })
         .finally(function() {
           // $scope.loading= false;
         });    
     };
-    $scope.getSentraList();
+    // $scope.getSentraList();
 
     $scope.selectSentra = function(item, model) {
       $scope.sentraList.selected = item; // update selected option
@@ -167,6 +169,7 @@
       $scope.showBuyer(data.buyer, data.granularity);
       $scope.showProduct(data.product);
       $scope.showRating(data.rating);
+      $scope.showCity(data.city);
     }
 
     $scope.showTransaction = function(data, granularity) {
@@ -531,6 +534,28 @@
       $scope.stats.avg_rating = stat;
     }
 
+    // CITY
+    $scope.showCity = function(data) {
+
+      $scope.updatedCityList = data;
+      // copy references
+      $scope.cityList = [].concat($scope.updatedCityList);
+    }
+
+    $scope.getArrowIcon = function(value) {
+      if(value >= 0)
+        return 'ion-arrow-up-b';
+      else
+        return 'ion-arrow-down-b';
+    };
+
+    $scope.getArrowColor = function(value) {
+      if(value >= 0)
+        return $scope.colors.green;
+      else
+        return $scope.colors.red;
+    };
+    
     $scope.formatNumber = function(value) {
       return mpHelper.formatNumber(parseInt(value),false,true,1);
     };

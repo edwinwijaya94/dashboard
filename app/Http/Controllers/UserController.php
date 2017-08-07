@@ -76,6 +76,7 @@ class UserController extends Controller
         $roles = DB::connection('user')
                     ->table('roles')
                     ->select(DB::raw('id, name'))
+                    ->whereIn('roles.name', $this->governmentRoles)
                     ->get();
 
         return response()->json([

@@ -37,14 +37,28 @@
         iconColor: $scope.colors.green,
       },
       transactionPerShopper: {
-        description: 'Jumlah Transaksi per Garendong',
+        description: 'Transaksi per Garendong',
         info: '',
         value: 0,
         percent: 0,
         change: 0,
         icon:'ion-arrow-up-b',
         iconColor: $scope.colors.green,
-      }
+      },
+      feedback_count: {
+        color: pieColor,
+        description: 'Jumlah Ulasan',
+        info: '',
+        value: 0,
+        percent: 0,
+        showPie: false,
+        showChange: true,
+        change: 0,
+        prevValue: 0,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 4,
+      },
     };
 
     
@@ -94,7 +108,7 @@
     $scope.getData = function(startDate, endDate) {
       // $scope.getShopperStats(startDate, endDate);
       $scope.getShopperList(startDate, endDate, $scope.shopperList.page, $scope.shopperList.pageSize, $scope.shopperListOptions.selected.value);
-      // $scope.getFeedbackStats(startDate, endDate);
+      $scope.getFeedbackStats(startDate, endDate);
     };
 
     // SHOPPER STATS
@@ -269,13 +283,42 @@
       $http.get('/api/virtualmarket/feedback?type=stats&start_date='+startDate+'&end_date='+endDate)
         .then(function(res) {
           var data = res.data.data;
-          $scope.showFeedbackStats(data.rating);
+          // $scope.showFeedbackStats(data.rating);
+          $scope.showFeedbackCount(data.count);
           $scope.showFeedbackReason(data.feedback);
+
         })
         .finally(function() {
           // $scope.loading= false;
         });    
     };
+
+    $scope.showFeedbackCount = function(data) {
+      
+      //feedback count
+      var stat = {};
+      stat.description = $scope.stats.feedback_count.description;
+      stat.info = $scope.stats.feedback_count.info;
+      stat.showPie = $scope.stats.feedback_count.showPie;
+      stat.showChange = $scope.stats.feedback_count.showChange;
+      stat.value = parseInt(data.current);
+      stat.prevValue = parseInt(data.prev);
+      var change = ((stat.value-stat.prevValue)/(stat.prevValue)*100).toFixed(2);
+      stat.change = isFinite(change)? change:0;
+      if(stat.change>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.red;
+      } else {
+        stat.change *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.green;
+      }
+      stat.colSize = $scope.stats.feedback_count.colSize;
+      stat.value = vmHelper.formatNumber(stat.value,false,false);
+      stat.change = vmHelper.formatNumber(stat.change,false,false)+'%';
+      $scope.stats.feedback_count = stat;
+      
+    }
 
     $scope.showFeedbackStats = function(data) {
       $scope.stats.rating.transactions = data.transactions;
@@ -320,7 +363,7 @@
               return hoverInfo;
             },
             lineAlpha: 0,
-            fillColors: colors.green,
+            fillColors: colors.yellow,
             fillAlphas: 1,
             type: 'column',
             valueField: 'count',
@@ -349,9 +392,14 @@
     };
 
     $scope.formatRating = function(rating) {
+      return vmHelper.formatNumber(rating,false,false,1);
+    };
+
+    $scope.formatRatingChange = function(rating) {
       if(rating < 0)
         rating *= -1;
-      return vmHelper.formatNumber(rating,false,false);
+      rating = rating.toFixed(1);
+      return vmHelper.formatNumber(rating,false,false,1);
     };
 
     $scope.getArrowIcon = function(value) {
@@ -366,6 +414,18 @@
         return $scope.colors.green;
       else
         return $scope.colors.red;
+    };
+
+    $scope.sorter = {
+      orders: function(value) {
+        return parseInt(value.orders);
+      },
+      rating: function(value) {
+        return parseFloat(value.rating);
+      },
+      feedbacks: function(value) {
+        return parseInt(value.feedbacks);
+      }
     };
 
     // FOR TESTING PURPOSE ONLY

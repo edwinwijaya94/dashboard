@@ -244,6 +244,47 @@ class OperationalController extends Controller
         $data['transaction']['count']['prev'] = $prevTransactionCount[0]->count;
         $data['transaction']['status'] = $transactionStatus;
         
+         // product price
+        $productPrice = DB::connection('virtual_market')
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('products.id, round(avg(order_lines.price/order_lines.quantity), 0) as avg_price'))
+                    ->where('orders.created_at', '>=', $query['startDate'])
+                    ->where('orders.created_at', '<=', $query['endDate'])
+                    ->groupBy('products.id')
+                    ->get();
+
+        for($i=0; $i<count($productPrice); $i++) {
+            $prevPrice = DB::connection('virtual_market')
+                    ->table('order_lines')
+                    ->join('products', 'order_lines.product_id', '=', 'products.id')
+                    ->join('orders', 'order_lines.order_id', '=', 'orders.id')
+                    ->select(DB::raw('products.id, round(avg(order_lines.price/order_lines.quantity), 0) as avg_price'))
+                    ->where('orders.created_at', '>=', $prevPeriod['startDate'])
+                    ->where('orders.created_at', '<=', $prevPeriod['endDate'])
+                    ->where('products.id', '=', $productPrice[$i]->id)
+                    ->groupBy('products.id')
+                    ->get();
+
+            // change in percent
+            if(count($prevPrice) != 0) {
+                $productPrice[$i]->price_change = (string) round((float)($productPrice[$i]->avg_price - $prevPrice[0]->avg_price)/($prevPrice[0]->avg_price)*100, 2);
+            } else {
+                $productPrice[$i]->price_change = (string) 0;
+            }
+        }
+        // average price change in percent
+        $total = 0;
+        for($i=0; $i<count($productPrice); $i++){
+            $total += $productPrice[$i]->price_change;
+        }
+        if(count($productPrice)>0)
+            $fluctuation = round(($total / count($productPrice)), 2);
+        else 
+            $fluctuation = null;
+
+        $data['fluctuation'] = $fluctuation;
         $status = $this->setStatus();
 
         return response()->json([

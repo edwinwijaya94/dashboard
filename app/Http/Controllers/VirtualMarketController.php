@@ -421,7 +421,10 @@ class VirtualMarketController extends Controller
         for($i=0; $i<count($product); $i++){
             $total += $product[$i]->price_change;
         }
-        $fluctuation = round(($total / count($product)), 2);
+        if(count($product)>0)
+            $fluctuation = round(($total / count($product)), 2);
+        else 
+            $fluctuation = null;
 
         $data = array();
         $data['availability'] = array();

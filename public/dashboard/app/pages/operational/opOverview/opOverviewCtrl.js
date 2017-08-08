@@ -47,6 +47,15 @@
         iconColor: $scope.colors.green,
         colSize: 6,
       },
+      fluctuation: {
+        description: 'Fluktuasi Harga',
+        value: opHelper.formatNumber(0,false,false),
+        showPie: false,
+        showChange: true,
+        icon:'ion-arrow-up-b',
+        iconColor: $scope.colors.green,
+        colSize: 2,
+      },
     };
 
     $scope.options = {
@@ -79,6 +88,7 @@
           var data = res.data.data;
           $scope.showProduct(data.product);
           $scope.showTransaction(data.transaction);
+          $scope.showFluctuation(data.fluctuation);
         })
         .finally(function() {
           // $scope.loading= false;
@@ -211,6 +221,25 @@
 
       return opHelper.getBarChartOptions(options);
     };
+
+    $scope.showFluctuation = function(data) {
+      //product fluctuation
+      var stat = {};
+      stat.description = $scope.stats.fluctuation.description;
+      stat.showPie = $scope.stats.fluctuation.showPie;
+      stat.showChange = $scope.stats.fluctuation.showChange;
+      stat.value = parseFloat(data);
+      if(stat.value>=0) {
+        stat.icon = 'ion-arrow-up-b';
+        stat.iconColor = $scope.colors.red;
+      } else {
+        stat.value *= -1;
+        stat.icon = 'ion-arrow-down-b';
+        stat.iconColor = $scope.colors.green;
+      }
+      stat.value = isFinite(stat.value)? (opHelper.formatNumber(stat.value,false,false)+'%'):'-';
+      $scope.stats.fluctuation = stat;
+    }
 
     // PRODUCT TREND
     $scope.viewTrend = function(product) {

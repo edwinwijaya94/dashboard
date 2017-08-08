@@ -70,14 +70,28 @@
           <span ng-bind="periodInfo"></span> 
         </div>
         <div class="row">
-          <div class="pie-charts col-md-4">
-            <div class="">
-              <div class="description">
-                <div>{{ ::stats.transaction_count.description }}</div><br>
-                <div class="description-stats" ng-bind="stats.transaction_count.value"></div><br>
-                <div ng-show="stats.transaction_count.showChange">
-                  <i class="{{stats.transaction_count.icon}}" style="color:{{stats.transaction_count.iconColor}}"></i>
-                  <span>{{stats.transaction_count.change}}%</span>
+          <div class = "col-md-4">
+            <div class="pie-charts col-md-12" style="margin-bottom:20px">
+              <div class="">
+                <div class="description">
+                  <div>{{ ::stats.transaction_count.description }}</div><br>
+                  <div class="description-stats" ng-bind="stats.transaction_count.value"></div><br>
+                  <div ng-show="stats.transaction_count.showChange">
+                    <i class="{{stats.transaction_count.icon}}" style="color:{{stats.transaction_count.iconColor}}"></i>
+                    <span>{{stats.transaction_count.change}}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="pie-charts col-md-12" style="margin-bottom:20px">
+              <div class="">
+                <div class="description">
+                  <div>{{ ::stats.fluctuation.description }}</div><br>
+                  <div class="description-stats">
+                    <i class="{{stats.fluctuation.icon}}" style="color:{{stats.fluctuation.iconColor}}" ng-show="stats.fluctuation.value != '0%'"></i>
+                    <span class="description-stats" ng-bind="stats.fluctuation.value"></span><br>
+                    <!-- <span>{{stats.fluctuation.change}}</span> -->
+                  </div>
                 </div>
               </div>
             </div>
@@ -89,7 +103,7 @@
              ba-panel-class="pv-panel" style="height:200px; ">
             <div class="row">
               <div class="col-lg-12 col-md-12">
-                <div id="opTransactionStatus" class="admin-chart" style="height:140px"></div>
+                <div id="opTransactionStatus" class="admin-chart" style="height:180px"></div>
               </div>
             </div>
           </div>

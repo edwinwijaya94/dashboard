@@ -20,7 +20,7 @@ class VirtualMarketController extends Controller
     // }
 
     // ATTRIBUTES
-    private $successStatus = 'success';
+    private $successStatus = true;
 
     // HELPER FUNCTIONS
     public function setDefault()

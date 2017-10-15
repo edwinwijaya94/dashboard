@@ -167,7 +167,7 @@
 
     $scope.showSuccessRate = function(data) {
       for(var i=0; i<data.length; i++){
-        if(data[i].status == 'success')
+        if(data[i].status == 'sukses')
           data[i].fillColor = $scope.colors.green;
         else
           data[i].fillColor = '#d1cfcf';

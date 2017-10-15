@@ -208,6 +208,7 @@ class VirtualMarketController extends Controller
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('order_statuses.name')
+                    ->groupBy('order_statuses.status')
                     ->orderByRaw('count desc')
                     ->get();
 

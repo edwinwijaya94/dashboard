@@ -24,7 +24,7 @@ class VirtualMarketController extends Controller
     private $successName = 'Pesanan Anda sudah sampai';
     private $priorityNotAvailable = 'Barang prioritas tidak tersedia';
     private $buyerNotAtHome = 'Tidak ada orang di rumah';
-    private $finalTransactionStatus = array($this->successName, $this->priorityNotAvailable, $this->buyerNotAtHome);
+    private $finalTransactionStatus = array('Pesanan Anda sudah sampai', 'Barang prioritas tidak tersedia', 'Tidak ada orang di rumah');
 
     // HELPER FUNCTIONS
     public function setDefault()

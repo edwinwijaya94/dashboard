@@ -22,6 +22,9 @@ class VirtualMarketController extends Controller
     // ATTRIBUTES
     private $successStatus = true;
     private $successName = 'Pesanan Anda sudah sampai';
+    private $priorityNotAvailable = 'Barang prioritas tidak tersedia';
+    private $buyerNotAtHome = 'Tidak ada orang di rumah';
+    private $finalTransactionStatus = array($successName, $priorityNotAvailable, $buyerNotAtHome);
 
     // HELPER FUNCTIONS
     public function setDefault()
@@ -199,11 +202,12 @@ class VirtualMarketController extends Controller
         $transactionStatus = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->select(DB::raw('status, count(*)'))
+                    ->select(DB::raw('case when order_statuses.status then \'sukses\' else order_statuses.name end as status, count(*)'))
                     // ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', $this->finalTransactionStatus)
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->groupBy('status')
+                    ->groupBy('order_statuses.name')
                     ->orderByRaw('count desc')
                     ->get();
 

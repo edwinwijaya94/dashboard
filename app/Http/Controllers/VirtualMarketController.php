@@ -21,6 +21,7 @@ class VirtualMarketController extends Controller
 
     // ATTRIBUTES
     private $successStatus = true;
+    private $successName = 'Pesanan Anda sudah sampai';
 
     // HELPER FUNCTIONS
     public function setDefault()
@@ -156,6 +157,7 @@ class VirtualMarketController extends Controller
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('count(*)'))
                     ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     // ->groupBy('status')
@@ -166,6 +168,7 @@ class VirtualMarketController extends Controller
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('count(*)'))
                     ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orders.created_at', '<=', $prevPeriod['endDate'])
                     // ->groupBy('status')
@@ -179,6 +182,7 @@ class VirtualMarketController extends Controller
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->get();
 
         $prevTransactionValue = DB::connection('virtual_market')
@@ -188,6 +192,7 @@ class VirtualMarketController extends Controller
                     ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orders.created_at', '<=', $prevPeriod['endDate'])
                     ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->get();
 
         // transaction status
@@ -237,6 +242,7 @@ class VirtualMarketController extends Controller
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('order_type as name, count(*)'))
                     ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('order_type')
@@ -251,6 +257,7 @@ class VirtualMarketController extends Controller
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('order_type as platform, count(*),'.$dateQuery))
                     ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('order_type')
@@ -323,6 +330,7 @@ class VirtualMarketController extends Controller
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
                     // ->toSql();
@@ -1117,6 +1125,7 @@ class VirtualMarketController extends Controller
                                         ->where('orders.created_at', '>=', $query['startDate'])
                                         ->where('orders.created_at', '<=', $query['endDate'])
                                         ->where('order_statuses.status', '=', $this->successStatus )
+                                        ->whereIn('order_statuses.name', [$this->successName])
                                         ->distinct('customer_id')
                                         ->count('customer_id');
 
@@ -1126,6 +1135,7 @@ class VirtualMarketController extends Controller
                                         ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                                         ->where('orders.created_at', '<=', $prevPeriod['endDate'])
                                         ->where('order_statuses.status', '=', $this->successStatus )
+                                        ->whereIn('order_statuses.name', [$this->successName])
                                         ->distinct('customer_id')
                                         ->count('customer_id');
 
@@ -1209,6 +1219,7 @@ class VirtualMarketController extends Controller
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->where('order_statuses.status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     // ->groupBy('addresses.district')
                     ->get();
 

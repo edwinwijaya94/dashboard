@@ -18,6 +18,13 @@ class OperationalController extends Controller
     // {
     //     $this->middleware('auth');
     // }
+    
+    // ATTRIBUTES
+    private $successStatus = true;
+    private $successName = 'Pesanan Anda sudah sampai';
+    private $priorityNotAvailable = 'Barang prioritas tidak tersedia';
+    private $buyerNotAtHome = 'Tidak ada orang di rumah';
+    private $finalTransactionStatus = array('Pesanan Anda sudah sampai', 'Barang prioritas tidak tersedia', 'Tidak ada orang di rumah');
 
     // HELPER FUNCTIONS
     public function setDefault()
@@ -210,7 +217,8 @@ class OperationalController extends Controller
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
+                    ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     // ->groupBy('status')
@@ -220,7 +228,8 @@ class OperationalController extends Controller
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
+                    ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orders.created_at', '<=', $prevPeriod['endDate'])
                     // ->groupBy('status')
@@ -230,11 +239,13 @@ class OperationalController extends Controller
         $transactionStatus = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->select(DB::raw('status, count(*)'))
+                    ->select(DB::raw('case when order_statuses.status then \'sukses\' else order_statuses.name end as status, count(*)'))
                     // ->whereIn('status', ['success'])
+                    ->whereIn('order_statuses.name', $this->finalTransactionStatus)
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->groupBy('status')
+                    ->groupBy('order_statuses.status')
+                    ->groupBy('order_statuses.name')
                     ->orderByRaw('count desc')
                     ->get();        
 
@@ -316,7 +327,8 @@ class OperationalController extends Controller
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
+                    ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     // ->groupBy('status')
@@ -326,7 +338,8 @@ class OperationalController extends Controller
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('count(*)'))
-                    ->whereIn('status', ['success'])
+                    ->whereIn('status', [$this->successStatus])
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orders.created_at', '<=', $prevPeriod['endDate'])
                     // ->groupBy('status')
@@ -339,7 +352,8 @@ class OperationalController extends Controller
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->get();
 
         $prevTransactionValue = DB::connection('virtual_market')
@@ -348,27 +362,31 @@ class OperationalController extends Controller
                     ->select(DB::raw($query['aggregate'].'as value, coalesce(round(avg(total_price), 0), 0) as average'))
                     ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                     ->where('orders.created_at', '<=', $prevPeriod['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->get();
 
         // transaction status
         $transactionStatus = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->select(DB::raw('status, count(*)'))
+                    ->select(DB::raw('case when order_statuses.status then \'sukses\' else order_statuses.name end as status, count(*)'))
                     // ->whereIn('status', ['success'])
+                    ->whereIn('order_statuses.name', $this->finalTransactionStatus)
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->groupBy('status')
+                    ->groupBy('order_statuses.status')
+                    ->groupBy('order_statuses.name')
                     ->orderByRaw('count desc')
-                    ->get();        
+                    ->get(); 
 
         // app platform (mobile / sms)
         $appPlatform = DB::connection('virtual_market')
                     ->table('orders')
                     ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
                     ->select(DB::raw('order_type as name, count(*)'))
-                    ->where('status', '=', 'success')
+                    ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
                     ->groupBy('order_type')
@@ -416,7 +434,8 @@ class OperationalController extends Controller
                     ->select(DB::raw($query['aggregate'].'as value, count(*),'.$dateQuery))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('status', '=', 'success')
+                    ->where('status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     ->groupBy($dateGroupBy)
                     ->orderByRaw($dateOrder)
                     // ->toSql();
@@ -899,7 +918,8 @@ class OperationalController extends Controller
                                         ->join('order_statuses', 'orders.order_status', 'order_statuses.id')
                                         ->where('orders.created_at', '>=', $query['startDate'])
                                         ->where('orders.created_at', '<=', $query['endDate'])
-                                        ->where('order_statuses.status', '=', 'success' )
+                                        ->where('order_statuses.status', '=', $this->successStatus)
+                                        ->whereIn('order_statuses.name', [$this->successName])
                                         ->distinct('customer_id')
                                         ->count('customer_id');
 
@@ -908,7 +928,8 @@ class OperationalController extends Controller
                                         ->join('order_statuses', 'orders.order_status', 'order_statuses.id')
                                         ->where('orders.created_at', '>=', $prevPeriod['startDate'])
                                         ->where('orders.created_at', '<=', $prevPeriod['endDate'])
-                                        ->where('order_statuses.status', '=', 'success' )
+                                        ->where('order_statuses.status', '=', $this->successStatus)
+                                        ->whereIn('order_statuses.name', [$this->successName])
                                         ->distinct('customer_id')
                                         ->count('customer_id');
 
@@ -991,7 +1012,8 @@ class OperationalController extends Controller
                     ->select(DB::raw('addresses.user_id, addresses.latitude, addresses.longitude'))
                     ->where('orders.created_at', '>=', $query['startDate'])
                     ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('order_statuses.status', '=', 'success')
+                    ->where('order_statuses.status', '=', $this->successStatus)
+                    ->whereIn('order_statuses.name', [$this->successName])
                     // ->groupBy('addresses.district')
                     ->get();
 

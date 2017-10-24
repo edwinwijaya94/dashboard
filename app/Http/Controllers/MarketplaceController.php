@@ -39,6 +39,7 @@ class MarketplaceController extends Controller
         return $default;
     }
 
+    // set query configuration based on request
     public function setQuery($request, $default)
     {
         $query = array();
@@ -67,6 +68,7 @@ class MarketplaceController extends Controller
         return $query;
     }
 
+    // set API response status
     public function setStatus() 
     {
         // set status
@@ -77,6 +79,7 @@ class MarketplaceController extends Controller
         return $status;
     }
 
+    // get previous period of a date range
     public function getPrevDatePeriod($startDate, $endDate) {
         $prevDatePeriod = array();
         
@@ -92,6 +95,7 @@ class MarketplaceController extends Controller
         return $prevDatePeriod;
     }
 
+    // get granularity of a date period (month or day)
     public function getGranularity($startDate, $endDate) {
         $start = Carbon::createFromFormat('Y-m-d  H:i:s', $startDate);
         $end = Carbon::createFromFormat('Y-m-d  H:i:s', $endDate);
@@ -105,6 +109,7 @@ class MarketplaceController extends Controller
         return $granularity;
     }
 
+    // get request configuration
     public function getConfig(Request $request) {
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
@@ -123,6 +128,7 @@ class MarketplaceController extends Controller
     }
     
     // TRANSACTION
+    // main handler for transaction API
     public function getTransaction(Request $request)
     {
         $default = $this->setDefault();
@@ -134,6 +140,7 @@ class MarketplaceController extends Controller
             return $this->getTransactionStats($query);
     }
 
+    // fetch transaction common statistics
     public function getTransactionStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -226,6 +233,7 @@ class MarketplaceController extends Controller
                 ]);
     }
 
+    // fetch transaction trend data
     public function getTransactionByHistory($query)
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
@@ -266,6 +274,7 @@ class MarketplaceController extends Controller
     }
 
     // PRODUCT
+    //main handler for product API
     public function getProduct(Request $request)
     {
         $default = $this->setDefault();
@@ -281,6 +290,7 @@ class MarketplaceController extends Controller
             return $this->getProductTrend($query);
     }
     
+    // fetch product common statistics
     public function getProductStats($query)
     {
         DB::enableQueryLog();
@@ -315,6 +325,7 @@ class MarketplaceController extends Controller
                 ]);
     }
 
+    // fetch top products based on sales quantity
     public function getProductTopList($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -383,6 +394,7 @@ class MarketplaceController extends Controller
                 ]);
     }
 
+    // fetch all products, ordered by sales quantity
     public function getProductList($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -469,6 +481,7 @@ class MarketplaceController extends Controller
                 ]);
     }
 
+    // fetch product trends based on sales
     public function getProductTrend($query)
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
@@ -592,6 +605,7 @@ class MarketplaceController extends Controller
     }
 
     // SENTRA
+    // main handler for sentra API
     public function getSentra(Request $request)
     {
         $default = $this->setDefault();
@@ -605,6 +619,7 @@ class MarketplaceController extends Controller
             return $this->getSentraTopList($query);
     }
 
+    // fetch all sentra name
     public function getSentraList()
     {
         DB::enableQueryLog();
@@ -622,26 +637,7 @@ class MarketplaceController extends Controller
                 ]);      
     }
 
-    public function getSentraStats($query)
-    {
-        DB::enableQueryLog();
-        // execute
-        $data = DB::connection('marketplace')
-                    ->table('sentra')
-                    ->select(DB::raw('count(*)'))
-                    ->get();
-
-        // $data = array();
-        // $data['rating'] = $rating;
-        // $data['feedback'] = $feedback;
-        $status = $this->setStatus();
-
-        return response()->json([
-                    'status' => $status,
-                    'data' => $data[0]
-                ]);      
-    }
-
+    // fetch specific sentra data analysis
     public function getSentraData($query)
     {
         // config
@@ -913,6 +909,7 @@ class MarketplaceController extends Controller
                 ]);      
     }
 
+    // fetch top sentra based on sales quantity
     public function getSentraTopList($query)
     {
         // $rows = (int)$query['rows'];
@@ -989,6 +986,7 @@ class MarketplaceController extends Controller
     }
 
     // USER FEEDBACK
+    // main handler for user feedback (rating)
     public function getFeedback(Request $request)
     {
         $default = $this->setDefault();
@@ -998,6 +996,7 @@ class MarketplaceController extends Controller
             return $this->getFeedbackStats($query);
     }
 
+    // fetch rating common statistics
     public function getFeedbackStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -1060,6 +1059,7 @@ class MarketplaceController extends Controller
     }
 
     // BUYER
+    // main handler for buyer API
     public function getBuyer(Request $request)
     {
         $default = $this->setDefault();
@@ -1075,6 +1075,7 @@ class MarketplaceController extends Controller
             return $this->getBuyerCity($query);
     }
 
+    // fetch buyer common statistics
     public function getBuyerStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -1132,6 +1133,7 @@ class MarketplaceController extends Controller
                 ]);
     }
 
+    // fetch buyer trend data
     public function getBuyerHistory($query)
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
@@ -1169,30 +1171,7 @@ class MarketplaceController extends Controller
                 ]);
     }
 
-    public function getBuyerMap($query)
-    {
-        
-        DB::enableQueryLog();
-        // execute
-        $data = DB::connection('marketplace')
-                    ->table('orders')
-                    ->join('order_statuses', 'orders.order_status', '=', 'order_statuses.id')
-                    ->join('addresses', 'orders.customer_id', '=', 'addresses.user_id')
-                    ->select(DB::raw('addresses.user_id, addresses.latitude, addresses.longitude'))
-                    ->where('orders.created_at', '>=', $query['startDate'])
-                    ->where('orders.created_at', '<=', $query['endDate'])
-                    ->where('order_statuses.status', '=', $this->successStatus)
-                    // ->groupBy('addresses.district')
-                    ->get();
-
-        $status = $this->setStatus();
-
-        return response()->json([
-                    'status' => $status,
-                    'data' => $data
-                ]);
-    }
-
+    // count buyers based on their cities
     public function getBuyerCity($query) 
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);   

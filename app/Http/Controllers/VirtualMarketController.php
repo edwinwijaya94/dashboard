@@ -43,6 +43,7 @@ class VirtualMarketController extends Controller
         return $default;
     }
 
+    // set query configuration based on request
     public function setQuery($request, $default)
     {
         $query = array();
@@ -70,7 +71,8 @@ class VirtualMarketController extends Controller
 
         return $query;
     }
-
+    
+    // set API response status
     public function setStatus() 
     {
         // set status
@@ -80,7 +82,8 @@ class VirtualMarketController extends Controller
 
         return $status;
     }
-
+    
+    // get previous period of a date range
     public function getPrevDatePeriod($startDate, $endDate) {
         $prevDatePeriod = array();
         
@@ -96,6 +99,7 @@ class VirtualMarketController extends Controller
         return $prevDatePeriod;
     }
 
+    // get granularity of a date period (month or day)
     public function getGranularity($startDate, $endDate) {
         $start = Carbon::createFromFormat('Y-m-d  H:i:s', $startDate);
         $end = Carbon::createFromFormat('Y-m-d  H:i:s', $endDate);
@@ -108,7 +112,8 @@ class VirtualMarketController extends Controller
         }
         return $granularity;
     }
-
+   
+    // get request configuration
     public function getConfig(Request $request) {
         $default = $this->setDefault();
         $query = $this->setQuery($request, $default);
@@ -127,6 +132,7 @@ class VirtualMarketController extends Controller
     }
 
     // TRANSACTION
+    // main handler for transaction API
     public function getTransaction(Request $request)
     {
         $default = $this->setDefault();
@@ -138,6 +144,7 @@ class VirtualMarketController extends Controller
             return $this->getTransactionStats($query);
     }
 
+    // fetch transaction common statistics
     public function getTransactionStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -313,6 +320,7 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
+    // fetch transaction trend data
     public function getTransactionByHistory($query)
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
@@ -354,6 +362,7 @@ class VirtualMarketController extends Controller
     }
 
     // PRODUCT
+    // main handler for product API
     public function getProduct(Request $request)
     {
         $default = $this->setDefault();
@@ -369,6 +378,7 @@ class VirtualMarketController extends Controller
             return $this->getProductTrend($query);
     }
     
+    // fetch product common statistics
     public function getProductStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -454,6 +464,7 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
+    // fetch top products based on sales quantity
     public function getProductTopList($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -523,6 +534,7 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
+    // fetch all products, ordered by sales quantity
     public function getProductList($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -648,6 +660,7 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
+    // fetch product trends based on sales
     public function getProductTrend($query)
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);
@@ -772,7 +785,8 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
-    // SHOPPER
+    // SHOPPER (GARENDONG)
+    // main handler for shopper API
     public function getShopper(Request $request)
     {
         $default = $this->setDefault();
@@ -806,6 +820,7 @@ class VirtualMarketController extends Controller
                 ]);      
     }
 
+    // fetch top shoppers based on ratings
     public function getShopperTopList($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -840,6 +855,7 @@ class VirtualMarketController extends Controller
                 ]);      
     }
 
+    // fetch shopper common statistics and all shoppers data
     public function getShopperList($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -985,6 +1001,7 @@ class VirtualMarketController extends Controller
     }
 
     // USER FEEDBACK
+    // main handler for user feedback
     public function getFeedback(Request $request)
     {
         $default = $this->setDefault();
@@ -994,6 +1011,7 @@ class VirtualMarketController extends Controller
             return $this->getFeedbackStats($query);
     }
 
+    // fetch feedback statistics
     public function getFeedbackStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -1104,6 +1122,7 @@ class VirtualMarketController extends Controller
     }
 
     // BUYER
+    // main handler for buyers API
     public function getBuyer(Request $request)
     {
         $default = $this->setDefault();
@@ -1117,6 +1136,7 @@ class VirtualMarketController extends Controller
             return $this->getBuyerMap($query);
     }
 
+    // fetch buyer common statistics
     public function getBuyerStats($query)
     {
         $prevPeriod = $this->getPrevDatePeriod($query['startDate'], $query['endDate']);
@@ -1176,6 +1196,7 @@ class VirtualMarketController extends Controller
                 ]);
     }
 
+    // fetch buyer trend data
     public function getBuyerHistory($query)
     {
         $granularity = $this->getGranularity($query['startDate'], $query['endDate']);

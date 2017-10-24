@@ -1,10 +1,12 @@
 # Dashboard
 
 Pasar Virtual Kota Payakumbuh: Subsistem Analisis Data and Visualisasi
-***Aplikasi dapat diakses pada alamat 167.205.35.43:8000** (menggunakan VPN ke network ITB)
+
+**Aplikasi dapat diakses pada alamat 167.205.35.43:8000** (menggunakan VPN ke network ITB)
 
 # Instalasi
-1. ```sh
+1. 
+   ```
     $ git clone http://gitlab.informatika.org/pasar-virtual/dashboard.git
     $ composer install
    ```
@@ -24,7 +26,7 @@ Hasil analisis data dapat diakses melalui API yang tersedia. Parameter query yan
 | sentra_id    | ID sentra (numerik: **1,2,3,..**)
 
 ## Pasar Tradisional
-***Source code dapat diakses pada** ```app/Http/Controllers/VirtualMarketController.php```
+**Source code dapat diakses pada** ```app/Http/Controllers/VirtualMarketController.php```
 
 API endpoints:
 - ### **```/api/virtualmarket/transaction```**
@@ -48,7 +50,7 @@ API endpoints:
     Contoh:    `http://167.205.35.43:8000/api/virtualmarket/buyer?type=stats&start_date=2017-09-25&end_date=2017-10-24`
 
 ## Marketplace
-***Source code dapat diakses pada** ```/app/Http/Controllers/MarketplaceController.php```
+**Source code dapat diakses pada** ```/app/Http/Controllers/MarketplaceController.php```
 - ### **```/api/marketplace/transaction```**
     
     Contoh: `http://167.205.35.43:8000/api/marketplace/transaction?type=stats&start_date=2017-09-25&end_date=2017-10-24`
@@ -68,7 +70,7 @@ API endpoints:
     Contoh: `http://167.205.35.43:8000/api/marketplace/buyer?type=history&start_date=2017-09-25&end_date=2017-10-24`
 
 # Frontend
-***Source code dapat diakses pada folder** ```/public/dashboard/app/pages```
+**Source code dapat diakses pada folder** ```/public/dashboard/app/pages```
 Setiap folder berisi source code untuk menu aplikasi yang bersangkutan, misal: source code untuk dashboard pasar tradisional terletak pada folder ```/public/dashboard/app/pages/virtualmarket```
 
 # Cara Penggunaan
@@ -88,12 +90,14 @@ Setiap folder berisi source code untuk menu aplikasi yang bersangkutan, misal: s
 Analisis data menggunakan beberapa rumus / perhitungan / algoritma berikut.
 1. **Fluktuasi Harga**
     
-    $$Fluktuasi = {\sum_{i=1}^n \Biggl({H_i - H_i'\over H_i} \Biggr) \over n} * 100\% $$
+    ```math
+    Fluktuasi = {\sum_{i=1}^n \Biggl({H_i - H_i'\over H_i} \Biggr) \over n} * 100\% 
+    ```
     
     Keterangan:
-    $H_i$ = Harga rata-rata produk ke-$i$ pada periode waktu yang dipilih
-    $H_i'$ = Harga rata-rata produk ke-$i$ pada periode sebelumnya
-    $n$ = Banyaknya produk
+    $`H_i`$ = Harga rata-rata produk ke-$i$ pada periode waktu yang dipilih
+    $`H_i'`$ = Harga rata-rata produk ke-$i$ pada periode sebelumnya
+    $`n`$ = Banyaknya produk
     
 2. **Prediksi Permintaan dan Harga**
 
@@ -104,9 +108,12 @@ Analisis data menggunakan beberapa rumus / perhitungan / algoritma berikut.
     
     Rating dihitung sebagai rata-rata menggunakan rumus berikut.
     
-    $$rating = {\sum_{i=1}^n ( R_i ) \over n}$$
+    ```math
+    rating = {\sum_{i=1}^n ( R_i ) \over n}
+    ```
     
     Keterangan:
-    $R_i$ = Rating yang diberikan untuk pesanan ke-$i$ pada periode waktu yang dipilih
-    $n$ = Banyaknya rating yang diberikan
+    
+    $`R_i`$ = Rating yang diberikan untuk pesanan ke-$i$ pada periode waktu yang dipilih
+    $`n`$ = Banyaknya rating yang diberikan
   

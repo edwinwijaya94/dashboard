@@ -77,7 +77,7 @@ Setiap folder berisi source code untuk menu aplikasi yang bersangkutan, misal: s
 
 1. Akses **167.205.35.43:8000** pada browser Anda
 2. Login (akses default menggunakan data berikut)
-   ```sh
+   ```
    email: disperindag@gmail.com
    password: 12345
    ```
@@ -95,8 +95,10 @@ Analisis data menggunakan beberapa rumus / perhitungan / algoritma berikut.
     ```
     
     Keterangan:
-    $`H_i`$ = Harga rata-rata produk ke-$i$ pada periode waktu yang dipilih
-    $`H_i'`$ = Harga rata-rata produk ke-$i$ pada periode sebelumnya
+    $`H_i`$ = Harga rata-rata produk ke-$`i`$ pada periode waktu yang dipilih
+    
+    $`H_i'`$ = Harga rata-rata produk ke-$`i`$ pada periode sebelumnya
+    
     $`n`$ = Banyaknya produk
     
 2. **Prediksi Permintaan dan Harga**
@@ -114,6 +116,7 @@ Analisis data menggunakan beberapa rumus / perhitungan / algoritma berikut.
     
     Keterangan:
     
-    $`R_i`$ = Rating yang diberikan untuk pesanan ke-$i$ pada periode waktu yang dipilih
+    $`R_i`$ = Rating yang diberikan untuk pesanan ke-$`i`$ pada periode waktu yang dipilih
+    
     $`n`$ = Banyaknya rating yang diberikan
   
